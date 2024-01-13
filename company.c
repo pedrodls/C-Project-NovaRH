@@ -22,6 +22,7 @@ Company *initCompany(){
 Company *readCompany(){
     Company *newCompany = (Company *)malloc(sizeof(Company));
     if(newCompany){
+       // FILE *files;
 
         //Lógica de Leitura de Arquivos
 
