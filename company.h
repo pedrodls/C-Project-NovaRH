@@ -8,3 +8,6 @@ Company *readCompany();
 Company *createCompany(char *name, char *email, char *address, char phone[9], char nif[12], int countColaborator);
 //Actualização dos dados da Empresa
 Company *updateCompany(char *name, char *email, char *address, char phone[9], char nif[12], int countColaborator);
+
+FILE *openCompanyFile();
+void closeCompanyFile(FILE *file);

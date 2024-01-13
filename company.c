@@ -1,4 +1,5 @@
-#include "company.h";
+#include <stdio.h>
+#include "company.h"
 #include <stdlib.h>
 
 struct company{
@@ -7,7 +8,9 @@ struct company{
     int countColaborator;
 };
 
+
 //Inicialização da Empresa quando a mesma não possui algum registro
+/*
 Company *initCompany(){
     Company *newCompany = (Company *)malloc(sizeof(Company));
     if(newCompany){
@@ -17,17 +20,38 @@ Company *initCompany(){
         printf("Falha na Alocação de Empresa\n");  
     return NULL;
 }
-
+*/
 //Busca de Informações da Empresa apartid dos arquivos
 Company *readCompany(){
     Company *newCompany = (Company *)malloc(sizeof(Company));
     if(newCompany){
-       // FILE *files;
+      /* FILE *files = fopen("./files/empresa.txt","a+");
+        char *data;
+        while(!feof){
+            fscanf(files, "%s",data);
+            printf("%s\n", data);
+        }
 
+        fclose(files);
+        */
         //Lógica de Leitura de Arquivos
 
         return newCompany;
     }else
-        printf("Falha na Alocação de Empresa\n");  
+        //printf("Falha na Alocação de Empresa\n");  
     return NULL;
 }
+/*
+FILE *openCompanyFile(){
+    FILE *file;
+    file = fopen("./files/empresa.txt","a+");
+    if(!file) {
+        printf("Falha ao abrir Arquivo\n\n");
+        return NULL; //falha no ficheiro
+    }
+    return file;    
+}
+void closeCompanyFile(FILE *file){
+    fclose(file);
+}
+*/

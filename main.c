@@ -1,9 +1,9 @@
-#include <stdio.h>
 #include <stdlib.h>
+#include "company.c"
 
 int main()
 {
-    FILE *arq;
+    /*FILE *arq;
     char *nome, *name;
 
     arq = fopen("./files/empresa.txt", "a+");
@@ -24,5 +24,5 @@ int main()
         
         // printf("%s\n", nome);
     }
-    fclose(arq);
+    fclose(arq);*/
 }
