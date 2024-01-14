@@ -40,6 +40,9 @@ void menuDepartment(Company *company, Department *department);
 // Funcao pra criar Departamento
 void createDepartmentFromMain(Company *company, Department *department);
 
+// Função para actualizar Departamento
+void updateDepartmentFromMain(Company *company, Department *department);
+
 int main()
 {
     Company *myCompany = initCompany();
@@ -166,7 +169,7 @@ void menuCompany(Company *company, Department *department)
         menuMain(company, department);
         break;
     case '3':
-        menuDepartment(company,department);
+        menuDepartment(company, department);
         break;
     default:
         menuCompany(company, department);
@@ -401,7 +404,7 @@ void menuDepartment(Company *company, Department *department)
     printf("| 1 - REGISTAR DEPARTAMENTO                      |\n");
     printf("| 2 - ACTUALIZAR DEPARTMENTO                     |\n");
     printf("| 3 - LISTAR DEPARTAMENTOS                       |\n");
-    printf("| 4 - VER DEPARTAMENTO                           |\n");
+    printf("| 4 - LISTAR FUNCIONARIOS DE UM DEPARTAMENTO     |\n");
     printf("| 5 - ELIMINAR DEPARTAMENTOS                     |\n");
     printf("| 0 - SAIR                                       |\n");
     printf("000000000000000000000000000000000000000000000000\n\nOpcao: ");
@@ -409,23 +412,38 @@ void menuDepartment(Company *company, Department *department)
     fflush(stdin);
 
     scanf("%c", &menu);
-
+    int code;
     switch (menu)
     {
     case '1':
         createDepartmentFromMain(company, department);
         break;
+    case '2':
+        updateDepartmentFromMain(company, department);
+        break;
     case '0':
-        menuMain(company, department);
+        menuCompany(company, department);
         break;
     case '3':
         findAllDepartments(department);
         printf("\nClique <Enter> para Continuar\n");
         system("pause>nul");
-        menuDepartment(company,department);
+        menuDepartment(company, department);
+        break;
+    case '4':
+        //PENDENTE
     break;
+    case '5':
+        findAllDepartments(department);
+        printf("Codigo do Departamento: ");
+        scanf("%d",&code);
+        department = deleteDepartment(department, code);
+        system("timeout -t 5");
+        menuDepartment(company,department);
+
+        break;
     default:
-        menuCompany(company, department);
+        menuDepartment(company, department);
         break;
     }
 }
@@ -436,7 +454,7 @@ void createDepartmentFromMain(Company *company, Department *department)
 
     fflush(stdin);
 
-    char  *name = (char *)malloc(sizeof(size));
+    char *name = (char *)malloc(sizeof(size));
 
     printf("000000000000000000000000000000000000000000000000\n");
     printf("|              Dados Necessarios               |\n");
@@ -466,6 +484,26 @@ void createDepartmentFromMain(Company *company, Department *department)
     return menuDepartment(company, department);
 }
 
+void updateDepartmentFromMain(Company *company, Department *department)
+{
+    system("cls");
+
+    int code;
+
+    printf("000000000000000000000000000000000000000000000000\n");
+    printf("              Actualizar Departmento               \n");
+    findAllDepartments(department);
+    printf("000000000000000000000000000000000000000000000000\n\n");
+
+    printf("Codigo do Departmento: ");
+    scanf("%d", &code);
+
+    department = updateDepartment(department, code);
+
+    system("timeout -t 5\n\n");
+
+    return menuDepartment(company, department);
+}
 int required(char *value)
 {
 

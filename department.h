@@ -16,7 +16,8 @@ void *findOneDepartment(Department *data, int code);
 void *findAllDepartments(Department *data);
 
 // Atualiza um departamento
-void *updateDepartment(Department *data, int code);
+Department *updateDepartment(Department *data, int code);
 
-// Busca de Informações da Empresa apartid dos arquivos
-Department *readDepartment();
+//Elimina um departamento
+Department *deleteDepartment(Department *data, int code);
+

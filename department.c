@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define size_char 100
+
 struct department
 {
     int code;
@@ -104,24 +106,24 @@ void *findAllDepartments(Department *data)
 }
 
 // Atualiza um departamento
-void *updateDepartment(Department *data, int code)
+Department *updateDepartment(Department *data, int code)
 {
     Department *departmentData = findOneDepartment(data, code);
 
-    char *newName;
+    char *newName = (char *)malloc(sizeof(size_char));
     int newState;
 
     if (departmentData)
     {
-        describeDepartment(departmentData);
-        printf("Clique enter caso não deseja atualizar o campo!\n");
+        printf("\nClique enter caso nao deseja atualizar o campo!\n");
 
         fflush(stdin);
 
         printf("Novo nome: ");
-        scanf("%s", newName);
+        fgets(newName, size_char, stdin);
+        newName[strcspn(newName, "\n")] = '\0';
 
-        printf("Ativar - 1 | Desactivar - 2: ");
+        printf("\nAtivar - 1 | Desactivar - 2: ");
         scanf("%d", &newState);
 
         if (!(strcmp(newName, departmentData->name) == 0))
@@ -140,10 +142,32 @@ void *updateDepartment(Department *data, int code)
     }
     else
         printf("Departamento nao encontrado!\n");
-}
-// Busca de Informações da Empresa apartid dos arquivos
-Department *readDepartment()
-{
 
-    return NULL;
+    return data;
+}
+
+Department *deleteDepartment(Department *data, int code){
+    Department *aux = data, *ant = NULL;
+
+    while (aux && aux->code != code){
+        ant = aux;
+        aux = aux->next;
+    }
+
+    if(!aux){
+        printf("Departamento nao Encontrado!\n");
+        return data;
+    }
+    else if(aux == data){ //encontrou no inicio
+        data = aux->next;
+        free(aux);
+    }else{
+        ant->next = aux->next;
+    }
+
+    if(data == NULL)
+        data = initDepartment();
+    
+    printf("\nDepartamento Eliminado Com Sucesso\n");
+    return data;
 }
