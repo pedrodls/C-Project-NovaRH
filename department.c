@@ -19,8 +19,11 @@ Department *initDepartment()
 
     if (newDepartment)
     {
+        newDepartment->code = 0;
+        newDepartment->name = "";
         newDepartment->colaborators = 0;
         newDepartment->status = 0;
+        newDepartment->next = NULL;
     }
     else
         printf("Falha na Alocação do departamento\n");
@@ -31,10 +34,19 @@ Department *initDepartment()
 // Criar um departamento
 Department *createDepartment(Department *head, char *name)
 {
-    Department *newDepartment = (Department *)malloc(sizeof(Department));
 
-    if (newDepartment)
+    if (head->code > 0)
     {
+        Department *newDepartment = (Department *)malloc(sizeof(Department));
+
+        if (!newDepartment)
+        {
+            printf("Falha na Alocação do departamento\n");
+            return head;
+        }
+
+        newDepartment->code = head->code + 1;
+
         newDepartment->name = name;
 
         newDepartment->colaborators = 0;
@@ -42,11 +54,19 @@ Department *createDepartment(Department *head, char *name)
         newDepartment->next = head;
 
         newDepartment->status = 1;
-    }
-    else
-        printf("Falha na Alocação do departamento\n");
 
-    return newDepartment;
+        return newDepartment;
+    }
+
+    if (head->code == 0)
+    {
+        head->name = name;
+        head->code = 1;
+        head->colaborators = 0;
+        head->status = 1;
+    }
+
+    return head;
 }
 
 // Descreve um departamento
@@ -70,14 +90,16 @@ void *findOneDepartment(Department *data, int code)
 // Encontra todos departamentos
 void *findAllDepartments(Department *data)
 {
-    Department *aux = data;
-
-    while (aux)
+    if (data->code == 0)
+        printf("Lista Vazia\n");
+    else
     {
-
-        describeDepartment(aux);
-
-        aux = aux->next;
+        Department *aux = data;
+        while (aux)
+        {
+            describeDepartment(aux);
+            aux = aux->next;
+        }
     }
 }
 

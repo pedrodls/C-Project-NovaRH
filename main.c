@@ -10,41 +10,50 @@
 #define size_char_nif 14
 
 // Funçao pra pegar o menu principal
-void menuMain(Company *company);
+void menuMain(Company *company, Department *department);
 
 // Funcao pra pegar o menu do Admin
-void menuAdmin(Company *company);
+void menuAdmin(Company *company, Department *department);
 
 // Funcao pra pegar o menu da empresa
-void menuCompany(Company *company);
+void menuCompany(Company *company, Department *department);
 
 // Funcao pra pegar as opcçoes do menu do Admin
-void menuCompanyOp(Company *company);
+void menuCompanyOp(Company *company, Department *department);
 
 // Funcao para atualizar os dados da empresa
-void updateCompanyFromMain(Company *company);
+void updateCompanyFromMain(Company *company, Department *department);
 
 // Funcao pra criar empresa
-void createCompanyFromMain(Company *company);
+void createCompanyFromMain(Company *company, Department *department);
 
 // Funcao pra verificar campos vazios
 int required(char *value);
 
 // Funcao pra mostrar dados da empresa
-void showCompanyDataFromMain(Company *company);
+void showCompanyDataFromMain(Company *company, Department *department);
+
+//-----------------DEPARTAMENTOS--------------------------
+// Menu Departamento
+void menuDepartment(Company *company, Department *department);
+
+// Funcao pra criar Departamento
+void createDepartmentFromMain(Company *company, Department *department);
 
 int main()
 {
     Company *myCompany = initCompany();
 
+    Department *myDepartments = initDepartment();
+
     // Função para pegar dados da empresa apartir do ficheiro
     readCompany(myCompany);
 
-    menuMain(myCompany);
+    menuMain(myCompany, myDepartments);
 }
 
 // Menu Principal para escolha de Login
-void menuMain(Company *company)
+void menuMain(Company *company, Department *department)
 {
     system("cls");
 
@@ -65,7 +74,7 @@ void menuMain(Company *company)
     switch (menu)
     {
     case '1':
-        menuAdmin(company);
+        menuAdmin(company, department);
         break;
 
     case '0':
@@ -78,7 +87,7 @@ void menuMain(Company *company)
 }
 
 // Menu do Login do Admin
-void menuAdmin(Company *company)
+void menuAdmin(Company *company, Department *department)
 {
     system("cls");
 
@@ -107,7 +116,7 @@ void menuAdmin(Company *company)
     {
         printf("Erro ao abrir Arquivo\n");
         system("timeout -t 5");
-        menuMain(company);
+        menuMain(company, department);
         return;
     }
 
@@ -118,14 +127,14 @@ void menuAdmin(Company *company)
     {
         printf("\n\nCredencias Invalidas!\n\n");
         system("timeout -t 5");
-        menuMain(company);
+        menuMain(company, department);
     }
 
-    menuCompany(company);
+    menuCompany(company, department);
 }
 
 // Menu com as Funcionalidades do Admin
-void menuCompany(Company *company)
+void menuCompany(Company *company, Department *department)
 {
     system("cls");
 
@@ -151,19 +160,21 @@ void menuCompany(Company *company)
     switch (menu)
     {
     case '1':
-        menuCompanyOp(company);
+        menuCompanyOp(company, department);
         break;
     case '0':
-        menuMain(company);
+        menuMain(company, department);
+        break;
+    case '3':
+        menuDepartment(company,department);
         break;
     default:
-        menuCompany(company);
+        menuCompany(company, department);
         break;
     }
 }
 
-
-void menuCompanyOp(Company *company)
+void menuCompanyOp(Company *company, Department *department)
 {
 
     system("cls");
@@ -203,20 +214,20 @@ void menuCompanyOp(Company *company)
     switch (menu)
     {
     case '1':
-        !file ? createCompanyFromMain(company) : updateCompanyFromMain(company);
+        !file ? createCompanyFromMain(company, department) : updateCompanyFromMain(company, department);
         break;
     case '2':
-        !required(getName(company)) ? showCompanyDataFromMain(company) : menuCompany(company);
+        !required(getName(company)) ? showCompanyDataFromMain(company, department) : menuCompany(company, department);
         break;
     default:
-        menuCompany(company);
+        menuCompany(company, department);
         break;
     }
 
     return;
 }
 
-void updateCompanyFromMain(Company *company)
+void updateCompanyFromMain(Company *company, Department *department)
 {
 
     system("cls");
@@ -275,10 +286,10 @@ void updateCompanyFromMain(Company *company)
 
     system("timeout -t 5\n\n");
 
-    return menuCompanyOp(company);
+    return menuCompanyOp(company, department);
 }
 
-void createCompanyFromMain(Company *company)
+void createCompanyFromMain(Company *company, Department *department)
 {
 
     system("cls");
@@ -330,7 +341,7 @@ void createCompanyFromMain(Company *company)
     {
 
         system("timeout -t 5\n\n");
-        return createCompanyFromMain(company);
+        return createCompanyFromMain(company, department);
     }
 
     fflush(stdin);
@@ -341,10 +352,10 @@ void createCompanyFromMain(Company *company)
 
     system("timeout -t 5\n\n");
 
-    return menuCompanyOp(company);
+    return menuCompanyOp(company, department);
 }
 
-void showCompanyDataFromMain(Company *company)
+void showCompanyDataFromMain(Company *company, Department *department)
 {
 
     system("cls");
@@ -367,14 +378,92 @@ void showCompanyDataFromMain(Company *company)
 
     fflush(stdin);
 
-    scanf("%c", &me nu);
+    scanf("%c", &menu);
 
     switch (menu)
     {
     default:
-        menuCompanyOp(company);
+        menuCompanyOp(company, department);
         break;
     }
+}
+
+void menuDepartment(Company *company, Department *department)
+{
+    system("cls");
+
+    fflush(stdin);
+
+    char menu;
+
+    printf("\t Gerencie a sua Empresa com a NOVA-RH\n\n");
+    printf("000000000000000000000000000000000000000000000000\n");
+    printf("| 1 - REGISTAR DEPARTAMENTO                      |\n");
+    printf("| 2 - ACTUALIZAR DEPARTMENTO                     |\n");
+    printf("| 3 - LISTAR DEPARTAMENTOS                       |\n");
+    printf("| 4 - VER DEPARTAMENTO                           |\n");
+    printf("| 5 - ELIMINAR DEPARTAMENTOS                     |\n");
+    printf("| 0 - SAIR                                       |\n");
+    printf("000000000000000000000000000000000000000000000000\n\nOpcao: ");
+
+    fflush(stdin);
+
+    scanf("%c", &menu);
+
+    switch (menu)
+    {
+    case '1':
+        createDepartmentFromMain(company, department);
+        break;
+    case '0':
+        menuMain(company, department);
+        break;
+    case '3':
+        findAllDepartments(department);
+        printf("\nClique <Enter> para Continuar\n");
+        system("pause>nul");
+        menuDepartment(company,department);
+    break;
+    default:
+        menuCompany(company, department);
+        break;
+    }
+}
+
+void createDepartmentFromMain(Company *company, Department *department)
+{
+    system("cls");
+
+    fflush(stdin);
+
+    char  *name = (char *)malloc(sizeof(size));
+
+    printf("000000000000000000000000000000000000000000000000\n");
+    printf("|              Dados Necessarios               |\n");
+    printf("| Nome                                         |\n\n");
+    printf("000000000000000000000000000000000000000000000000\n\n");
+
+    fflush(stdin);
+
+    printf("Nome: ");
+    fgets(name, size_char, stdin);
+    name[strcspn(name, "\n")] = '\0';
+
+    fflush(stdin);
+
+    if (required(name))
+    {
+        system("timeout -t 5\n\n");
+        return createDepartmentFromMain(company, department);
+    }
+
+    department = createDepartment(department, name);
+
+    printf("\n\nDepartamento criada com sucesso!\n\n");
+
+    system("timeout -t 5\n\n");
+
+    return menuDepartment(company, department);
 }
 
 int required(char *value)
