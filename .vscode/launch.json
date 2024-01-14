@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
-      "cwd": "c:/Users/Lenovo/Desktop/ISPTEC/II ANO/I SEMESTRE/ED I/2º Trabalho-TAD/C - NovaRH/C-Project-NovaRH",
-      "program": "c:/Users/Lenovo/Desktop/ISPTEC/II ANO/I SEMESTRE/ED I/2º Trabalho-TAD/C - NovaRH/C-Project-NovaRH/build/Debug/outDebug",
+      "cwd": "c:/Users/Lenovo/Desktop/ISPTEC/II ANO/I SEMESTRE/ED I/2º Trabalho-TAD/C-Project-NovaRH",
+      "program": "c:/Users/Lenovo/Desktop/ISPTEC/II ANO/I SEMESTRE/ED I/2º Trabalho-TAD/C-Project-NovaRH/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [
