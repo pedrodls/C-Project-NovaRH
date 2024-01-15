@@ -64,26 +64,26 @@ int main()
 
 #include <stdlib.h>
 #include <stdio.h>
-#include "company.h"
-#include "department.h"
+#include "employee.h"
 #include <string.h>
-
 
 #define size_char 50
 #define size_char_phone 10
 #define size_char_nif 14
 
+
 int main()
 {
+/*
+    Employee *myEmployee = initEmployee();
+    //printf("%d\n", getEmployeeCode(myEmployee));
+    myEmployee = createEmployee(myEmployee,getEmployeeCode(myEmployee)+1,"bruno mateus", 5000);    
+    myEmployee = createEmployee(myEmployee,getEmployeeCode(myEmployee)+1,"jone mateus", 5000);
 
-    
-    Company *myCompany = initCompany();
-    readCompany(myCompany);
-    printf("%s\n", getName(myCompany));
-    printf("%s\n", getEmail(myCompany));
-    printf("%s\n", getAddress(myCompany));
-    printf("%s\n", getPhone(myCompany));
-    printf("%s\n", getNIF(myCompany));
+    findAllEmployees(myEmployee);
+*/
+
+    int valorPadrao
 
     return 0;
 }

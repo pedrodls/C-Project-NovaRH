@@ -9,15 +9,15 @@ Company *createCompany(Company *company, char *name, char *email, char *address,
 // Actualização dos dados da Empresa
 Company *updateCompany(Company *company, char *name, char *email, char *address, char *phone, char *nif);
 // Métodos Getters - usado para retornar os valores da variável
-char *getName(Company *company);
-char *getEmail(Company *company);
-char *getAddress(Company *company);
-char *getPhone(Company *company);
-char *getNIF(Company *company);
+char *getCompanyName(Company *company);
+char *getCompanyEmail(Company *company);
+char *getCompanyAddress(Company *company);
+char *getCompanyPhone(Company *company);
+char *getCompanyNIF(Company *company);
 
 // Métodos Setter - usados para actualizar os valores das variáveis
-void setName(Company *company, char *value);
-void setEmail(Company *company, char *value);
-void setAddress(Company *company, char *value);
-void setPhone(Company *company, char *value);
-void setNIF(Company *company, char *value);
+void setCompanyName(Company *company, char *value);
+void setCompanyEmail(Company *company, char *value);
+void setCompanyAddress(Company *company, char *value);
+void setCompanyPhone(Company *company, char *value);
+void setCompanyNIF(Company *company, char *value);

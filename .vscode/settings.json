@@ -59,6 +59,8 @@
   "files.associations": {
     "mysqlstubs.h": "c",
     "mysql.h": "c",
-    "typeinfo": "c"
+    "typeinfo": "c",
+    "string.h": "c",
+    "department.h": "c"
   }
 }

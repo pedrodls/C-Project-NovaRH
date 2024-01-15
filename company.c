@@ -57,11 +57,11 @@ Company *readCompany(Company *company)
     fscanf(file, "%s", nif);
     // fscanf(file, "%d", countColaborator);
 
-    setName(company, name);
-    setEmail(company, email);
-    setAddress(company, address);
-    setPhone(company, phone);
-    setNIF(company, nif);
+    setCompanyName(company, name);
+    setCompanyEmail(company, email);
+    setCompanyAddress(company, address);
+    setCompanyPhone(company, phone);
+    setCompanyNIF(company, nif);
 
     // setCountColaborator(company, countColaborator);
 
@@ -105,14 +105,14 @@ Company *updateCompany(Company *company, char *name, char *email, char *address,
     address = !!address ? company->address : address;
     phone = !!phone ? company->phone : phone;
 
-    setName(company, name);
+    setCompanyName(company, name);
 
-    setEmail(company, email);
+    setCompanyEmail(company, email);
 
-    setAddress(company, address);
-    setPhone(company, phone);
+    setCompanyAddress(company, address);
+    setCompanyPhone(company, phone);
 
-    setNIF(company, nif);
+    setCompanyNIF(company, nif);
 
     fprintf(file, "%s\n%s\n%s\n%s\n%s", name, email, address, phone, nif);
 
@@ -123,50 +123,50 @@ Company *updateCompany(Company *company, char *name, char *email, char *address,
 
 // Métodos Getters
 // retorna o nome da empresa
-char *getName(Company *company)
+char *getCompanyName(Company *company)
 {
     return company->name;
 }
 // retorna o email da empresa
-char *getEmail(Company *company)
+char *getCompanyEmail(Company *company)
 {
     return company->email;
 }
 
 // retorna o endereço da empresa
-char *getAddress(Company *company)
+char *getCompanyAddress(Company *company)
 {
     return company->address;
 }
 // retorna o telefone da empresa
-char *getPhone(Company *company)
+char *getCompanyPhone(Company *company)
 {
     return company->phone;
 }
 // retorna o nif da empresa
-char *getNIF(Company *company)
+char *getCompanyNIF(Company *company)
 {
     return company->nif;
 }
 
 // Mètodos Setters
-void setEmail(Company *company, char *value)
+void setCompanyEmail(Company *company, char *value)
 {
     company->email = value;
 }
-void setName(Company *company, char *value)
+void setCompanyName(Company *company, char *value)
 {
     company->name = value;
 }
-void setAddress(Company *company, char *value)
+void setCompanyAddress(Company *company, char *value)
 {
     company->address = value;
 }
-void setPhone(Company *company, char *value)
+void setCompanyPhone(Company *company, char *value)
 {
     company->phone = value;
 }
-void setNIF(Company *company, char *value)
+void setCompanyNIF(Company *company, char *value)
 {
     company->nif = value;
 }

@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include "company.h"
 #include "department.h"
+#include "employee.h"
 #include <string.h>
 
 #define size 100
@@ -10,38 +11,47 @@
 #define size_char_nif 14
 
 // Funçao pra pegar o menu principal
-void menuMain(Company *company, Department *department);
+void menuMain(Company *company, Department *department, Employee *employee);
 
 // Funcao pra pegar o menu do Admin
-void menuAdmin(Company *company, Department *department);
+void menuAdmin(Company *company, Department *department, Employee *employee);
 
 // Funcao pra pegar o menu da empresa
-void menuCompany(Company *company, Department *department);
+void menuCompany(Company *company, Department *department, Employee *employee);
+
+//-----------------------EMPRESA-------------------------------
 
 // Funcao pra pegar as opcçoes do menu do Admin
-void menuCompanyOp(Company *company, Department *department);
+void menuCompanyOp(Company *company, Department *department, Employee *employee);
 
 // Funcao para atualizar os dados da empresa
-void updateCompanyFromMain(Company *company, Department *department);
+void updateCompanyFromMain(Company *company, Department *department, Employee *employee);
 
 // Funcao pra criar empresa
-void createCompanyFromMain(Company *company, Department *department);
+void createCompanyFromMain(Company *company, Department *department, Employee *employee);
 
 // Funcao pra verificar campos vazios
 int required(char *value);
 
 // Funcao pra mostrar dados da empresa
-void showCompanyDataFromMain(Company *company, Department *department);
+void showCompanyDataFromMain(Company *company, Department *department, Employee *employee);
 
 //-----------------DEPARTAMENTOS--------------------------
 // Menu Departamento
-void menuDepartment(Company *company, Department *department);
+void menuDepartment(Company *company, Department *department, Employee *employee);
 
 // Funcao pra criar Departamento
-void createDepartmentFromMain(Company *company, Department *department);
+void createDepartmentFromMain(Company *company, Department *department, Employee *employee);
 
 // Função para actualizar Departamento
-void updateDepartmentFromMain(Company *company, Department *department);
+void updateDepartmentFromMain(Company *company, Department *department, Employee *employee);
+
+//-------------------FUNCIONÁRIOS--------------------------------------
+void menuEmployee(Company *company, Department *department, Employee *employee);
+
+void createEmployeeFromMain(Company *company, Department *department, Employee *employee);
+
+void updateEmployeeFromMain(Company *company, Department *department, Employee *employee);
 
 int main()
 {
@@ -49,14 +59,16 @@ int main()
 
     Department *myDepartments = initDepartment();
 
+    Employee *myEmployees = initEmployee();
+
     // Função para pegar dados da empresa apartir do ficheiro
     readCompany(myCompany);
 
-    menuMain(myCompany, myDepartments);
+    menuMain(myCompany, myDepartments, myEmployees);
 }
 
 // Menu Principal para escolha de Login
-void menuMain(Company *company, Department *department)
+void menuMain(Company *company, Department *department, Employee *employee)
 {
     system("cls");
 
@@ -77,7 +89,7 @@ void menuMain(Company *company, Department *department)
     switch (menu)
     {
     case '1':
-        menuAdmin(company, department);
+        menuAdmin(company, department, employee);
         break;
 
     case '0':
@@ -90,7 +102,7 @@ void menuMain(Company *company, Department *department)
 }
 
 // Menu do Login do Admin
-void menuAdmin(Company *company, Department *department)
+void menuAdmin(Company *company, Department *department, Employee *employee)
 {
     system("cls");
 
@@ -119,7 +131,7 @@ void menuAdmin(Company *company, Department *department)
     {
         printf("Erro ao abrir Arquivo\n");
         system("timeout -t 5");
-        menuMain(company, department);
+        menuMain(company, department, employee);
         return;
     }
 
@@ -130,14 +142,14 @@ void menuAdmin(Company *company, Department *department)
     {
         printf("\n\nCredencias Invalidas!\n\n");
         system("timeout -t 5");
-        menuMain(company, department);
+        menuMain(company, department, employee);
     }
 
-    menuCompany(company, department);
+    menuCompany(company, department, employee);
 }
 
 // Menu com as Funcionalidades do Admin
-void menuCompany(Company *company, Department *department)
+void menuCompany(Company *company, Department *department, Employee *employee)
 {
     system("cls");
 
@@ -163,21 +175,24 @@ void menuCompany(Company *company, Department *department)
     switch (menu)
     {
     case '1':
-        menuCompanyOp(company, department);
+        menuCompanyOp(company, department, employee);
+        break;
+    case '2':
+        menuEmployee(company, department, employee);
         break;
     case '0':
-        menuMain(company, department);
+        menuMain(company, department, employee);
         break;
     case '3':
-        menuDepartment(company, department);
+        menuDepartment(company, department, employee);
         break;
     default:
-        menuCompany(company, department);
+        menuCompany(company, department, employee);
         break;
     }
 }
-
-void menuCompanyOp(Company *company, Department *department)
+// Opç~oes da Empresa
+void menuCompanyOp(Company *company, Department *department, Employee *employee)
 {
 
     system("cls");
@@ -217,20 +232,20 @@ void menuCompanyOp(Company *company, Department *department)
     switch (menu)
     {
     case '1':
-        !file ? createCompanyFromMain(company, department) : updateCompanyFromMain(company, department);
+        !file ? createCompanyFromMain(company, department, employee) : updateCompanyFromMain(company, department, employee);
         break;
     case '2':
-        !required(getName(company)) ? showCompanyDataFromMain(company, department) : menuCompany(company, department);
+        !required(getCompanyName(company)) ? showCompanyDataFromMain(company, department, employee) : menuCompany(company, department, employee);
         break;
     default:
-        menuCompany(company, department);
+        menuCompany(company, department, employee);
         break;
     }
 
     return;
 }
-
-void updateCompanyFromMain(Company *company, Department *department)
+// Actualização dos Dados da Empresa
+void updateCompanyFromMain(Company *company, Department *department, Employee *employee)
 {
 
     system("cls");
@@ -244,11 +259,11 @@ void updateCompanyFromMain(Company *company, Department *department)
 
     printf("000000000000000000000000000000000000000000000000\n");
     printf("|                  Dados Atuais                \n");
-    printf("| Nome     - %s                                \n", getName(company));
-    printf("| Email    - %s                                \n", getEmail(company));
-    printf("| Endereco - %s                                \n", getAddress(company));
-    printf("| Telefone - %s                                \n", getPhone(company));
-    printf("| NIF      - %s                                \n", getNIF(company));
+    printf("| Nome     - %s                                \n", getCompanyName(company));
+    printf("| Email    - %s                                \n", getCompanyEmail(company));
+    printf("| Endereco - %s                                \n", getCompanyAddress(company));
+    printf("| Telefone - %s                                \n", getCompanyPhone(company));
+    printf("| NIF      - %s                                \n", getCompanyNIF(company));
     printf("000000000000000000000000000000000000000000000000\n\n");
     printf("Clique Enter caso nao deseja atualizar o campo!\n\n");
 
@@ -289,10 +304,10 @@ void updateCompanyFromMain(Company *company, Department *department)
 
     system("timeout -t 5\n\n");
 
-    return menuCompanyOp(company, department);
+    return menuCompanyOp(company, department, employee);
 }
-
-void createCompanyFromMain(Company *company, Department *department)
+// Criação da Empresa
+void createCompanyFromMain(Company *company, Department *department, Employee *employee)
 {
 
     system("cls");
@@ -344,7 +359,7 @@ void createCompanyFromMain(Company *company, Department *department)
     {
 
         system("timeout -t 5\n\n");
-        return createCompanyFromMain(company, department);
+        return createCompanyFromMain(company, department, employee);
     }
 
     fflush(stdin);
@@ -355,10 +370,10 @@ void createCompanyFromMain(Company *company, Department *department)
 
     system("timeout -t 5\n\n");
 
-    return menuCompanyOp(company, department);
+    return menuCompanyOp(company, department, employee);
 }
-
-void showCompanyDataFromMain(Company *company, Department *department)
+// Apresentação dos Dados da Empresa
+void showCompanyDataFromMain(Company *company, Department *department, Employee *employee)
 {
 
     system("cls");
@@ -369,11 +384,11 @@ void showCompanyDataFromMain(Company *company, Department *department)
 
     printf("000000000000000000000000000000000000000000000000\n");
     printf("|                  Dados Atuais                \n");
-    printf("| Nome     - %s                                \n", getName(company));
-    printf("| Email    - %s                                \n", getEmail(company));
-    printf("| Endereco - %s                                \n", getAddress(company));
-    printf("| Telefone - %s                                \n", getPhone(company));
-    printf("| NIF      - %s                                \n", getNIF(company));
+    printf("| Nome     - %s                                \n", getCompanyName(company));
+    printf("| Email    - %s                                \n", getCompanyEmail(company));
+    printf("| Endereco - %s                                \n", getCompanyAddress(company));
+    printf("| Telefone - %s                                \n", getCompanyPhone(company));
+    printf("| NIF      - %s                                \n", getCompanyNIF(company));
     printf("000000000000000000000000000000000000000000000000\n\n");
     printf("0 - Sair \n\n");
 
@@ -386,12 +401,12 @@ void showCompanyDataFromMain(Company *company, Department *department)
     switch (menu)
     {
     default:
-        menuCompanyOp(company, department);
+        menuCompanyOp(company, department, employee);
         break;
     }
 }
-
-void menuDepartment(Company *company, Department *department)
+// Menu do Departamento
+void menuDepartment(Company *company, Department *department, Employee *employee)
 {
     system("cls");
 
@@ -416,43 +431,41 @@ void menuDepartment(Company *company, Department *department)
     switch (menu)
     {
     case '1':
-        createDepartmentFromMain(company, department);
+        createDepartmentFromMain(company, department, employee);
         break;
     case '2':
-        updateDepartmentFromMain(company, department);
+        updateDepartmentFromMain(company, department, employee);
         break;
     case '0':
-        menuCompany(company, department);
+        menuCompany(company, department, employee);
         break;
     case '3':
         findAllDepartments(department);
         printf("\nClique <Enter> para Continuar\n");
         system("pause>nul");
-        menuDepartment(company, department);
+        menuDepartment(company, department, employee);
         break;
     case '4':
-        //PENDENTE
-    break;
+        // PENDENTE
+        break;
     case '5':
         findAllDepartments(department);
         printf("Codigo do Departamento: ");
-        scanf("%d",&code);
+        scanf("%d", &code);
         department = deleteDepartment(department, code);
         system("timeout -t 5");
-        menuDepartment(company,department);
+        menuDepartment(company, department, employee);
 
         break;
     default:
-        menuDepartment(company, department);
+        menuDepartment(company, department, employee);
         break;
     }
 }
-
-void createDepartmentFromMain(Company *company, Department *department)
+// Criação do Departamento
+void createDepartmentFromMain(Company *company, Department *department, Employee *employee)
 {
     system("cls");
-
-    fflush(stdin);
 
     char *name = (char *)malloc(sizeof(size));
 
@@ -472,7 +485,7 @@ void createDepartmentFromMain(Company *company, Department *department)
     if (required(name))
     {
         system("timeout -t 5\n\n");
-        return createDepartmentFromMain(company, department);
+        return createDepartmentFromMain(company, department, employee);
     }
 
     department = createDepartment(department, name);
@@ -481,10 +494,10 @@ void createDepartmentFromMain(Company *company, Department *department)
 
     system("timeout -t 5\n\n");
 
-    return menuDepartment(company, department);
+    return menuDepartment(company, department, employee);
 }
-
-void updateDepartmentFromMain(Company *company, Department *department)
+// Actualização do Departamento
+void updateDepartmentFromMain(Company *company, Department *department, Employee *employee)
 {
     system("cls");
 
@@ -502,8 +515,140 @@ void updateDepartmentFromMain(Company *company, Department *department)
 
     system("timeout -t 5\n\n");
 
-    return menuDepartment(company, department);
+    return menuDepartment(company, department, employee);
 }
+
+void menuEmployee(Company *company, Department *department, Employee *employee)
+{
+    system("cls");
+
+    fflush(stdin);
+
+    char menu;
+
+    printf("\t Gerencie a sua Empresa com a NOVA-RH\n\n");
+    printf("000000000000000000000000000000000000000000000000\n");
+    printf("| 1 - REGISTAR FUNCIONARIO                       |\n");
+    printf("| 2 - ACTUALIZAR FUNCIONARIO                     |\n");
+    printf("| 3 - LISTAR FUNCIONARIOS                        |\n");
+    printf("| 4 - VINCULAR FUNCIONARIO A DEPARTAMENTO        |\n");
+    printf("| 5 - ELIMINAR FUNCIONARIO                       |\n");
+    printf("| 0 - SAIR                                       |\n");
+    printf("000000000000000000000000000000000000000000000000\n\nOpcao: ");
+
+    fflush(stdin);
+
+    scanf("%c", &menu);
+    int code;
+    switch (menu)
+    {
+    case '1':
+        createEmployeeFromMain(company, department, employee);
+        break;
+    case '2':
+        updateEmployeeFromMain(company, department, employee);
+        break;
+    case '0':
+        menuCompany(company, department, employee);
+        break;
+    case '3':
+        findAllEmployees(employee);
+        printf("\nClique <Enter> para Continuar\n");
+        system("pause>nul");
+        menuEmployee(company, department, employee);
+        break;
+    case '4':
+        employeeDepartment(employee, department);
+        printf("\nClique <Enter> para Continuar\n");
+        system("pause>nul");
+        menuEmployee(company, department, employee);
+        break;
+    case '5':
+        /*
+            findAllDepartments(department);
+            printf("Codigo do Departamento: ");
+            scanf("%d", &code);
+            department = deleteDepartment(department, code);
+            system("timeout -t 5");
+            menuDepartment(company, department);
+        */
+
+        break;
+    default:
+        menuEmployee(company, department, employee);
+        break;
+    }
+}
+
+// Registro de um novo funcionário
+void createEmployeeFromMain(Company *company, Department *department, Employee *employee)
+{
+    system("cls");
+
+    char *name = (char *)malloc(sizeof(size));
+    float salary;
+
+    fflush(stdin);
+
+    // myEmployee = createEmployee(myEmployee,1,1,"bruno mateus", 5000);
+
+    printf("000000000000000000000000000000000000000000000000\n");
+    printf("|              Dados Necessarios               |\n");
+    printf("| Nome                                         |\n");
+    printf("| Salario                                      |\n\n");
+    printf("000000000000000000000000000000000000000000000000\n\n");
+
+    printf("Nome: ");
+    fgets(name, size_char, stdin);
+    name[strcspn(name, "\n")] = '\0';
+
+    fflush(stdin);
+
+    printf("Salario: ");
+    scanf("%f", &salary);
+
+    if (required(name))
+    {
+        system("timeout -t 5\n\n");
+        return createEmployeeFromMain(company, department, employee);
+    }
+
+    employee = createEmployee(employee, getEmployeeCode(employee) + 1, name, salary);
+
+    system("timeout -t 5\n\n");
+
+    return menuEmployee(company, department, employee);
+}
+
+// Actualização dos dadods de um funcionário
+void updateEmployeeFromMain(Company *company, Department *department, Employee *employee)
+{
+    system("cls");
+
+    int code;
+
+    fflush(stdin);
+
+
+    printf("000000000000000000000000000000000000000000000000\n");
+    printf("|              Dados Necessarios               |\n");
+    printf("| Nome                                         |\n");
+    printf("| Estado                                       |\n");
+    printf("| Salario                                      |\n\n");
+    printf("000000000000000000000000000000000000000000000000\n\n");
+
+    findAllEmployees(employee);
+
+    printf("\nCodigo do Funcionario: ");
+    scanf("%d", &code);
+
+    employee = updateEmployee(employee, code);
+
+    system("timeout -t 5\n\n");
+
+    return menuEmployee(company, department, employee);
+}
+
 int required(char *value)
 {
 

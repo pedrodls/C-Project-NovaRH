@@ -75,11 +75,11 @@ Department *createDepartment(Department *head, char *name)
 void *describeDepartment(Department *data)
 {
     if (data)
-        printf("\nCodigo: %d,\nNome: %s,\nColaboradores: %d,\nEstado: %s\n\n", data->code, data->name, data->colaborators, data->code ? "Ativo" : "Deasativado");
+        printf("\nCodigo: %d,\nNome: %s,\nColaboradores: %d,\nEstado: %s\n\n", data->code, data->name, data->colaborators, data->status ? "Ativo" : "Desativado");
 }
 
 // Encontra um departamento
-void *findOneDepartment(Department *data, int code)
+Department *findOneDepartment(Department *data, int code)
 {
     Department *aux = data;
 
@@ -115,29 +115,27 @@ Department *updateDepartment(Department *data, int code)
 
     if (departmentData)
     {
-        printf("\nClique enter caso nao deseja atualizar o campo!\n");
-
         fflush(stdin);
 
-        printf("Novo nome: ");
+        printf("Novo nome <apenas Enter para ignorar>: ");
         fgets(newName, size_char, stdin);
         newName[strcspn(newName, "\n")] = '\0';
 
-        printf("\nAtivar - 1 | Desactivar - 2: ");
+        printf("\nAtivar - 1 | Desactivar - 0: ");
         scanf("%d", &newState);
 
-        if (!(strcmp(newName, departmentData->name) == 0))
+        if (!(strcmp(newName, departmentData->name) == 0 && strlen(newName) > 1))
         {
             departmentData->name = newName;
 
             printf("\nNome atualizado com sucesso!\n");
         }
 
-        if (!(departmentData->status == newState))
+        if (!(departmentData->status == newState && (newState >= 0 && newState <= 1)))
         {
-            departmentData->name = newName;
+            departmentData->status = newState;
 
-            printf("Status atualizado com sucesso!\n");
+            printf("Estado atualizado com sucesso!\n");
         }
     }
     else
@@ -146,28 +144,51 @@ Department *updateDepartment(Department *data, int code)
     return data;
 }
 
-Department *deleteDepartment(Department *data, int code){
+Department *deleteDepartment(Department *data, int code)
+{
     Department *aux = data, *ant = NULL;
 
-    while (aux && aux->code != code){
+    while (aux && aux->code != code)
+    {
         ant = aux;
         aux = aux->next;
     }
 
-    if(!aux){
+    if (!aux)
+    {
         printf("Departamento nao Encontrado!\n");
         return data;
     }
-    else if(aux == data){ //encontrou no inicio
+    else if (aux == data)
+    { // encontrou no inicio
         data = aux->next;
         free(aux);
-    }else{
+    }
+    else
+    {
         ant->next = aux->next;
     }
 
-    if(data == NULL)
+    if (data == NULL)
         data = initDepartment();
-    
+
     printf("\nDepartamento Eliminado Com Sucesso\n");
     return data;
+}
+
+// retorna o nome do funcionário
+char *getDepartmentName(Department *data)
+{
+    return data->name;
+}
+// retorna o código do funcionário
+int getDepartmentCode(Department *data)
+{
+    return data->code;
+}
+
+// Retorna o proximo departamento
+Department *nextDepartment(Department *data)
+{
+    return data->next;
 }

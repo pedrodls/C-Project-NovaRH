@@ -10,7 +10,7 @@ Department *createDepartment(Department *head, char *name);
 void *describeDepartment(Department *data);
 
 // Encontra um departamento
-void *findOneDepartment(Department *data, int code);
+Department *findOneDepartment(Department *data, int code);
 
 // Encontra todos departamentos
 void *findAllDepartments(Department *data);
@@ -20,4 +20,12 @@ Department *updateDepartment(Department *data, int code);
 
 //Elimina um departamento
 Department *deleteDepartment(Department *data, int code);
+
+//Manda o proximo departamento
+Department *nextDepartment(Department *data);
+
+// retorna o nome do funcionário
+char *getDepartmentName(Department *data);
+// retorna o código do funcionário
+int getDepartmentCode(Department *data);
 
