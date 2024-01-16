@@ -419,7 +419,7 @@ void menuDepartment(Company *company, Department *department, Employee *employee
     printf("| 1 - REGISTAR DEPARTAMENTO                      |\n");
     printf("| 2 - ACTUALIZAR DEPARTMENTO                     |\n");
     printf("| 3 - LISTAR DEPARTAMENTOS                       |\n");
-    printf("| 4 - LISTAR FUNCIONARIOS DE UM DEPARTAMENTO     |\n");
+    printf("| 4 - LISTAR FUNCIONARIOS POR DEPARTAMENTO       |\n");
     printf("| 5 - ELIMINAR DEPARTAMENTOS                     |\n");
     printf("| 0 - SAIR                                       |\n");
     printf("000000000000000000000000000000000000000000000000\n\nOpcao: ");
@@ -446,7 +446,15 @@ void menuDepartment(Company *company, Department *department, Employee *employee
         menuDepartment(company, department, employee);
         break;
     case '4':
-        // PENDENTE
+        findAllDepartments(department);
+        if(getDepartmentCode(department) > 0){
+            printf("Codigo do Departamento: ");
+            scanf("%d",&code);
+            department = findEmployeeByDepartment(department, employee ,code);
+        }
+        printf("\nClique <Enter> para Continuar\n");
+        system("pause>nul");
+        menuDepartment(company, department, employee);
         break;
     case '5':
         findAllDepartments(department);
@@ -455,7 +463,6 @@ void menuDepartment(Company *company, Department *department, Employee *employee
         department = deleteDepartment(department, code);
         system("timeout -t 5");
         menuDepartment(company, department, employee);
-
         break;
     default:
         menuDepartment(company, department, employee);
@@ -564,14 +571,12 @@ void menuEmployee(Company *company, Department *department, Employee *employee)
         menuEmployee(company, department, employee);
         break;
     case '5':
-        /*
-            findAllDepartments(department);
-            printf("Codigo do Departamento: ");
-            scanf("%d", &code);
-            department = deleteDepartment(department, code);
-            system("timeout -t 5");
-            menuDepartment(company, department);
-        */
+        findAllEmployees(employee);
+        printf("Codigo do Funcionario: ");
+        scanf("%d", &code);
+        employee = deleteEmployee(employee, code);
+        system("timeout -t 5");
+        menuEmployee(company, department, employee);
 
         break;
     default:
@@ -628,7 +633,6 @@ void updateEmployeeFromMain(Company *company, Department *department, Employee *
     int code;
 
     fflush(stdin);
-
 
     printf("000000000000000000000000000000000000000000000000\n");
     printf("|              Dados Necessarios               |\n");

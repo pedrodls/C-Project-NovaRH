@@ -141,7 +141,6 @@ Employee *updateEmployee(Employee *data, int code)
 
 Employee *employeeDepartment(Employee *data, Department *data_department)
 {
-
     if (!data)
         printf("NAO EXISTEM FUNCIONARIOS\n----------------------------------\n\n");
     else
@@ -234,6 +233,38 @@ Employee *deleteEmployee(Employee *data, int code)
     return data;
 }
 
+
+Department *findEmployeeByDepartment(Department *department, Employee *employee, int code)
+{
+    Department *aux_department = findOneDepartment(department, code);
+    Employee *aux_employee = employee;
+
+    /**/
+    if (!aux_department)
+        printf("\nDEPARTAMENTO NAO ENCONTRADO!\n----------------------------------\n\n");
+    else
+    {
+        int count = 0;
+        while (aux_employee)
+        {
+            if (getDepartmentCode(aux_employee->department) == code)
+            {
+                if(count == 0)
+                    printf("\t\nFUNCIONARIOS DO DEPARTAMENTO:\n");
+                
+                printf("+------------------------------------------+\n");
+                printf("  %s (cod: %d)\n", aux_employee->name, aux_employee->code);
+                printf("+------------------------------------------+\n");
+                aux_employee = aux_employee->next;
+                count=1;
+            }
+        }
+        if (!count)
+            printf("\t\n- - - NAO HA FUNCIONARIOS NESSE DEPARTAMENTO\n\n");
+    }
+
+    return department;
+}
 // retorna o nome do funcionário
 char *getEmployeeName(Employee *employee)
 {

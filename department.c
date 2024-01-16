@@ -1,4 +1,5 @@
 #include "department.h"
+#include "employee.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -93,7 +94,7 @@ Department *findOneDepartment(Department *data, int code)
 void *findAllDepartments(Department *data)
 {
     if (data->code == 0)
-        printf("Lista Vazia\n");
+        printf("NAO EXISTEM DEPARTAMENTOS\n___________________________\n\n");
     else
     {
         Department *aux = data;

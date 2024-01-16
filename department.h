@@ -1,3 +1,4 @@
+
 typedef struct department Department;
 
 //Inicialização do departamento da empresa

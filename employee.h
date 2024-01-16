@@ -32,6 +32,11 @@ int getEmployeeCode(Employee *employee);
 int getEmployeeStatus(Employee *employee);
 // retorna o nif da empresa
 float getEmployeeSalary(Employee *employee);
+
+//apresenta todos os funcionarios de um departamento específico
+Department *findEmployeeByDepartment(Department *department, Employee *employee ,int code);
+//retorna o proximo funcionario da lista
+
 // Mètodos Setters
 void setEmployeeName(Employee *employee, char *value);
 void setEmployeeDepartment(Employee *employee, char *value);
