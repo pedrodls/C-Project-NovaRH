@@ -10,7 +10,6 @@ void describeColaborator(Employee *data);
 // Criar um Funcionario
 Employee *createEmployee(Employee *data, int code, char *name, float salary);
 
-
 // Encontra um Funcionario
 Employee *findOneEmployee(Employee *data, int code);
 

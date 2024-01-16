@@ -61,6 +61,7 @@
     "mysql.h": "c",
     "typeinfo": "c",
     "string.h": "c",
-    "department.h": "c"
+    "department.h": "c",
+    "system_error": "c"
   }
 }
