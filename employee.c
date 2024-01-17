@@ -1,5 +1,7 @@
 #include "employee.h"
 #include "department.h"
+#include "bonus.h"
+#include "absence.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -11,6 +13,8 @@ struct employee
     int code, status;
     char *name;
     float salary;
+    StackBonus *bonus;
+    StackAbsence *absence;
     Department *department;
     Employee *next;
 };
@@ -24,7 +28,24 @@ Employee *initEmployee()
 void describeColaborator(Employee *data)
 {
     if (data)
-        printf("\nCodigo: %d,\nNome: %s,\nSalario: %f,\nEstado: %s\nDepartamento: %s\n\n", getEmployeeCode(data), getEmployeeName(data), getEmployeeSalary(data), getEmployeeStatus(data) ? "Ativo" : "Desativado", data->department ? getDepartmentName(data->department): "NULL");
+    {
+        printf("\nCodigo: %d,\nNome: %s,\nSalario: %f,\nEstado: %s\nDepartamento: %s\n\n", getEmployeeCode(data), getEmployeeName(data), getEmployeeSalary(data), getEmployeeStatus(data) ? "Ativo" : "Desativado", data->department ? getDepartmentName(data->department) : "NULL");
+        
+        printf("\nBonus de %s: \n", getEmployeeName(data));
+        findAllBonus(data);
+        printf("\n------------------------------------------------\n");
+    }
+}
+
+// Descreve um colaborador de forma simples
+void simpleDescribeColaborator(Employee *data)
+{
+    if (data)
+    {
+        printf("\nCodigo: %d - Nome: %s\n", getEmployeeCode(data), getEmployeeName(data));
+
+        
+    }
 }
 
 // Criar um Funcionario
@@ -43,6 +64,8 @@ Employee *createEmployee(Employee *data, int code, char *name, float salary)
     newEmployee->name = name;
     newEmployee->salary = salary;
     newEmployee->department = NULL;
+    newEmployee->bonus = initBonus();
+    newEmployee->absence = initAbsence();
     newEmployee->next = data;
 
     printf("\n\nFuncionario criado com sucesso!\n\n");
@@ -61,18 +84,38 @@ Employee *findOneEmployee(Employee *data, int code)
 }
 
 // Encontra todos departamentos
-void findAllEmployees(Employee *data)
+void findAllEmployees(Employee *data, int type)
 {
     if (!data)
-        printf("Lista Vazia\n");
+        printf("Lista de Funcionarios Vazia\n");
     else
     {
         Employee *aux = data;
+
+        printf("Lista de Funcionarios\n\n");
+
         while (aux != NULL)
         {
-            describeColaborator(aux);
+            !type ? describeColaborator(aux)
+                  : simpleDescribeColaborator(aux);
 
             aux = aux->next;
+        }
+    }
+}
+
+// Encontra todos bonus
+void findAllBonus(Employee *data)
+{
+    Bonus *aux_bonus = getTopBonus(data->bonus);
+    if (!aux_bonus || !data)
+        printf("Lista de Bonus Vazia\n\n");
+    else
+    {
+        while (aux_bonus != NULL)
+        {
+            printf("\nDescricao: %s - Percentagem: %.2f", getBonusDesc(aux_bonus), getBonusPerc(aux_bonus));
+            aux_bonus = getNextBonus(aux_bonus);
         }
     }
 }
@@ -232,8 +275,7 @@ Employee *deleteEmployee(Employee *data, int code)
     printf("\nFuncionario Eliminado Com Sucesso\n");
     return data;
 }
-
-
+// retorna o nome do funcionário
 Department *findEmployeeByDepartment(Department *department, Employee *employee, int code)
 {
     Department *aux_department = findOneDepartment(department, code);
@@ -249,14 +291,14 @@ Department *findEmployeeByDepartment(Department *department, Employee *employee,
         {
             if (getDepartmentCode(aux_employee->department) == code)
             {
-                if(count == 0)
+                if (count == 0)
                     printf("\t\nFUNCIONARIOS DO DEPARTAMENTO:\n");
-                
+
                 printf("+------------------------------------------+\n");
                 printf("  %s (cod: %d)\n", aux_employee->name, aux_employee->code);
                 printf("+------------------------------------------+\n");
                 aux_employee = aux_employee->next;
-                count=1;
+                count = 1;
             }
         }
         if (!count)
@@ -265,7 +307,46 @@ Department *findEmployeeByDepartment(Department *department, Employee *employee,
 
     return department;
 }
-// retorna o nome do funcionário
+// cria um bonus para o funcionario
+Employee *createBonus(Employee *employee, int code, char *desc, float perc)
+{
+    Employee *aux_employee = findOneEmployee(employee, code); // Localizando funcionario
+    if (aux_employee)
+    {
+        aux_employee->bonus = pushBonus(aux_employee->bonus, desc, perc);
+        printf("Bonus adicionado com Sucesso\n");
+    }
+    else
+        printf("Funcionario nao encontrado\n");
+
+    return employee;
+}
+// elimina o ultimo bonus do funcionário
+Employee *deleteBonus(Employee *employee, int code)
+{
+    Employee *aux_employee = findOneEmployee(employee, code); // Localizando funcionario
+
+    if (aux_employee)
+    {
+        if (!getTopBonus(aux_employee->bonus))
+        {
+            printf("NAO EXISTE BONUS\n");
+
+            return employee;
+        }
+        else
+        {
+
+            aux_employee->bonus = popBonus(aux_employee->bonus);
+            printf("Bonus removido com Sucesso\n");
+        }
+    }
+    else
+        printf("Funcionario nao encontrado\n");
+
+    return employee;
+}
+
 char *getEmployeeName(Employee *employee)
 {
     return employee->name;

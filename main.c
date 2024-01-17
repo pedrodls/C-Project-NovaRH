@@ -53,6 +53,8 @@ void createEmployeeFromMain(Company *company, Department *department, Employee *
 
 void updateEmployeeFromMain(Company *company, Department *department, Employee *employee);
 
+void createBonusFromMain(Employee *employee);
+
 int main()
 {
     Company *myCompany = initCompany();
@@ -156,15 +158,18 @@ void menuCompany(Company *company, Department *department, Employee *employee)
     fflush(stdin);
 
     char menu;
+    int code;
 
     printf("\t Gerencie a sua Empresa com a NOVA-RH\n\n");
     printf("000000000000000000000000000000000000000000000000\n");
     printf("| 1 - EMPRESA                                    |\n");
     printf("| 2 - FUNCIONARIOS                               |\n");
     printf("| 3 - DEPARTAMENTOS                              |\n");
-    printf("| 4 - FERIAS                                     |\n");
-    printf("| 5 - FALTAS                                     |\n");
-    printf("| 6 - FOLHAS DE PAGAMENTO                        |\n");
+    printf("| 4 - FOLHAS DE PAGAMENTO                        |\n");
+    printf("| 5 - ADICIONAR BONUS A UM FUNCIONARIO           |\n");
+    printf("| 6 - ELIMINAR BONUS DE UM FUNCIONARIO           |\n");
+    printf("| 7 - MARCAR FALTA A UM FUNCIONARIO              |\n");
+    printf("| 8 - ELIMINAR FALTA A UM FUNCIONARIO            |\n");
     printf("| 0 - SAIR                                       |\n");
     printf("000000000000000000000000000000000000000000000000\n\nOpcao: ");
 
@@ -180,11 +185,44 @@ void menuCompany(Company *company, Department *department, Employee *employee)
     case '2':
         menuEmployee(company, department, employee);
         break;
-    case '0':
-        menuMain(company, department, employee);
-        break;
     case '3':
         menuDepartment(company, department, employee);
+        break;
+
+        // 4 é o payroll
+
+    case '5':
+        createBonusFromMain(employee);
+        printf("\nClique <Enter> para Continuar\n");
+        system("pause>nul");
+        menuCompany(company, department, employee);
+        break;
+    case '6':
+
+        system("cls");
+
+        findAllEmployees(employee, 1);
+
+        if (!employee)
+        {
+            printf("\nClique <Enter> para Continuar\n");
+            system("pause>nul");
+            menuCompany(company, department, employee);
+        }
+
+        printf("Codigo do Funcionario: ");
+        scanf("%d", &code);
+
+        //employee = deleteEmployee(employee, code);
+
+        employee = deleteBonus(employee, code);
+
+        system("timeout -t 5");
+        menuCompany(company, department, employee);
+
+        break;
+    case '0':
+        menuMain(company, department, employee);
         break;
     default:
         menuCompany(company, department, employee);
@@ -447,10 +485,11 @@ void menuDepartment(Company *company, Department *department, Employee *employee
         break;
     case '4':
         findAllDepartments(department);
-        if(getDepartmentCode(department) > 0){
+        if (getDepartmentCode(department) > 0)
+        {
             printf("Codigo do Departamento: ");
-            scanf("%d",&code);
-            department = findEmployeeByDepartment(department, employee ,code);
+            scanf("%d", &code);
+            department = findEmployeeByDepartment(department, employee, code);
         }
         printf("\nClique <Enter> para Continuar\n");
         system("pause>nul");
@@ -555,11 +594,8 @@ void menuEmployee(Company *company, Department *department, Employee *employee)
     case '2':
         updateEmployeeFromMain(company, department, employee);
         break;
-    case '0':
-        menuCompany(company, department, employee);
-        break;
     case '3':
-        findAllEmployees(employee);
+        findAllEmployees(employee, 0);
         printf("\nClique <Enter> para Continuar\n");
         system("pause>nul");
         menuEmployee(company, department, employee);
@@ -570,14 +606,8 @@ void menuEmployee(Company *company, Department *department, Employee *employee)
         system("pause>nul");
         menuEmployee(company, department, employee);
         break;
-    case '5':
-        findAllEmployees(employee);
-        printf("Codigo do Funcionario: ");
-        scanf("%d", &code);
-        employee = deleteEmployee(employee, code);
-        system("timeout -t 5");
-        menuEmployee(company, department, employee);
-
+    case '0':
+        menuCompany(company, department, employee);
         break;
     default:
         menuEmployee(company, department, employee);
@@ -625,6 +655,55 @@ void createEmployeeFromMain(Company *company, Department *department, Employee *
     return menuEmployee(company, department, employee);
 }
 
+// Adicionar bonus a um funcionario
+void createBonusFromMain(Employee *employee)
+{
+
+    system("cls");
+
+    char *desc = (char *)malloc(sizeof(size));
+    float perc;
+    int code;
+
+    findAllEmployees(employee, 1);
+
+    if (!employee)
+        return;
+
+    printf("000000000000000000000000000000000000000000000000\n");
+    printf("|              Dados Necessarios               |\n");
+    printf("| Descricao                                    |\n\n");
+    printf("| Percentagem                                  |\n\n");
+    printf("| Codigo do Funcionario                        |\n\n");
+    printf("000000000000000000000000000000000000000000000000\n\n");
+
+    fflush(stdin);
+
+    printf("Descricao: ");
+    fgets(desc, size_char, stdin);
+    desc[strcspn(desc, "\n")] = '\0';
+
+    fflush(stdin);
+
+    printf("Percentagem: ");
+    scanf("%f", &perc);
+    fflush(stdin);
+
+    printf("Codigo do funcionario: ");
+    scanf("%d", &code);
+
+    fflush(stdin);
+
+    if (required(desc) || !(perc >= 0.0 && perc <= 100.0))
+    {
+        printf("Por favor, verifique bem os campos preenchidos!");
+    }
+    else
+    {
+        createBonus(employee, code, desc, perc);
+    }
+}
+
 // Actualização dos dadods de um funcionário
 void updateEmployeeFromMain(Company *company, Department *department, Employee *employee)
 {
@@ -634,14 +713,17 @@ void updateEmployeeFromMain(Company *company, Department *department, Employee *
 
     fflush(stdin);
 
+    findAllEmployees(employee, 1);
+
+    if (!employee)
+        return;
+
     printf("000000000000000000000000000000000000000000000000\n");
     printf("|              Dados Necessarios               |\n");
     printf("| Nome                                         |\n");
     printf("| Estado                                       |\n");
     printf("| Salario                                      |\n\n");
     printf("000000000000000000000000000000000000000000000000\n\n");
-
-    findAllEmployees(employee);
 
     printf("\nCodigo do Funcionario: ");
     scanf("%d", &code);
@@ -658,7 +740,7 @@ int required(char *value)
 
     if (!(strlen(value) > 1))
     {
-        printf("\nCampos invalidos!: [%s]!");
+        printf("\nCampos invalidos! ");
 
         return !(strlen(value) > 1);
     }

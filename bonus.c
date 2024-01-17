@@ -54,7 +54,7 @@ StackBonus *pushBonus(StackBonus *head, char *desc, float perc)
     return head;
 }
 
-Bonus *popBonus(StackBonus *head)
+StackBonus *popBonus(StackBonus *head)
 {
     if (!head || !head->top){
         printf("NAO EXISTE BONUS\n");
@@ -63,21 +63,26 @@ Bonus *popBonus(StackBonus *head)
     Bonus *aux = head->top;
     head->top = head->top->next;
     free(aux);
-    return aux;
+
+    return head;
 }
 
-// Encontra todos Bonuss
-void *findAllBonus(StackBonus *head)
-{
-    if (!head || !head->top)
-        printf("NAO EXISTEM BONUS\n___________________________\n\n");
-    else
-    {
-        Bonus *aux = head->top;
-        while (aux){
-            printf("Descricao: %s\nPercentagem: %.2f\n", aux->desc, aux->perc);
-            aux = aux->next;
-        }
-    }
+//retorna o topo da pilha bonus
+Bonus *getTopBonus(StackBonus *head){
+    return head->top;
 }
+
+//retorna a descrição do bonus
+char* getBonusDesc(Bonus *bonus){
+    return bonus->desc;
+}
+//retorna a percentagem do bonus
+float getBonusPerc(Bonus *bonus){
+    return bonus->perc;
+}
+//retorna o proximo bonus da lista
+Bonus *getNextBonus(Bonus *bonus){
+    return bonus->next;
+}
+
 

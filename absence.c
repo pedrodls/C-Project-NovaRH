@@ -22,7 +22,7 @@ StackAbsence *initAbsence()
     StackAbsence *newAbsence = (StackAbsence *)malloc(sizeof(StackAbsence));
     if (!newAbsence)
     {
-        printf("Falha na Alocacao da Pilha do Absence\n");
+        printf("Falha na Alocacao da Pilha das Faltas\n");
         return NULL;
     }
 
@@ -30,7 +30,7 @@ StackAbsence *initAbsence()
     return newAbsence;
 }
 
-// Criar um Absence
+// Criar um Falta
 StackAbsence *pushAbsence(StackAbsence *head, char *desc)
 {
     if (!head)
@@ -53,7 +53,7 @@ StackAbsence *pushAbsence(StackAbsence *head, char *desc)
 
     return head;
 }
-
+//Elimina uma falta
 Absence *popAbsence(StackAbsence *head)
 {
     if (!head || !head->top){
