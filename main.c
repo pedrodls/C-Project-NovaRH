@@ -55,6 +55,8 @@ void updateEmployeeFromMain(Company *company, Department *department, Employee *
 
 void createBonusFromMain(Employee *employee);
 
+void createAbsenceFromMain(Employee *employee);
+
 int main()
 {
     Company *myCompany = initCompany();
@@ -161,17 +163,18 @@ void menuCompany(Company *company, Department *department, Employee *employee)
     int code;
 
     printf("\t Gerencie a sua Empresa com a NOVA-RH\n\n");
-    printf("000000000000000000000000000000000000000000000000\n");
-    printf("| 1 - EMPRESA                                    |\n");
-    printf("| 2 - FUNCIONARIOS                               |\n");
-    printf("| 3 - DEPARTAMENTOS                              |\n");
-    printf("| 4 - FOLHAS DE PAGAMENTO                        |\n");
-    printf("| 5 - ADICIONAR BONUS A UM FUNCIONARIO           |\n");
-    printf("| 6 - ELIMINAR BONUS DE UM FUNCIONARIO           |\n");
-    printf("| 7 - MARCAR FALTA A UM FUNCIONARIO              |\n");
-    printf("| 8 - ELIMINAR FALTA A UM FUNCIONARIO            |\n");
-    printf("| 0 - SAIR                                       |\n");
-    printf("000000000000000000000000000000000000000000000000\n\nOpcao: ");
+    printf("0000000000000000000000000000000000000000000000000000\n");
+    printf("| 1  -  EMPRESA                                    |\n");
+    printf("| 2  -  FUNCIONARIOS                               |\n");
+    printf("| 3  -  DEPARTAMENTOS                              |\n");
+    printf("| 4  -  FOLHAS DE PAGAMENTO                        |\n");
+    printf("| 5  -  ADICIONAR BONUS A UM FUNCIONARIO           |\n");
+    printf("| 6  -  ELIMINAR BONUS DE UM FUNCIONARIO           |\n");
+    printf("| 7  -  MARCAR FALTA A UM FUNCIONARIO              |\n");
+    printf("| 8  -  ELIMINAR FALTA A UM FUNCIONARIO            |\n");
+    printf("| 9  -  VER FUNCIONARIOS NA APOSENTADORIA          |\n");
+    printf("| 0  -  SAIR                                       |\n");
+    printf("0000000000000000000000000000000000000000000000000000\n\nOpcao: ");
 
     fflush(stdin);
 
@@ -189,7 +192,9 @@ void menuCompany(Company *company, Department *department, Employee *employee)
         menuDepartment(company, department, employee);
         break;
 
-        // 4 é o payroll
+    case '4':
+        menuEmployee(company, department, employee);
+        break;
 
     case '5':
         createBonusFromMain(employee);
@@ -213,14 +218,48 @@ void menuCompany(Company *company, Department *department, Employee *employee)
         printf("Codigo do Funcionario: ");
         scanf("%d", &code);
 
-        //employee = deleteEmployee(employee, code);
-
         employee = deleteBonus(employee, code);
 
         system("timeout -t 5");
         menuCompany(company, department, employee);
 
         break;
+
+    case '7':
+
+        createAbsenceFromMain(employee);
+        printf("\nClique <Enter> para Continuar\n");
+        system("pause>nul");
+        menuCompany(company, department, employee);
+        break;
+
+    case '8':
+
+        system("cls");
+
+        findAllEmployees(employee, 1);
+
+        if (!employee)
+        {
+            printf("\nClique <Enter> para Continuar\n");
+            system("pause>nul");
+            menuCompany(company, department, employee);
+        }
+
+        printf("Codigo do Funcionario: ");
+        scanf("%d", &code);
+
+        employee = deleteAbsence(employee, code);
+
+        system("timeout -t 5");
+        menuCompany(company, department, employee);
+
+        break;
+
+    case '9':
+        menuCompany(company, department, employee);
+        break;
+
     case '0':
         menuMain(company, department, employee);
         break;
@@ -704,6 +743,49 @@ void createBonusFromMain(Employee *employee)
     }
 }
 
+// Adicionar falta a um funcionario
+void createAbsenceFromMain(Employee *employee)
+{
+
+    system("cls");
+
+    char *desc = (char *)malloc(sizeof(size));
+    float perc;
+    int code;
+
+    findAllEmployees(employee, 1);
+
+    if (!employee)
+        return;
+
+    printf("000000000000000000000000000000000000000000000000\n");
+    printf("|              Dados Necessarios               |\n");
+    printf("| Descricao                                    |\n\n");
+    printf("| Codigo do Funcionario                        |\n\n");
+    printf("000000000000000000000000000000000000000000000000\n\n");
+
+    fflush(stdin);
+
+    printf("Descricao: ");
+    fgets(desc, size_char, stdin);
+    desc[strcspn(desc, "\n")] = '\0';
+
+    fflush(stdin);
+
+    printf("Codigo do funcionario: ");
+    scanf("%d", &code);
+
+    fflush(stdin);
+
+    if (required(desc) || !(perc >= 0.0 && perc <= 100.0))
+    {
+        printf("Por favor, verifique bem os campos preenchidos!");
+    }
+    else
+    {
+        createAbsence(employee, code, desc);
+    }
+}
 // Actualização dos dadods de um funcionário
 void updateEmployeeFromMain(Company *company, Department *department, Employee *employee)
 {

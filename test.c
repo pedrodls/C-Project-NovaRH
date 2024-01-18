@@ -1,7 +1,6 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include "bonus.h"
 #include "absence.h"
 #include <string.h>
 

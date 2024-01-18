@@ -30,8 +30,18 @@ Employee *employeeDepartment(Employee *data, Department *data_department);
 Employee *createBonus(Employee *employee, int code, char *desc, float perc);
 //elimina o bonus do funcionario
 Employee *deleteBonus(Employee *employee, int code);
+
 //Encontra todos bonus
 void findAllBonus(Employee *data);
+
+//cria uma falta para o funcionario
+Employee *createAbsence(Employee *employee, int code, char *desc);
+
+//elimina uma falta do funcionario
+Employee *deleteAbsence(Employee *employee, int code);
+
+//Encontra todas as faltas
+void findAllAbsence(Employee *data);
 
 // retorna o nome do funcionário
 char *getEmployeeName(Employee *employee);

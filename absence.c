@@ -53,31 +53,41 @@ StackAbsence *pushAbsence(StackAbsence *head, char *desc)
 
     return head;
 }
-//Elimina uma falta
-Absence *popAbsence(StackAbsence *head)
+// Elimina uma falta
+StackAbsence *popAbsence(StackAbsence *head)
 {
-    if (!head || !head->top){
+    if (!head || !head->top)
+    {
         printf("NAO EXISTE Absence\n");
         return NULL;
     }
     Absence *aux = head->top;
     head->top = head->top->next;
     free(aux);
-    return aux;
+
+    return head;
 }
 
-// Encontra todas as faltas
-void *findAllAbsence(StackAbsence *head)
+// retorna o topo da pilha absence
+Absence *getTopAbsence(StackAbsence *head)
 {
-    if (!head || !head->top)
-        printf("NAO EXISTEM FALTAS\n___________________________\n\n");
-    else
-    {
-        Absence *aux = head->top;
-        while (aux){
-            printf("Descricao: %s\nQuantidade: %d\n", aux->desc, aux->qtd);
-            aux = aux->next;
-        }
-    }
+    return head->top;
 }
 
+// retorna a descrição do absence
+char *getAbsenceDesc(Absence *absence)
+{
+    return absence->desc;
+}
+
+// retorna a quantidade de faltas
+int getAbsenceQtd(Absence *absence)
+{
+    return absence->qtd;
+}
+
+// retorna o proximo absence da lista
+Absence *getNextAbsence(Absence *absence)
+{
+    return absence->next;
+}

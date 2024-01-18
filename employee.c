@@ -8,6 +8,21 @@
 
 #define size_char 100
 
+/* employee
+{
+    int code, status;
+    char *name;
+    char *cargo;
+    char *conta;
+    char *BI;
+    int idade;
+    float salary;
+    StackBonus *bonus;
+    StackAbsence *absence;
+    Department *department;
+    Employee *next;
+};*/
+
 struct employee
 {
     int code, status;
@@ -30,10 +45,16 @@ void describeColaborator(Employee *data)
     if (data)
     {
         printf("\nCodigo: %d,\nNome: %s,\nSalario: %f,\nEstado: %s\nDepartamento: %s\n\n", getEmployeeCode(data), getEmployeeName(data), getEmployeeSalary(data), getEmployeeStatus(data) ? "Ativo" : "Desativado", data->department ? getDepartmentName(data->department) : "NULL");
-        
+
         printf("\nBonus de %s: \n", getEmployeeName(data));
         findAllBonus(data);
-        printf("\n------------------------------------------------\n");
+        printf("\n------------------------------------------------\n\n");
+
+        printf("\nFaltas de %s: \n", getEmployeeName(data));
+
+        findAllAbsence(data);
+
+        printf("\n------------------------------------------------\n\n");
     }
 }
 
@@ -43,8 +64,6 @@ void simpleDescribeColaborator(Employee *data)
     if (data)
     {
         printf("\nCodigo: %d - Nome: %s\n", getEmployeeCode(data), getEmployeeName(data));
-
-        
     }
 }
 
@@ -94,13 +113,14 @@ void findAllEmployees(Employee *data, int type)
 
         printf("Lista de Funcionarios\n\n");
 
-        while (aux != NULL)
+        while (aux && getEmployeeStatus(aux))
         {
             !type ? describeColaborator(aux)
                   : simpleDescribeColaborator(aux);
 
             aux = aux->next;
         }
+        printf("\n\n");
     }
 }
 
@@ -112,10 +132,28 @@ void findAllBonus(Employee *data)
         printf("Lista de Bonus Vazia\n\n");
     else
     {
-        while (aux_bonus != NULL)
+        while (aux_bonus)
         {
             printf("\nDescricao: %s - Percentagem: %.2f", getBonusDesc(aux_bonus), getBonusPerc(aux_bonus));
             aux_bonus = getNextBonus(aux_bonus);
+        }
+    }
+}
+
+// Encontra todas as faltas
+void findAllAbsence(Employee *data)
+{
+    Absence *aux = getTopAbsence(data->absence);
+
+    if (!aux || !data)
+        printf("Lista de Faltas Vazia\n\n");
+    else
+    {
+        while (aux)
+        {
+            printf("\nDescricao: %s - Quantidade: %d", getAbsenceDesc(aux), getAbsenceQtd(aux));
+
+            aux = getNextAbsence(aux);
         }
     }
 }
@@ -339,6 +377,46 @@ Employee *deleteBonus(Employee *employee, int code)
 
             aux_employee->bonus = popBonus(aux_employee->bonus);
             printf("Bonus removido com Sucesso\n");
+        }
+    }
+    else
+        printf("Funcionario nao encontrado\n");
+
+    return employee;
+}
+
+Employee *createAbsence(Employee *employee, int code, char *desc)
+{
+    Employee *aux_employee = findOneEmployee(employee, code); // Localizando funcionario
+    if (aux_employee)
+    {
+        aux_employee->absence = pushAbsence(aux_employee->absence, desc);
+        printf("Falta adicionado com Sucesso\n");
+    }
+    else
+        printf("Funcionario nao encontrado\n");
+
+    return employee;
+}
+// elimina a ultima féria do funcionário
+Employee *deleteAbsence(Employee *employee, int code)
+{
+    Employee *aux_employee = findOneEmployee(employee, code); // Localizando funcionario
+
+    if (aux_employee)
+    {
+        if (!getTopAbsence(aux_employee->absence))
+        {
+            printf("NAO EXISTEM FALTAS\n");
+
+            return employee;
+        }
+        else
+        {
+
+            aux_employee->absence = popAbsence(aux_employee->absence);
+
+            printf("Falta removido com Sucesso!\n");
         }
     }
     else
