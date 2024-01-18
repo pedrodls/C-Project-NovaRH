@@ -8,7 +8,7 @@ StackBonus *initBonus();
 StackBonus *pushBonus(StackBonus *head, char *desc, float perc);
 
 //elimina um Bonus
-StackBonus *popBonus(StackBonus *head);
+Bonus *popBonus(StackBonus *head);
 
 //retorna o topo de uma pilha de bonus
 Bonus *getTopBonus(StackBonus *head);

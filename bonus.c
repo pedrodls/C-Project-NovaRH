@@ -54,7 +54,7 @@ StackBonus *pushBonus(StackBonus *head, char *desc, float perc)
     return head;
 }
 
-StackBonus *popBonus(StackBonus *head)
+Bonus *popBonus(StackBonus *head)
 {
     if (!head || !head->top){
         printf("NAO EXISTE BONUS\n");
@@ -64,7 +64,7 @@ StackBonus *popBonus(StackBonus *head)
     head->top = head->top->next;
     free(aux);
 
-    return head;
+    return aux;
 }
 
 //retorna o topo da pilha bonus
