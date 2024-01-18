@@ -1,4 +1,5 @@
 #include "./department.h"
+#include "./absence.h"
 
 typedef struct employee Employee;
 
@@ -35,10 +36,12 @@ Employee *deleteBonus(Employee *employee, int code);
 void findAllBonus(Employee *data);
 
 //cria uma falta para o funcionario
-Employee *createAbsence(Employee *employee, int code, char *desc);
+Employee *createAbsence(Employee *employee, int code, char *desc );
 
 //elimina uma falta do funcionario
 Employee *deleteAbsence(Employee *employee, int code);
+
+Employee *getNextEmployee(Employee *employee);
 
 //Encontra todas as faltas
 void findAllAbsence(Employee *data);
@@ -52,6 +55,9 @@ int getEmployeeStatus(Employee *employee);
 // retorna o nif da empresa
 float getEmployeeSalary(Employee *employee);
 
+StackAbsence *getStackAbsence(Employee *employee);
+
+
 
 //apresenta todos os funcionarios de um departamento específico
 Department *findEmployeeByDepartment(Department *department, Employee *employee ,int code);
@@ -63,3 +69,5 @@ void setEmployeeDepartment(Employee *employee, char *value);
 void setEmployeeCode(Employee *employee, int value);
 void setEmployeeStatus(Employee *employee, int value);
 void setEmployeeSalary(Employee *employee, float value);
+
+void findAllAbsenceFromPayroll(Absence *absence);

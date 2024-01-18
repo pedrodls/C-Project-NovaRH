@@ -158,6 +158,25 @@ void findAllAbsence(Employee *data)
     }
 }
 
+void findAllAbsenceFromPayroll(Absence *absence)
+{
+    Absence *aux = absence;
+
+    if (!aux)
+        printf("Lista de Faltas Vazia\n\n");
+    else
+    {
+        while (aux)
+        {
+            printf("\nDescricao: %s - Quantidade: %d", getAbsenceDesc(aux), getAbsenceQtd(aux));
+
+            aux = getNextAbsence(aux);
+        }
+    }
+}
+
+
+
 // Atualiza o dado de um funcionário
 Employee *updateEmployee(Employee *data, int code)
 {
@@ -375,7 +394,7 @@ Employee *deleteBonus(Employee *employee, int code)
         else
         {
 
-            aux_employee->bonus = popBonus(aux_employee->bonus);
+            popBonus(aux_employee->bonus);
             printf("Bonus removido com Sucesso\n");
         }
     }
@@ -414,7 +433,7 @@ Employee *deleteAbsence(Employee *employee, int code)
         else
         {
 
-            aux_employee->absence = popAbsence(aux_employee->absence);
+           popAbsence(aux_employee->absence);
 
             printf("Falta removido com Sucesso!\n");
         }
@@ -429,6 +448,7 @@ char *getEmployeeName(Employee *employee)
 {
     return employee->name;
 }
+
 
 // retorna o código do funcionário
 int getEmployeeCode(Employee *employee)
@@ -445,6 +465,17 @@ float getEmployeeSalary(Employee *employee)
 {
     return employee->salary;
 }
+
+StackAbsence *getStackAbsence(Employee *employee){
+    return employee->absence;
+}
+
+Employee *getNextEmployee(Employee *employee){
+    return employee->next;
+}
+
+
+
 
 // Mètodos Setters
 void setEmployeeName(Employee *employee, char *value)
