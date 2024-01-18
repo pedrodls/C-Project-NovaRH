@@ -54,18 +54,18 @@ StackAbsence *pushAbsence(StackAbsence *head, char *desc)
     return head;
 }
 // Elimina uma falta
-StackAbsence *popAbsence(StackAbsence *head)
+Absence *popAbsence(StackAbsence *head)
 {
-    if (!head || !head->top)
+    if (!head->top)
     {
-        printf("NAO EXISTE Absence\n");
+        printf("NAO EXISTE FALTAS\n");
         return NULL;
     }
     Absence *aux = head->top;
     head->top = head->top->next;
     free(aux);
 
-    return head;
+    return aux;
 }
 
 // retorna o topo da pilha absence
@@ -90,4 +90,29 @@ int getAbsenceQtd(Absence *absence)
 Absence *getNextAbsence(Absence *absence)
 {
     return absence->next;
+}
+
+// Metodos Setters
+void setAbsenceDesc(Absence *absence, char *desc)
+{
+    absence->desc = desc;
+}
+void setAbsenceQtd(Absence *absence, int qtd)
+{
+    absence->qtd = qtd;
+}
+void setAbsenceNext(Absence *oldAbsence, Absence *newAbsence)
+{
+    oldAbsence->next = newAbsence;
+}
+
+void findAbsence(Absence *absence)
+{
+    Absence *aux = absence;
+
+    while (aux)
+    {
+        printf("%s\n", aux->desc);
+        aux = aux->next;
+    }
 }

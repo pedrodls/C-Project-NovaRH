@@ -8,7 +8,7 @@ StackAbsence *initAbsence();
 StackAbsence *pushAbsence(StackAbsence *head, char *desc);
 
 //elimina um Absence
-StackAbsence *popAbsence(StackAbsence *head);
+Absence *popAbsence(StackAbsence *head);
 
 //retorna o topo de uma pilha de absence
 Absence *getTopAbsence(StackAbsence *head);
@@ -20,4 +20,15 @@ int getAbsenceQtd(Absence *absence);
 
 //retorna o proximo absence da lista
 Absence *getNextAbsence(Absence *absence);
+
+//Métodos Setters
+
+//
+void setAbsenceDesc(Absence *absence, char *desc);
+
+void setAbsenceQtd(Absence *absence, int qtd);
+
+void setAbsenceNext(Absence *oldAbsence, Absence *newAbsence);
+
+void findAbsence(Absence *absence);
 
