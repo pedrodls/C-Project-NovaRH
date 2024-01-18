@@ -1,22 +1,18 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include "absence.h"
 #include <string.h>
-
-#define size_char 50
-#define size_char_phone 10
-#define size_char_nif 14
-
+#include "year.h"
+#include "payroll.h"
+#include "employee.h"
 
 int main(){
-    StackAbsence *newAbsence = initAbsence();
-    pushAbsence(newAbsence, "descricao");
-    pushAbsence(newAbsence, "descricao");
-    pushAbsence(newAbsence, "descricao");
-    popAbsence(newAbsence);
-    popAbsence(newAbsence);
+    QueueYear *year = initYear();
+    year = enqueueYear(year, 2024);
+    
+    enqueueMonth(getQueueMonth(year));
+    
+    printf("%d\n", getCurrentYear(year));
+    printf("%s\n", getCurrentMonth(getQueueMonth(year)));
 
-
-    findAllAbsence(newAbsence);
 }

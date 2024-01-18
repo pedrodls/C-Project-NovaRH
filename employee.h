@@ -1,6 +1,7 @@
 #include "./department.h"
 #include "./absence.h"
 
+
 typedef struct employee Employee;
 
 Employee *initEmployee();

@@ -3,59 +3,66 @@
 #include "company.h"
 #include "department.h"
 #include "employee.h"
+#include "payroll.h"
 #include <string.h>
+#include "year.h"
 
 #define size 100
 #define size_char 100
 #define size_char_phone 10
 #define size_char_nif 14
 
+char *CONST_MONTH[] = {"Janeiro", "Fevereiro", "Marco", "Abril", "Maio", "Junho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"};
+
 // Funçao pra pegar o menu principal
-void menuMain(Company *company, Department *department, Employee *employee);
+void menuMain(Company *company, Department *department, Employee *employee, QueueYear *year);
 
 // Funcao pra pegar o menu do Admin
-void menuAdmin(Company *company, Department *department, Employee *employee);
+void menuAdmin(Company *company, Department *department, Employee *employee, QueueYear *year);
 
 // Funcao pra pegar o menu da empresa
-void menuCompany(Company *company, Department *department, Employee *employee);
+void menuCompany(Company *company, Department *department, Employee *employee, QueueYear *year);
 
 //-----------------------EMPRESA-------------------------------
 
 // Funcao pra pegar as opcçoes do menu do Admin
-void menuCompanyOp(Company *company, Department *department, Employee *employee);
+void menuCompanyOp(Company *company, Department *department, Employee *employee, QueueYear *year);
 
 // Funcao para atualizar os dados da empresa
-void updateCompanyFromMain(Company *company, Department *department, Employee *employee);
+void updateCompanyFromMain(Company *company, Department *department, Employee *employee, QueueYear *year);
 
 // Funcao pra criar empresa
-void createCompanyFromMain(Company *company, Department *department, Employee *employee);
+void createCompanyFromMain(Company *company, Department *department, Employee *employee, QueueYear *year);
 
 // Funcao pra verificar campos vazios
 int required(char *value);
 
 // Funcao pra mostrar dados da empresa
-void showCompanyDataFromMain(Company *company, Department *department, Employee *employee);
+void showCompanyDataFromMain(Company *company, Department *department, Employee *employee, QueueYear *year);
 
 //-----------------DEPARTAMENTOS--------------------------
 // Menu Departamento
-void menuDepartment(Company *company, Department *department, Employee *employee);
+void menuDepartment(Company *company, Department *department, Employee *employee, QueueYear *year);
 
 // Funcao pra criar Departamento
-void createDepartmentFromMain(Company *company, Department *department, Employee *employee);
+void createDepartmentFromMain(Company *company, Department *department, Employee *employee, QueueYear *year);
 
 // Função para actualizar Departamento
-void updateDepartmentFromMain(Company *company, Department *department, Employee *employee);
+void updateDepartmentFromMain(Company *company, Department *department, Employee *employee, QueueYear *year);
 
 //-------------------FUNCIONÁRIOS--------------------------------------
-void menuEmployee(Company *company, Department *department, Employee *employee);
+void menuEmployee(Company *company, Department *department, Employee *employee, QueueYear *year);
 
-void createEmployeeFromMain(Company *company, Department *department, Employee *employee);
+void createEmployeeFromMain(Company *company, Department *department, Employee *employee, QueueYear *year);
 
-void updateEmployeeFromMain(Company *company, Department *department, Employee *employee);
+void updateEmployeeFromMain(Company *company, Department *department, Employee *employee, QueueYear *year);
 
 void createBonusFromMain(Employee *employee);
 
 void createAbsenceFromMain(Employee *employee);
+
+//---------------------------FOLHA DE PAGAMENTOS------------------------------
+void menuPayroll(Company *company, Department *department, Employee *employee, QueueYear *year);
 
 int main()
 {
@@ -65,14 +72,21 @@ int main()
 
     Employee *myEmployees = initEmployee();
 
+    QueueYear *year = initYear();
+
+    // Cadastro do Ano
+    year = enqueueYear(year, 2024);
+    // Cadastro do Primeiro Mês do Ano
+    enqueueMonth(getQueueMonth(year));
+
     // Função para pegar dados da empresa apartir do ficheiro
     readCompany(myCompany);
 
-    menuMain(myCompany, myDepartments, myEmployees);
+    menuMain(myCompany, myDepartments, myEmployees, year);
 }
 
 // Menu Principal para escolha de Login
-void menuMain(Company *company, Department *department, Employee *employee)
+void menuMain(Company *company, Department *department, Employee *employee, QueueYear *year)
 {
     system("cls");
 
@@ -93,7 +107,7 @@ void menuMain(Company *company, Department *department, Employee *employee)
     switch (menu)
     {
     case '1':
-        menuAdmin(company, department, employee);
+        menuAdmin(company, department, employee, year);
         break;
 
     case '0':
@@ -106,7 +120,7 @@ void menuMain(Company *company, Department *department, Employee *employee)
 }
 
 // Menu do Login do Admin
-void menuAdmin(Company *company, Department *department, Employee *employee)
+void menuAdmin(Company *company, Department *department, Employee *employee, QueueYear *year)
 {
     system("cls");
 
@@ -135,7 +149,7 @@ void menuAdmin(Company *company, Department *department, Employee *employee)
     {
         printf("Erro ao abrir Arquivo\n");
         system("timeout -t 5");
-        menuMain(company, department, employee);
+        menuMain(company, department, employee, year);
         return;
     }
 
@@ -146,14 +160,14 @@ void menuAdmin(Company *company, Department *department, Employee *employee)
     {
         printf("\n\nCredencias Invalidas!\n\n");
         system("timeout -t 5");
-        menuMain(company, department, employee);
+        menuMain(company, department, employee, year);
     }
 
-    menuCompany(company, department, employee);
+    menuCompany(company, department, employee, year);
 }
 
 // Menu com as Funcionalidades do Admin
-void menuCompany(Company *company, Department *department, Employee *employee)
+void menuCompany(Company *company, Department *department, Employee *employee, QueueYear *year)
 {
     system("cls");
 
@@ -183,24 +197,24 @@ void menuCompany(Company *company, Department *department, Employee *employee)
     switch (menu)
     {
     case '1':
-        menuCompanyOp(company, department, employee);
+        menuCompanyOp(company, department, employee, year);
         break;
     case '2':
-        menuEmployee(company, department, employee);
+        menuEmployee(company, department, employee, year);
         break;
     case '3':
-        menuDepartment(company, department, employee);
+        menuDepartment(company, department, employee, year);
         break;
 
     case '4':
-        menuEmployee(company, department, employee);
+        menuPayroll(company, department, employee, year);
         break;
 
     case '5':
         createBonusFromMain(employee);
         printf("\nClique <Enter> para Continuar\n");
         system("pause>nul");
-        menuCompany(company, department, employee);
+        menuCompany(company, department, employee, year);
         break;
     case '6':
 
@@ -212,7 +226,7 @@ void menuCompany(Company *company, Department *department, Employee *employee)
         {
             printf("\nClique <Enter> para Continuar\n");
             system("pause>nul");
-            menuCompany(company, department, employee);
+            menuCompany(company, department, employee, year);
         }
 
         printf("Codigo do Funcionario: ");
@@ -221,7 +235,7 @@ void menuCompany(Company *company, Department *department, Employee *employee)
         employee = deleteBonus(employee, code);
 
         system("timeout -t 5");
-        menuCompany(company, department, employee);
+        menuCompany(company, department, employee, year);
 
         break;
 
@@ -230,7 +244,7 @@ void menuCompany(Company *company, Department *department, Employee *employee)
         createAbsenceFromMain(employee);
         printf("\nClique <Enter> para Continuar\n");
         system("pause>nul");
-        menuCompany(company, department, employee);
+        menuCompany(company, department, employee, year);
         break;
 
     case '8':
@@ -243,7 +257,7 @@ void menuCompany(Company *company, Department *department, Employee *employee)
         {
             printf("\nClique <Enter> para Continuar\n");
             system("pause>nul");
-            menuCompany(company, department, employee);
+            menuCompany(company, department, employee, year);
         }
 
         printf("Codigo do Funcionario: ");
@@ -252,24 +266,24 @@ void menuCompany(Company *company, Department *department, Employee *employee)
         employee = deleteAbsence(employee, code);
 
         system("timeout -t 5");
-        menuCompany(company, department, employee);
+        menuCompany(company, department, employee, year);
 
         break;
 
     case '9':
-        menuCompany(company, department, employee);
+        menuCompany(company, department, employee, year);
         break;
 
     case '0':
-        menuMain(company, department, employee);
+        menuMain(company, department, employee, year);
         break;
     default:
-        menuCompany(company, department, employee);
+        menuCompany(company, department, employee, year);
         break;
     }
 }
 // Opç~oes da Empresa
-void menuCompanyOp(Company *company, Department *department, Employee *employee)
+void menuCompanyOp(Company *company, Department *department, Employee *employee, QueueYear *year)
 {
 
     system("cls");
@@ -309,20 +323,20 @@ void menuCompanyOp(Company *company, Department *department, Employee *employee)
     switch (menu)
     {
     case '1':
-        !file ? createCompanyFromMain(company, department, employee) : updateCompanyFromMain(company, department, employee);
+        !file ? createCompanyFromMain(company, department, employee, year) : updateCompanyFromMain(company, department, employee, year);
         break;
     case '2':
-        !required(getCompanyName(company)) ? showCompanyDataFromMain(company, department, employee) : menuCompany(company, department, employee);
+        !required(getCompanyName(company)) ? showCompanyDataFromMain(company, department, employee, year) : menuCompany(company, department, employee, year);
         break;
     default:
-        menuCompany(company, department, employee);
+        menuCompany(company, department, employee, year);
         break;
     }
 
     return;
 }
 // Actualização dos Dados da Empresa
-void updateCompanyFromMain(Company *company, Department *department, Employee *employee)
+void updateCompanyFromMain(Company *company, Department *department, Employee *employee, QueueYear *year)
 {
 
     system("cls");
@@ -381,10 +395,10 @@ void updateCompanyFromMain(Company *company, Department *department, Employee *e
 
     system("timeout -t 5\n\n");
 
-    return menuCompanyOp(company, department, employee);
+    return menuCompanyOp(company, department, employee, year);
 }
 // Criação da Empresa
-void createCompanyFromMain(Company *company, Department *department, Employee *employee)
+void createCompanyFromMain(Company *company, Department *department, Employee *employee, QueueYear *year)
 {
 
     system("cls");
@@ -436,7 +450,7 @@ void createCompanyFromMain(Company *company, Department *department, Employee *e
     {
 
         system("timeout -t 5\n\n");
-        return createCompanyFromMain(company, department, employee);
+        return createCompanyFromMain(company, department, employee, year);
     }
 
     fflush(stdin);
@@ -447,10 +461,10 @@ void createCompanyFromMain(Company *company, Department *department, Employee *e
 
     system("timeout -t 5\n\n");
 
-    return menuCompanyOp(company, department, employee);
+    return menuCompanyOp(company, department, employee, year);
 }
 // Apresentação dos Dados da Empresa
-void showCompanyDataFromMain(Company *company, Department *department, Employee *employee)
+void showCompanyDataFromMain(Company *company, Department *department, Employee *employee, QueueYear *year)
 {
 
     system("cls");
@@ -478,12 +492,12 @@ void showCompanyDataFromMain(Company *company, Department *department, Employee 
     switch (menu)
     {
     default:
-        menuCompanyOp(company, department, employee);
+        menuCompanyOp(company, department, employee, year);
         break;
     }
 }
 // Menu do Departamento
-void menuDepartment(Company *company, Department *department, Employee *employee)
+void menuDepartment(Company *company, Department *department, Employee *employee, QueueYear *year)
 {
     system("cls");
 
@@ -508,19 +522,19 @@ void menuDepartment(Company *company, Department *department, Employee *employee
     switch (menu)
     {
     case '1':
-        createDepartmentFromMain(company, department, employee);
+        createDepartmentFromMain(company, department, employee, year);
         break;
     case '2':
-        updateDepartmentFromMain(company, department, employee);
+        updateDepartmentFromMain(company, department, employee, year);
         break;
     case '0':
-        menuCompany(company, department, employee);
+        menuCompany(company, department, employee, year);
         break;
     case '3':
         findAllDepartments(department);
         printf("\nClique <Enter> para Continuar\n");
         system("pause>nul");
-        menuDepartment(company, department, employee);
+        menuDepartment(company, department, employee, year);
         break;
     case '4':
         findAllDepartments(department);
@@ -532,7 +546,7 @@ void menuDepartment(Company *company, Department *department, Employee *employee
         }
         printf("\nClique <Enter> para Continuar\n");
         system("pause>nul");
-        menuDepartment(company, department, employee);
+        menuDepartment(company, department, employee, year);
         break;
     case '5':
         findAllDepartments(department);
@@ -540,15 +554,15 @@ void menuDepartment(Company *company, Department *department, Employee *employee
         scanf("%d", &code);
         department = deleteDepartment(department, code);
         system("timeout -t 5");
-        menuDepartment(company, department, employee);
+        menuDepartment(company, department, employee, year);
         break;
     default:
-        menuDepartment(company, department, employee);
+        menuDepartment(company, department, employee, year);
         break;
     }
 }
 // Criação do Departamento
-void createDepartmentFromMain(Company *company, Department *department, Employee *employee)
+void createDepartmentFromMain(Company *company, Department *department, Employee *employee, QueueYear *year)
 {
     system("cls");
 
@@ -570,7 +584,7 @@ void createDepartmentFromMain(Company *company, Department *department, Employee
     if (required(name))
     {
         system("timeout -t 5\n\n");
-        return createDepartmentFromMain(company, department, employee);
+        return createDepartmentFromMain(company, department, employee, year);
     }
 
     department = createDepartment(department, name);
@@ -579,10 +593,10 @@ void createDepartmentFromMain(Company *company, Department *department, Employee
 
     system("timeout -t 5\n\n");
 
-    return menuDepartment(company, department, employee);
+    return menuDepartment(company, department, employee, year);
 }
 // Actualização do Departamento
-void updateDepartmentFromMain(Company *company, Department *department, Employee *employee)
+void updateDepartmentFromMain(Company *company, Department *department, Employee *employee, QueueYear *year)
 {
     system("cls");
 
@@ -600,10 +614,10 @@ void updateDepartmentFromMain(Company *company, Department *department, Employee
 
     system("timeout -t 5\n\n");
 
-    return menuDepartment(company, department, employee);
+    return menuDepartment(company, department, employee, year);
 }
 
-void menuEmployee(Company *company, Department *department, Employee *employee)
+void menuEmployee(Company *company, Department *department, Employee *employee, QueueYear *year)
 {
     system("cls");
 
@@ -628,34 +642,34 @@ void menuEmployee(Company *company, Department *department, Employee *employee)
     switch (menu)
     {
     case '1':
-        createEmployeeFromMain(company, department, employee);
+        createEmployeeFromMain(company, department, employee, year);
         break;
     case '2':
-        updateEmployeeFromMain(company, department, employee);
+        updateEmployeeFromMain(company, department, employee, year);
         break;
     case '3':
         findAllEmployees(employee, 0);
         printf("\nClique <Enter> para Continuar\n");
         system("pause>nul");
-        menuEmployee(company, department, employee);
+        menuEmployee(company, department, employee, year);
         break;
     case '4':
         employeeDepartment(employee, department);
         printf("\nClique <Enter> para Continuar\n");
         system("pause>nul");
-        menuEmployee(company, department, employee);
+        menuEmployee(company, department, employee, year);
         break;
     case '0':
-        menuCompany(company, department, employee);
+        menuCompany(company, department, employee, year);
         break;
     default:
-        menuEmployee(company, department, employee);
+        menuEmployee(company, department, employee, year);
         break;
     }
 }
 
 // Registro de um novo funcionário
-void createEmployeeFromMain(Company *company, Department *department, Employee *employee)
+void createEmployeeFromMain(Company *company, Department *department, Employee *employee, QueueYear *year)
 {
     system("cls");
 
@@ -684,14 +698,14 @@ void createEmployeeFromMain(Company *company, Department *department, Employee *
     if (required(name))
     {
         system("timeout -t 5\n\n");
-        return createEmployeeFromMain(company, department, employee);
+        return createEmployeeFromMain(company, department, employee, year);
     }
 
     employee = createEmployee(employee, getEmployeeCode(employee) + 1, name, salary);
 
     system("timeout -t 5\n\n");
 
-    return menuEmployee(company, department, employee);
+    return menuEmployee(company, department, employee, year);
 }
 
 // Adicionar bonus a um funcionario
@@ -787,7 +801,7 @@ void createAbsenceFromMain(Employee *employee)
     }
 }
 // Actualização dos dadods de um funcionário
-void updateEmployeeFromMain(Company *company, Department *department, Employee *employee)
+void updateEmployeeFromMain(Company *company, Department *department, Employee *employee, QueueYear *year)
 {
     system("cls");
 
@@ -814,7 +828,7 @@ void updateEmployeeFromMain(Company *company, Department *department, Employee *
 
     system("timeout -t 5\n\n");
 
-    return menuEmployee(company, department, employee);
+    return menuEmployee(company, department, employee, year);
 }
 
 int required(char *value)
@@ -828,4 +842,56 @@ int required(char *value)
     }
 
     return 0;
+}
+
+void menuPayroll(Company *company, Department *department, Employee *employee, QueueYear *year)
+{
+    system("cls");
+
+    fflush(stdin);
+
+    char menu;
+    int code;
+
+    printf("\t Gerencie a sua Empresa com a NOVA-RH\n\n");
+    printf("0000000000000000000000000000000000000000000000000000\n");
+    printf(" 1  -  EXECUTAR FOLHA PAGAMENTO (%d/%s)           \n", getCurrentYear(year), getMonthName(getCurrentMonth(getQueueMonth(year))));
+    printf(" 2  -  CONSULTAR ULTIMA FOLHA DE PAGAMENTO        \n");
+    printf(" 3  -  CONSULTAR HISTORICO DE FOLHA PAGAMENTO     \n");
+    printf(" 4  -  EDITAR FOLHA PAGAMENTO                     \n");
+    printf(" 0  -  SAIR                                       \n");
+    printf("0000000000000000000000000000000000000000000000000000\n\nOpcao: ");
+
+    fflush(stdin);
+
+    scanf("%c", &menu);
+
+    switch (menu)
+    {
+    case '1':
+        if (!employee)
+            printf("NAO EXISTE FUNCIONARIOS\n");
+        else
+        {
+            createPayroll(employee, year);
+        }
+        printf("\nClique <Enter> para Continuar\n");
+        system("pause>nul");
+        menuPayroll(company, department, employee, year);
+        break;
+    case '2':
+        describePayroll(getLastPayroll(getCurrentMonth(getQueueMonth(year))));
+
+        printf("\nClique <Enter> para Continuar\n");
+        system("pause>nul");
+        menuPayroll(company, department, employee, year);
+        break;
+
+    case '0':
+        menuCompany(company, department, employee, year);
+        break;
+    default:
+        menuPayroll(company, department, employee, year);
+        break;
+    }
 }
