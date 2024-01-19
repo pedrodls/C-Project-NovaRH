@@ -7,6 +7,9 @@
 #include <stdlib.h>
 
 #define size_char 100
+#define IRT 100
+#define DISCOUNT 100
+#define INSS 100
 
 struct payroll
 {
@@ -20,9 +23,75 @@ struct payroll
     Payroll *next;
 };
 
+float getDiscountTotalValue(Absence *absence, Employee *employee, Payroll *newPayroll)
+{
+    int count = 0;
+
+    Absence *auxAbsence = absence;
+
+    Employee *auxEmployee = employee;
+
+    while (auxAbsence)
+    {
+
+        Absence *newAbsence = (Absence *)malloc(sizeof(absence));
+
+        setAbsenceDesc(newAbsence, getAbsenceDesc(auxAbsence));
+        setAbsenceQtd(newAbsence, getAbsenceQtd(auxAbsence));
+
+        if (!newPayroll->absence)
+            setAbsenceNext(newAbsence, NULL);
+        else
+            setAbsenceNext(newAbsence, newPayroll->absence);
+
+        newPayroll->absence = newAbsence;
+
+        count += getAbsenceQtd(auxAbsence);
+
+        popAbsence(getStackAbsence(auxEmployee));
+
+        auxAbsence = getNextAbsence(auxAbsence);
+    }
+
+    return ((getEmployeeSalary(auxEmployee) * count) / 100);
+}
+
+float getBonusTotalValue(Bonus *bonus, Employee *employee, Payroll *newPayroll)
+{
+    int count = 0;
+
+    Bonus *auxBonus = bonus;
+
+    Employee *auxEmployee = employee;
+
+    while (auxBonus)
+    {
+
+        Bonus *newBonus = (Bonus *)malloc(sizeof(bonus));
+
+        setBonusDesc(newBonus, getBonusDesc(auxBonus));
+        setBonusPerc(newBonus, getBonusPerc(auxBonus));
+
+        if (!newPayroll->bonus)
+            setBonusNext(newBonus, NULL);
+        else
+            setBonusNext(newBonus, newPayroll->bonus);
+
+        newPayroll->bonus = newBonus;
+
+        count += getBonusPerc(auxBonus);
+
+        popBonus(getStackBonus(auxEmployee));
+
+        auxBonus = getNextBonus(auxBonus);
+    }
+
+    return ((getEmployeeSalary(auxEmployee) * count) / 100);
+}
+
 // Cria folha de pagamento
 
-Payroll *createPayroll(Employee *employee, QueueYear *year)
+void createPayroll(Employee *employee, QueueYear *year)
 {
 
     Employee *aux_employee = employee;
@@ -32,66 +101,71 @@ Payroll *createPayroll(Employee *employee, QueueYear *year)
     if (!newPayroll)
     {
         printf("Falha na Alocacao da folha de Pagamento\n");
-        return NULL;
+
+        return;
     }
 
-    while (aux_employee)
+  /*   if (!getEmployeeStatus(aux_employee))
     {
 
-        if (getStackAbsence(aux_employee))
-        {
+        return;
+    } */
 
-            Absence *absence = getTopAbsence(getStackAbsence(aux_employee));
+    newPayroll->bonus = NULL;
+    newPayroll->employee = employee;
+    newPayroll->absence = NULL;
+    newPayroll->next = NULL;
 
-            do
-            {
+    newPayroll->baseSalary = getEmployeeSalary(aux_employee);
 
-                if (absence)
-                {
-                    Absence *newAbsence = (Absence *)malloc(sizeof(absence));
-                    setAbsenceDesc(newAbsence, getAbsenceDesc(absence));
-                    setAbsenceQtd(newAbsence, getAbsenceQtd(absence));
+    newPayroll->discount = getDiscountTotalValue(getTopAbsence(getStackAbsence(aux_employee)), aux_employee, newPayroll);
 
-                    if (!newPayroll->absence)
-                    { // se é a primeira iteração
-                        newPayroll->absence = newAbsence;
-                        setAbsenceNext(newPayroll->absence, NULL);
-                    }
-                    else
-                    {
-                        setAbsenceNext(newAbsence, newPayroll->absence);
-                        newPayroll->absence = newAbsence;
-                    };
+    newPayroll->bonusValue = getBonusTotalValue(getTopBonus(getStackBonus(aux_employee)), aux_employee, newPayroll);
 
-                    popAbsence(getStackAbsence(aux_employee));
+    newPayroll->liquidSalary = newPayroll->baseSalary - newPayroll->discount + newPayroll->bonusValue;
 
-                    absence = getNextAbsence(absence);
-                }
+    /*  while (aux_employee)
+     {
 
-            } while (absence);
-        }
-
-        aux_employee = getNextEmployee(aux_employee);
-    }
+         aux_employee = getNextEmployee(aux_employee);
+     } */
 
     Month *auxMonth = getCurrentMonth(getQueueMonth(year));
 
-    setPayrollInCurrentMonth(getLastPayroll(auxMonth), auxMonth);
-
-    describePayroll(getLastPayroll(auxMonth));
+    setPayrollInCurrentMonth(newPayroll, auxMonth);
 
     printf("Folha de Pagamento criada com sucesso!\n");
-
-    return newPayroll;
 }
 
-void describePayroll(Payroll *payroll)
+void describePayroll(Payroll *payroll, QueueYear *year)
 {
     Payroll *aux = payroll;
 
+    printf("_________________________________________________________\n\n");
+    printf("\tULTIMA FOLHA DE PAGAMENTO (%d/%s)\n",
+           getCurrentYear(year),
+           getMonthName(getCurrentMonth(getQueueMonth(year))));
+    printf("_________________________________________________________\n");
+
     while (aux)
     {
-        printf("%s", getEmployeeName(aux->employee));
+
+        printf("Funcionario: %s\n", getEmployeeName(aux->employee));
+
+        printf("\nFaltas \n");
+        findAbsence(aux->absence);
+
+        printf("\nBonus\n");
+        findBonus(aux->bonus);
+
+        printf("\nTotal de Descontos  : %.2f\n", aux->discount);
+        printf("\nTotal de Bonus  : %.2f\n", aux->bonusValue);
+
+        printf("\nSalario Bruto    : %.2f\n", aux->baseSalary);
+
+        printf("\nSalario Liquido    : %.2f\n", aux->liquidSalary);
+
+        printf("_________________________________________________________\n");
 
         aux = aux->next;
     }

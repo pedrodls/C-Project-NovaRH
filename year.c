@@ -207,7 +207,5 @@ Payroll *getLastPayroll(Month *month)
 
 void setPayrollInCurrentMonth(Payroll *payroll, Month *month)
 {
-    describePayroll(payroll);
-    
     month->payrolls = payroll;
 }

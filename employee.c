@@ -471,11 +471,13 @@ StackAbsence *getStackAbsence(Employee *employee){
     return employee->absence;
 }
 
+StackBonus *getStackBonus(Employee *employee){
+    return employee->bonus;
+}
+
 Employee *getNextEmployee(Employee *employee){
     return employee->next;
 }
-
-
 
 
 // Mètodos Setters

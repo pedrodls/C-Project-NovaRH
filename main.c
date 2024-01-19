@@ -569,6 +569,7 @@ void createDepartmentFromMain(Company *company, Department *department, Employee
     char *name = (char *)malloc(sizeof(size));
 
     printf("000000000000000000000000000000000000000000000000\n");
+    printf("|           Adicionar Departamento             |\n");
     printf("|              Dados Necessarios               |\n");
     printf("| Nome                                         |\n\n");
     printf("000000000000000000000000000000000000000000000000\n\n");
@@ -681,6 +682,7 @@ void createEmployeeFromMain(Company *company, Department *department, Employee *
     // myEmployee = createEmployee(myEmployee,1,1,"bruno mateus", 5000);
 
     printf("000000000000000000000000000000000000000000000000\n");
+    printf("|            Adicionar Funcionario             |\n");
     printf("|              Dados Necessarios               |\n");
     printf("| Nome                                         |\n");
     printf("| Salario                                      |\n\n");
@@ -724,6 +726,7 @@ void createBonusFromMain(Employee *employee)
         return;
 
     printf("000000000000000000000000000000000000000000000000\n");
+    printf("|               Adicionar Bonus                |\n");
     printf("|              Dados Necessarios               |\n");
     printf("| Descricao                                    |\n\n");
     printf("| Percentagem                                  |\n\n");
@@ -773,6 +776,7 @@ void createAbsenceFromMain(Employee *employee)
         return;
 
     printf("000000000000000000000000000000000000000000000000\n");
+    printf("|               Adicionar Falta                |\n");
     printf("|              Dados Necessarios               |\n");
     printf("| Descricao                                    |\n\n");
     printf("| Codigo do Funcionario                        |\n\n");
@@ -815,6 +819,7 @@ void updateEmployeeFromMain(Company *company, Department *department, Employee *
         return;
 
     printf("000000000000000000000000000000000000000000000000\n");
+    printf("|            Atualizar Funcionario             |\n");
     printf("|              Dados Necessarios               |\n");
     printf("| Nome                                         |\n");
     printf("| Estado                                       |\n");
@@ -880,7 +885,7 @@ void menuPayroll(Company *company, Department *department, Employee *employee, Q
         menuPayroll(company, department, employee, year);
         break;
     case '2':
-        describePayroll(getLastPayroll(getCurrentMonth(getQueueMonth(year))));
+        describePayroll(getLastPayroll(getCurrentMonth(getQueueMonth(year))), year);
 
         printf("\nClique <Enter> para Continuar\n");
         system("pause>nul");

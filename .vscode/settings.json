@@ -69,6 +69,7 @@
     "employee.h": "c",
     "stdio.h": "c",
     "payroll.h": "c",
-    "year.h": "c"
+    "year.h": "c",
+    "bonus.h": "c"
   }
 }

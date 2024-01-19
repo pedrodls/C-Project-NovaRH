@@ -112,7 +112,8 @@ void findAbsence(Absence *absence)
 
     while (aux)
     {
-        printf("%s\n", aux->desc);
+        printf("\nDescricao: %s - Quantidade: %d\n\n", aux->desc, aux->qtd);
         aux = aux->next;
     }
+
 }

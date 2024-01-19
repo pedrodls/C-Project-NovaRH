@@ -1,6 +1,6 @@
 #include "./department.h"
 #include "./absence.h"
-
+#include "./bonus.h"
 
 typedef struct employee Employee;
 
@@ -9,7 +9,7 @@ Employee *initEmployee();
 // Descreve um colaborador
 void describeColaborator(Employee *data);
 
-//Descreve colaborador de forma simples
+// Descreve colaborador de forma simples
 void simpleDescribeColaborator(Employee *data);
 
 // Criar um Funcionario
@@ -28,23 +28,23 @@ Employee *deleteEmployee(Employee *data, int code);
 
 Employee *employeeDepartment(Employee *data, Department *data_department);
 
-//cria um bonus para o funcionario
+// cria um bonus para o funcionario
 Employee *createBonus(Employee *employee, int code, char *desc, float perc);
-//elimina o bonus do funcionario
+// elimina o bonus do funcionario
 Employee *deleteBonus(Employee *employee, int code);
 
-//Encontra todos bonus
+// Encontra todos bonus
 void findAllBonus(Employee *data);
 
-//cria uma falta para o funcionario
-Employee *createAbsence(Employee *employee, int code, char *desc );
+// cria uma falta para o funcionario
+Employee *createAbsence(Employee *employee, int code, char *desc);
 
-//elimina uma falta do funcionario
+// elimina uma falta do funcionario
 Employee *deleteAbsence(Employee *employee, int code);
 
 Employee *getNextEmployee(Employee *employee);
 
-//Encontra todas as faltas
+// Encontra todas as faltas
 void findAllAbsence(Employee *data);
 
 // retorna o nome do funcionário
@@ -58,11 +58,11 @@ float getEmployeeSalary(Employee *employee);
 
 StackAbsence *getStackAbsence(Employee *employee);
 
+StackBonus *getStackBonus(Employee *employee);
 
-
-//apresenta todos os funcionarios de um departamento específico
-Department *findEmployeeByDepartment(Department *department, Employee *employee ,int code);
-//retorna o proximo funcionario da lista
+// apresenta todos os funcionarios de um departamento específico
+Department *findEmployeeByDepartment(Department *department, Employee *employee, int code);
+// retorna o proximo funcionario da lista
 
 // Mètodos Setters
 void setEmployeeName(Employee *employee, char *value);
