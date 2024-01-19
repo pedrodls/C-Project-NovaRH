@@ -96,7 +96,7 @@ void createPayroll(Employee *employee, QueueYear *year)
 
     Employee *aux_employee = employee;
 
-    Payroll *oldPayroll = getLastPayroll(getCurrentMonth(getQueueMonth(year)));
+    Payroll *oldPayroll = NULL;
 
     while (aux_employee)
     {
@@ -126,9 +126,15 @@ void createPayroll(Employee *employee, QueueYear *year)
         newPayroll->liquidSalary = newPayroll->baseSalary - newPayroll->discount + newPayroll->bonusValue;
 
         if (!oldPayroll)
+        {
+
             oldPayroll = newPayroll;
+        }
         else
-            oldPayroll->next = newPayroll;
+        {
+            newPayroll->next = oldPayroll;
+            oldPayroll = newPayroll;
+        }
 
         aux_employee = getNextEmployee(aux_employee);
     }
