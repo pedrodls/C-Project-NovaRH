@@ -7,8 +7,8 @@
 #include <stdlib.h>
 
 #define size_char 100
-#define IRT 100
 #define DISCOUNT 100
+#define IRT 100
 #define INSS 100
 
 struct payroll
@@ -96,43 +96,46 @@ void createPayroll(Employee *employee, QueueYear *year)
 
     Employee *aux_employee = employee;
 
-    Payroll *newPayroll = (Payroll *)malloc(sizeof(Payroll));
+    Payroll *oldPayroll = getLastPayroll(getCurrentMonth(getQueueMonth(year)));
 
-    if (!newPayroll)
+    while (aux_employee)
     {
-        printf("Falha na Alocacao da folha de Pagamento\n");
 
-        return;
+        Payroll *newPayroll = (Payroll *)malloc(sizeof(Payroll));
+
+        if (!newPayroll)
+        {
+            printf("Falha na Alocacao da folha de Pagamento\n");
+
+            system("pause <Enter para continuar>!");
+
+            return;
+        }
+
+        newPayroll->bonus = NULL;
+        newPayroll->employee = aux_employee;
+        newPayroll->absence = NULL;
+        newPayroll->next = NULL;
+
+        newPayroll->baseSalary = getEmployeeSalary(aux_employee);
+
+        newPayroll->discount = getDiscountTotalValue(getTopAbsence(getStackAbsence(aux_employee)), aux_employee, newPayroll);
+
+        newPayroll->bonusValue = getBonusTotalValue(getTopBonus(getStackBonus(aux_employee)), aux_employee, newPayroll);
+
+        newPayroll->liquidSalary = newPayroll->baseSalary - newPayroll->discount + newPayroll->bonusValue;
+
+        if (!oldPayroll)
+            oldPayroll = newPayroll;
+        else
+            oldPayroll->next = newPayroll;
+
+        aux_employee = getNextEmployee(aux_employee);
     }
-
-  /*   if (!getEmployeeStatus(aux_employee))
-    {
-
-        return;
-    } */
-
-    newPayroll->bonus = NULL;
-    newPayroll->employee = employee;
-    newPayroll->absence = NULL;
-    newPayroll->next = NULL;
-
-    newPayroll->baseSalary = getEmployeeSalary(aux_employee);
-
-    newPayroll->discount = getDiscountTotalValue(getTopAbsence(getStackAbsence(aux_employee)), aux_employee, newPayroll);
-
-    newPayroll->bonusValue = getBonusTotalValue(getTopBonus(getStackBonus(aux_employee)), aux_employee, newPayroll);
-
-    newPayroll->liquidSalary = newPayroll->baseSalary - newPayroll->discount + newPayroll->bonusValue;
-
-    /*  while (aux_employee)
-     {
-
-         aux_employee = getNextEmployee(aux_employee);
-     } */
 
     Month *auxMonth = getCurrentMonth(getQueueMonth(year));
 
-    setPayrollInCurrentMonth(newPayroll, auxMonth);
+    setPayrollInCurrentMonth(oldPayroll, auxMonth);
 
     printf("Folha de Pagamento criada com sucesso!\n");
 }
