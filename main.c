@@ -860,7 +860,7 @@ void menuPayroll(Company *company, Department *department, Employee *employee, Q
 
     printf("\t Gerencie a sua Empresa com a NOVA-RH\n\n");
     printf("0000000000000000000000000000000000000000000000000000\n");
-    printf(" 1  -  EXECUTAR FOLHA PAGAMENTO (%d/%s)           \n", getCurrentYear(year), getMonthName(getCurrentMonth(getQueueMonth(year))));
+    printf(" 1  -  EXECUTAR FOLHA PAGAMENTO (%d/%s)           \n", getYear(getCurrentYear(year)), getMonthName(getCurrentMonth(getQueueMonth(year))));
     printf(" 2  -  CONSULTAR ULTIMA FOLHA DE PAGAMENTO        \n");
     printf(" 3  -  CONSULTAR HISTORICO DE FOLHA PAGAMENTO     \n");
     printf(" 4  -  EDITAR FOLHA PAGAMENTO                     \n");
@@ -885,7 +885,14 @@ void menuPayroll(Company *company, Department *department, Employee *employee, Q
         menuPayroll(company, department, employee, year);
         break;
     case '2':
-        describePayroll(getLastPayroll(getCurrentMonth(getQueueMonth(year))), year);
+        if (getPreviousYear(year) && (getMonthCode(getCurrentMonth(getQueueMonth(year))) == 0))
+        {
+            describePayroll(getLastPayroll(getCurrentMonth(getQueueMonthFromYear(getPreviousYear(year)))), getPreviousYear(year), 1);
+        }
+        else
+        {
+            describePayroll(getLastPayroll(getPreviousMonth(getQueueMonth(year))), getCurrentYear(year), 0);
+        }
 
         printf("\nClique <Enter> para Continuar\n");
         system("pause>nul");

@@ -10,7 +10,7 @@ Payroll *getNextPayroll(Payroll *payroll);
 
 Absence *getAbsenceFromPayroll(Payroll *payroll);
 
-void describePayroll(Payroll *payroll, QueueYear *year);
+void describePayroll(Payroll *payroll, Year *year, int type);
 
 float getBonusTotalValue(Bonus *bonus, Employee *employee, Payroll *newPayroll);
 

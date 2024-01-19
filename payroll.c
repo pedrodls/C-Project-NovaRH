@@ -17,6 +17,8 @@ struct payroll
     float discount;
     float baseSalary;
     float liquidSalary;
+    float irt;
+    float inss;
     Bonus *bonus;
     Absence *absence;
     Employee *employee;
@@ -96,6 +98,13 @@ void createPayroll(Employee *employee, QueueYear *year)
 
     Employee *aux_employee = employee;
 
+    if (!aux_employee)
+    {
+        printf("NAO EXISTEM FUNCIONARIOS\n");
+
+        return;
+    }
+
     Payroll *oldPayroll = NULL;
 
     while (aux_employee)
@@ -143,23 +152,46 @@ void createPayroll(Employee *employee, QueueYear *year)
 
     setPayrollInCurrentMonth(oldPayroll, auxMonth);
 
+    if (getMonthCode(auxMonth) == 1)
+    {
+        year = enqueueYear(year, getYear(getCurrentYear(year)) + 1);
+
+        enqueueMonth(getQueueMonth(year));
+    }
+    else
+        enqueueMonth(getQueueMonth(year));
+
     printf("Folha de Pagamento criada com sucesso!\n");
 }
 
-void describePayroll(Payroll *payroll, QueueYear *year)
+void describePayroll(Payroll *payroll, Year *year, int type)
 {
     Payroll *aux = payroll;
 
+    if (!aux)
+    {
+        printf("NAO EXISTE FOLHA DE PAGAMENTO\n");
+
+        return;
+    }
+
     printf("_________________________________________________________\n\n");
-    printf("\tULTIMA FOLHA DE PAGAMENTO (%d/%s)\n",
-           getCurrentYear(year),
-           getMonthName(getCurrentMonth(getQueueMonth(year))));
+
+
+    type ? printf("\tULTIMA FOLHA DE PAGAMENTO (%d/%s)\n",
+                  getYear(year),
+                  getMonthName(getCurrentMonth(getQueueMonthFromYear(year))))
+
+         : printf("\tULTIMA FOLHA DE PAGAMENTO (%d/%s)\n",
+                  getYear(year),
+                  getMonthName(getPreviousMonth(getQueueMonthFromYear(year))));
+
     printf("_________________________________________________________\n");
 
     while (aux)
     {
 
-        printf("Funcionario: %s\n", getEmployeeName(aux->employee));
+        printf("Funcionario        :%s\n", getEmployeeName(aux->employee));
 
         printf("\nFaltas \n");
         findAbsence(aux->absence);
@@ -167,12 +199,18 @@ void describePayroll(Payroll *payroll, QueueYear *year)
         printf("\nBonus\n");
         findBonus(aux->bonus);
 
+        printf("\nINSS                : %.2f\n", aux->inss);
+
+        printf("\nIRT                 : %.2f\n", aux->irt);
+
         printf("\nTotal de Descontos  : %.2f\n", aux->discount);
-        printf("\nTotal de Bonus  : %.2f\n", aux->bonusValue);
+        
 
-        printf("\nSalario Bruto    : %.2f\n", aux->baseSalary);
+        printf("\nTotal de Bonus      : %.2f\n", aux->bonusValue);
 
-        printf("\nSalario Liquido    : %.2f\n", aux->liquidSalary);
+        printf("\nSalario Bruto       : %.2f\n", aux->baseSalary);
+
+        printf("\nSalario Liquido     : %.2f\n", aux->liquidSalary);
 
         printf("_________________________________________________________\n");
 

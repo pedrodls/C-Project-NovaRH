@@ -10,6 +10,7 @@ struct month
     char *name;
     int code;
     struct month *next;
+    struct month *prev;
     Payroll *payrolls;
 };
 
@@ -23,6 +24,8 @@ struct year
     int year;
 
     struct year *next;
+    struct year *prev;
+
     QueueMonth *months;
 };
 
@@ -121,6 +124,8 @@ QueueYear *enqueueYear(QueueYear *queueYear, int year)
 
     newYear->year = year;
 
+    newYear->prev = queueYear->endYear;
+
     newYear->next = NULL;
 
     if (!queueYear->startYear)
@@ -153,6 +158,7 @@ QueueMonth *enqueueMonth(QueueMonth *queueMonth)
     }
 
     newMonth->next = NULL;
+    newMonth->prev = queueMonth->endMonth;
     newMonth->payrolls = NULL;
 
     if (!queueMonth->startMonth)
@@ -182,9 +188,20 @@ QueueMonth *getQueueMonth(QueueYear *year)
     return year->endYear->months;
 }
 
-int getCurrentYear(QueueYear *year)
+QueueMonth *getQueueMonthFromYear(Year *year)
 {
-    return year->endYear->year;
+    // Traz os meses de um ano
+    return year->months;
+}
+
+Year *getCurrentYear(QueueYear *year)
+{
+    return year->endYear;
+}
+
+int getYear(Year *year)
+{
+    return year->year;
 }
 
 Month *getCurrentMonth(QueueMonth *month)
@@ -192,15 +209,38 @@ Month *getCurrentMonth(QueueMonth *month)
     return month->endMonth;
 }
 
+Month *getPreviousMonth(QueueMonth *month)
+{
+    return month->endMonth->prev;
+}
+
+Year *getPreviousYear(QueueYear *year)
+{
+    return year->endYear->prev;
+}
+
+
+
+
 char *getMonthName(Month *month)
 {
     return month->name;
+}
+
+int getMonthCode(Month *month)
+{
+    return month->code;
 }
 
 Payroll *getLastPayroll(Month *month)
 {
 
     Month *aux = month;
+
+    if (!aux)
+    {
+        return NULL;
+    }
 
     return aux->payrolls;
 }

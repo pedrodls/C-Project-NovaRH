@@ -25,7 +25,7 @@ void findAllYearMonth(QueueYear *year);
 // recebe a fila de um ano
 QueueMonth *getQueueMonth(QueueYear *year);
 
-int getCurrentYear(QueueYear *year);
+Year *getCurrentYear(QueueYear *year);
 
 char *getMonthName(Month *month);
 
@@ -33,7 +33,14 @@ Month *getCurrentMonth(QueueMonth *month);
 
 Payroll *getLastPayroll(Month *month);
 
+Month *getPreviousMonth(QueueMonth *month);
+
+int getMonthCode(Month *month);
+
+Year *getPreviousYear(QueueYear *year);
+
+int getYear(Year *year);
+
+QueueMonth *getQueueMonthFromYear(Year *year);
+
 void setPayrollInCurrentMonth(Payroll *payroll, Month *month);
-
-
-
