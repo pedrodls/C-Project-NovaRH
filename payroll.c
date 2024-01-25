@@ -164,6 +164,54 @@ void createPayroll(Employee *employee, QueueYear *year)
     printf("Folha de Pagamento criada com sucesso!\n");
 }
 
+void describeYearHistoryPayroll(Payroll *payroll, int year, Month *month)
+{
+    Payroll *aux = payroll;
+
+    if (!aux)
+    {
+        printf("Final do Historico\n");
+
+        return;
+    }
+
+    printf("_________________________________________________________\n\n");
+
+    printf("\tFOLHA DE PAGAMENTO (%d/%s)\n",
+           year,
+           getMonthName(month));
+
+        printf("_________________________________________________________\n");
+
+    while (aux)
+    {
+
+        printf("Funcionario        :%s\n", getEmployeeName(aux->employee));
+
+        printf("\nFaltas \n");
+        findAbsence(aux->absence);
+
+        printf("\nBonus\n");
+        findBonus(aux->bonus);
+
+        printf("\nINSS                : %.2f\n", aux->inss);
+
+        printf("\nIRT                 : %.2f\n", aux->irt);
+
+        printf("\nTotal de Descontos  : %.2f\n", aux->discount);
+
+        printf("\nTotal de Bonus      : %.2f\n", aux->bonusValue);
+
+        printf("\nSalario Bruto       : %.2f\n", aux->baseSalary);
+
+        printf("\nSalario Liquido     : %.2f\n", aux->liquidSalary);
+
+        printf("_________________________________________________________\n");
+
+        aux = aux->next;
+    }
+}
+
 void describePayroll(Payroll *payroll, Year *year, int type)
 {
     Payroll *aux = payroll;
@@ -176,7 +224,6 @@ void describePayroll(Payroll *payroll, Year *year, int type)
     }
 
     printf("_________________________________________________________\n\n");
-
 
     type ? printf("\tULTIMA FOLHA DE PAGAMENTO (%d/%s)\n",
                   getYear(year),
@@ -204,7 +251,6 @@ void describePayroll(Payroll *payroll, Year *year, int type)
         printf("\nIRT                 : %.2f\n", aux->irt);
 
         printf("\nTotal de Descontos  : %.2f\n", aux->discount);
-        
 
         printf("\nTotal de Bonus      : %.2f\n", aux->bonusValue);
 

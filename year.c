@@ -219,9 +219,6 @@ Year *getPreviousYear(QueueYear *year)
     return year->endYear->prev;
 }
 
-
-
-
 char *getMonthName(Month *month)
 {
     return month->name;
@@ -248,4 +245,24 @@ Payroll *getLastPayroll(Month *month)
 void setPayrollInCurrentMonth(Payroll *payroll, Month *month)
 {
     month->payrolls = payroll;
+}
+
+void getYearHistory(QueueYear *queueYear)
+{
+    Year *aux = queueYear->startYear;
+
+    while (aux)
+    {
+        Month *auxMonth = aux->months->startMonth;
+
+        while (auxMonth && auxMonth->payrolls)
+        {
+
+            describeYearHistoryPayroll(auxMonth->payrolls, aux->year, auxMonth);
+
+            auxMonth = auxMonth->next;
+        }
+
+        aux = aux->next;
+    }
 }

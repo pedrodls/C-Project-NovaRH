@@ -15,3 +15,6 @@ void describePayroll(Payroll *payroll, Year *year, int type);
 float getBonusTotalValue(Bonus *bonus, Employee *employee, Payroll *newPayroll);
 
 float getDiscountTotalValue(Absence *absence, Employee *employee, Payroll *newPayroll);
+
+void describeYearHistoryPayroll(Payroll *payroll, int year, Month *month);
+

@@ -44,3 +44,5 @@ int getYear(Year *year);
 QueueMonth *getQueueMonthFromYear(Year *year);
 
 void setPayrollInCurrentMonth(Payroll *payroll, Month *month);
+
+void getYearHistory(QueueYear *queueYear);

@@ -899,6 +899,13 @@ void menuPayroll(Company *company, Department *department, Employee *employee, Q
         menuPayroll(company, department, employee, year);
         break;
 
+    case '3':
+        getYearHistory(year);
+        printf("\nClique <Enter> para Continuar\n");
+        system("pause>nul");
+        menuPayroll(company, department, employee, year);
+        break;
+
     case '0':
         menuCompany(company, department, employee, year);
         break;
