@@ -13,7 +13,7 @@ void describeColaborator(Employee *data);
 void simpleDescribeColaborator(Employee *data);
 
 // Criar um Funcionario
-Employee *createEmployee(Employee *data, int code, char *name, float salary);
+Employee *createEmployee(Employee *data, int code, char *BI, char *name, float salary);
 
 // Encontra um Funcionario
 Employee *findOneEmployee(Employee *data, int code);
@@ -55,6 +55,9 @@ int getEmployeeCode(Employee *employee);
 int getEmployeeStatus(Employee *employee);
 // retorna o nif da empresa
 float getEmployeeSalary(Employee *employee);
+
+//retorna BI do funcionário
+char *getEmployeeBI(Employee *employee);
 
 StackAbsence *getStackAbsence(Employee *employee);
 

@@ -6,6 +6,7 @@
 #include "payroll.h"
 #include <string.h>
 #include "year.h"
+#include <ctype.h>
 
 #define size 100
 #define size_char 100
@@ -60,6 +61,8 @@ void updateEmployeeFromMain(Company *company, Department *department, Employee *
 void createBonusFromMain(Employee *employee);
 
 void createAbsenceFromMain(Employee *employee);
+
+int invalidCardId(char *value);
 
 //---------------------------FOLHA DE PAGAMENTOS------------------------------
 void menuPayroll(Company *company, Department *department, Employee *employee, QueueYear *year);
@@ -675,6 +678,9 @@ void createEmployeeFromMain(Company *company, Department *department, Employee *
     system("cls");
 
     char *name = (char *)malloc(sizeof(size));
+    char *BI = (char *)malloc(sizeof(size));
+    char *IBAN = (char *)malloc(sizeof(size));
+
     float salary;
 
     fflush(stdin);
@@ -684,9 +690,20 @@ void createEmployeeFromMain(Company *company, Department *department, Employee *
     printf("000000000000000000000000000000000000000000000000\n");
     printf("|            Adicionar Funcionario             |\n");
     printf("|              Dados Necessarios               |\n");
+    printf("| BI                                           |\n\n");
     printf("| Nome                                         |\n");
+    printf("| Cargo                                        |\n\n");
+    printf("| Genero                                       |\n");
     printf("| Salario                                      |\n\n");
+    printf("| Conta(IBAN)                                  |\n");
+    printf("| Data de Nascimento                           |\n\n");
     printf("000000000000000000000000000000000000000000000000\n\n");
+
+    printf("BI: ");
+    fgets(BI, size_char, stdin);
+    BI[strcspn(BI, "\n")] = '\0';
+
+    fflush(stdin);
 
     printf("Nome: ");
     fgets(name, size_char, stdin);
@@ -697,13 +714,13 @@ void createEmployeeFromMain(Company *company, Department *department, Employee *
     printf("Salario: ");
     scanf("%f", &salary);
 
-    if (required(name))
+    if (required(name) || invalidCardId(BI))
     {
         system("timeout -t 5\n\n");
         return createEmployeeFromMain(company, department, employee, year);
     }
 
-    employee = createEmployee(employee, getEmployeeCode(employee) + 1, name, salary);
+    employee = createEmployee(employee, getEmployeeCode(employee) + 1, BI, name, salary);
 
     system("timeout -t 5\n\n");
 
@@ -821,9 +838,13 @@ void updateEmployeeFromMain(Company *company, Department *department, Employee *
     printf("000000000000000000000000000000000000000000000000\n");
     printf("|            Atualizar Funcionario             |\n");
     printf("|              Dados Necessarios               |\n");
+    printf("| BI                                           |\n\n");
     printf("| Nome                                         |\n");
-    printf("| Estado                                       |\n");
+    printf("| Cargo                                        |\n\n");
+    printf("| Genero                                       |\n");
     printf("| Salario                                      |\n\n");
+    printf("| Conta(IBAN)                                  |\n");
+    printf("| Data de Nascimento                           |\n\n");
     printf("000000000000000000000000000000000000000000000000\n\n");
 
     printf("\nCodigo do Funcionario: ");
@@ -844,6 +865,25 @@ int required(char *value)
         printf("\nCampos invalidos! ");
 
         return !(strlen(value) > 1);
+    }
+
+    return 0;
+}
+
+int invalidCardId(char *value)
+{
+    int countLetter = 0;
+
+    for (int i = 0; i < strlen(value); i++)
+    {
+        countLetter += isalpha(value[i]) ? 1 : 0;
+    }
+
+    if (countLetter > 2 || strlen(value) != 14 || (!isalpha(value[9]) || !isalpha(value[10])))
+    {
+        printf("\nCampos invalidos! ");
+
+        return 1;
     }
 
     return 0;

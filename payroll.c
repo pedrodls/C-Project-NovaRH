@@ -169,7 +169,7 @@ void createPayroll(Employee *employee, QueueYear *year)
 
     setPayrollInCurrentMonth(oldPayroll, auxMonth);
 
-    if (getMonthCode(auxMonth) == 1)
+    if (getMonthCode(auxMonth) == 11)
     {
         year = enqueueYear(year, getYear(getCurrentYear(year)) + 1);
 

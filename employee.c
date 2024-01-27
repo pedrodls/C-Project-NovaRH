@@ -15,7 +15,6 @@
     char *name;
     char *cargo;
     char *conta;
-    char *BI;
     int idade;
     float salary;
     StackBonus *bonus;
@@ -27,6 +26,7 @@
 struct employee
 {
     int code, status;
+    char *BI;
     char *name;
     float salary;
     StackBonus *bonus;
@@ -45,7 +45,7 @@ void describeColaborator(Employee *data)
 {
     if (data)
     {
-        printf("\nCodigo: %d,\nNome: %s,\nSalario: %f,\nEstado: %s\nDepartamento: %s\n\n", getEmployeeCode(data), getEmployeeName(data), getEmployeeSalary(data), getEmployeeStatus(data) ? "Ativo" : "Desativado", data->department ? getDepartmentName(data->department) : "NULL");
+        printf("\nCodigo: %d,\nBI: %s, \nNome: %s,\nSalario: %.2f,\nEstado: %s\nDepartamento: %s\n\n", getEmployeeCode(data), getEmployeeBI(data), getEmployeeName(data), getEmployeeSalary(data), getEmployeeStatus(data) ? "Ativo" : "Desativado", data->department ? getDepartmentName(data->department) : "NULL");
 
         printf("\nBonus de %s: \n", getEmployeeName(data));
         findAllBonus(data);
@@ -69,7 +69,7 @@ void simpleDescribeColaborator(Employee *data)
 }
 
 // Criar um Funcionario
-Employee *createEmployee(Employee *data, int code, char *name, float salary)
+Employee *createEmployee(Employee *data, int code, char *BI, char *name, float salary)
 {
     Employee *newEmployee = (Employee *)malloc(sizeof(Employee));
 
@@ -81,6 +81,7 @@ Employee *createEmployee(Employee *data, int code, char *name, float salary)
     // Inserção no Início
     newEmployee->code = code;
     newEmployee->status = 1;
+    newEmployee->BI = BI;
     newEmployee->name = name;
     newEmployee->salary = salary;
     newEmployee->department = NULL;
@@ -175,8 +176,6 @@ void findAllAbsenceFromPayroll(Absence *absence)
         }
     }
 }
-
-
 
 // Atualiza o dado de um funcionário
 Employee *updateEmployee(Employee *data, int code)
@@ -434,7 +433,7 @@ Employee *deleteAbsence(Employee *employee, int code)
         else
         {
 
-           popAbsence(aux_employee->absence);
+            popAbsence(aux_employee->absence);
 
             printf("Falta removido com Sucesso!\n");
         }
@@ -450,6 +449,10 @@ char *getEmployeeName(Employee *employee)
     return employee->name;
 }
 
+char *getEmployeeBI(Employee *employee)
+{
+    return employee->BI;
+}
 
 // retorna o código do funcionário
 int getEmployeeCode(Employee *employee)
@@ -467,18 +470,20 @@ float getEmployeeSalary(Employee *employee)
     return employee->salary;
 }
 
-StackAbsence *getStackAbsence(Employee *employee){
+StackAbsence *getStackAbsence(Employee *employee)
+{
     return employee->absence;
 }
 
-StackBonus *getStackBonus(Employee *employee){
+StackBonus *getStackBonus(Employee *employee)
+{
     return employee->bonus;
 }
 
-Employee *getNextEmployee(Employee *employee){
+Employee *getNextEmployee(Employee *employee)
+{
     return employee->next;
 }
-
 
 // Mètodos Setters
 void setEmployeeName(Employee *employee, char *value)
