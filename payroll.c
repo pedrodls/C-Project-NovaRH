@@ -7,18 +7,19 @@
 #include <stdlib.h>
 
 #define size_char 100
-#define DISCOUNT 100
-#define IRT 100
-#define INSS 100
+#define DISCOUNT_FAULT 2
+#define IRT_MAX 25
+#define IRT 13
+#define INSS 3
 
 struct payroll
 {
     float bonusValue;
     float discount;
     float baseSalary;
-    float liquidSalary;
-    float irt;
     float inss;
+    float irt;
+    float liquidSalary;
     Bonus *bonus;
     Absence *absence;
     Employee *employee;
@@ -55,7 +56,7 @@ float getDiscountTotalValue(Absence *absence, Employee *employee, Payroll *newPa
         auxAbsence = getNextAbsence(auxAbsence);
     }
 
-    return ((getEmployeeSalary(auxEmployee) * count) / 100);
+    return ((getEmployeeSalary(auxEmployee) * (count * DISCOUNT_FAULT) / 100));
 }
 
 float getBonusTotalValue(Bonus *bonus, Employee *employee, Payroll *newPayroll)
@@ -121,28 +122,44 @@ void createPayroll(Employee *employee, QueueYear *year)
             return;
         }
 
-        newPayroll->bonus = NULL;
-        newPayroll->employee = aux_employee;
-        newPayroll->absence = NULL;
-        newPayroll->next = NULL;
-
-        newPayroll->baseSalary = getEmployeeSalary(aux_employee);
-
-        newPayroll->discount = getDiscountTotalValue(getTopAbsence(getStackAbsence(aux_employee)), aux_employee, newPayroll);
-
-        newPayroll->bonusValue = getBonusTotalValue(getTopBonus(getStackBonus(aux_employee)), aux_employee, newPayroll);
-
-        newPayroll->liquidSalary = newPayroll->baseSalary - newPayroll->discount + newPayroll->bonusValue;
-
-        if (!oldPayroll)
+        if (getEmployeeStatus(aux_employee))
         {
+            newPayroll->bonus = NULL;
+            newPayroll->employee = aux_employee;
+            newPayroll->absence = NULL;
+            newPayroll->next = NULL;
 
-            oldPayroll = newPayroll;
-        }
-        else
-        {
-            newPayroll->next = oldPayroll;
-            oldPayroll = newPayroll;
+            newPayroll->irt = 0.00;
+
+            if (getEmployeeSalary(aux_employee) >= 101000.00 && getEmployeeSalary(aux_employee) < 120000000.00)
+            {
+                newPayroll->irt = (getEmployeeSalary(aux_employee) * IRT) / 100;
+            }
+            else if (getEmployeeSalary(aux_employee) >= 120000000.00)
+            {
+                newPayroll->irt = (getEmployeeSalary(aux_employee) * IRT_MAX) / 100;
+            }
+
+            newPayroll->inss = (getEmployeeSalary(aux_employee) * INSS) / 100;
+
+            newPayroll->baseSalary = getEmployeeSalary(aux_employee);
+
+            newPayroll->discount = getDiscountTotalValue(getTopAbsence(getStackAbsence(aux_employee)), aux_employee, newPayroll) + newPayroll->inss + newPayroll->irt;
+
+            newPayroll->bonusValue = getBonusTotalValue(getTopBonus(getStackBonus(aux_employee)), aux_employee, newPayroll);
+
+            newPayroll->liquidSalary = (newPayroll->baseSalary - newPayroll->discount) + newPayroll->bonusValue;
+
+            if (!oldPayroll)
+            {
+
+                oldPayroll = newPayroll;
+            }
+            else
+            {
+                newPayroll->next = oldPayroll;
+                oldPayroll = newPayroll;
+            }
         }
 
         aux_employee = getNextEmployee(aux_employee);
@@ -181,12 +198,12 @@ void describeYearHistoryPayroll(Payroll *payroll, int year, Month *month)
            year,
            getMonthName(month));
 
-        printf("_________________________________________________________\n");
+    printf("_________________________________________________________\n");
 
     while (aux)
     {
 
-        printf("Funcionario        :%s\n", getEmployeeName(aux->employee));
+        printf("Funcionario        : %s\n", getEmployeeName(aux->employee));
 
         printf("\nFaltas \n");
         findAbsence(aux->absence);
@@ -194,7 +211,7 @@ void describeYearHistoryPayroll(Payroll *payroll, int year, Month *month)
         printf("\nBonus\n");
         findBonus(aux->bonus);
 
-        printf("\nINSS                : %.2f\n", aux->inss);
+        printf("\nINSS                : %.2f\n", (aux->inss));
 
         printf("\nIRT                 : %.2f\n", aux->irt);
 
@@ -238,7 +255,7 @@ void describePayroll(Payroll *payroll, Year *year, int type)
     while (aux)
     {
 
-        printf("Funcionario        :%s\n", getEmployeeName(aux->employee));
+        printf("Funcionario        : %s\n", getEmployeeName(aux->employee));
 
         printf("\nFaltas \n");
         findAbsence(aux->absence);
@@ -246,11 +263,11 @@ void describePayroll(Payroll *payroll, Year *year, int type)
         printf("\nBonus\n");
         findBonus(aux->bonus);
 
-        printf("\nINSS                : %.2f\n", aux->inss);
+        printf("\nINSS                : %.2f\n", (aux->inss));
 
         printf("\nIRT                 : %.2f\n", aux->irt);
 
-        printf("\nTotal de Descontos  : %.2f\n", aux->discount);
+        printf("\nTotal de Desconto   : %.2f\n", aux->discount);
 
         printf("\nTotal de Bonus      : %.2f\n", aux->bonusValue);
 

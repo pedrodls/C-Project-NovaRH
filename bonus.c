@@ -96,7 +96,7 @@ void findBonus(Bonus *bonus)
 
     while (aux)
     {
-        printf("\nDescricao: %s - Percentagem: %f\n\n", aux->desc, aux->perc);
+        printf("\nDescricao: %s - Percentagem: %.2f%\n\n", aux->desc, aux->perc);
         aux = aux->next;
     }
 }
