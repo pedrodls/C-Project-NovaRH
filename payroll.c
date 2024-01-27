@@ -111,21 +111,27 @@ void createPayroll(Employee *employee, QueueYear *year)
     while (aux_employee)
     {
 
-        Payroll *newPayroll = (Payroll *)malloc(sizeof(Payroll));
+        Payroll *newPayroll = (Payroll *)malloc(sizeof(Payroll *));
 
-        if (!newPayroll)
+        // Na folha de pagamento, não queremos fazer refência direta para que atualizando o funcionário, altera a folha de pagamento;
+
+        Employee *newEmployee = (Employee *)malloc(sizeof(Employee *));
+
+        if (!newPayroll || newEmployee)
         {
-            printf("Falha na Alocacao da folha de Pagamento\n");
+            printf("Falha na Alocacao\n");
 
             system("pause <Enter para continuar>!");
 
             return;
         }
 
+        newEmployee = aux_employee;
+
         if (getEmployeeStatus(aux_employee))
         {
             newPayroll->bonus = NULL;
-            newPayroll->employee = aux_employee;
+            newPayroll->employee = newEmployee;
             newPayroll->absence = NULL;
             newPayroll->next = NULL;
 
