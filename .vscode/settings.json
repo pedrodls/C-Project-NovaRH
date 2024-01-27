@@ -70,6 +70,8 @@
     "stdio.h": "c",
     "payroll.h": "c",
     "year.h": "c",
-    "bonus.h": "c"
+    "bonus.h": "c",
+    "algorithm": "c",
+    "initializer_list": "c"
   }
 }

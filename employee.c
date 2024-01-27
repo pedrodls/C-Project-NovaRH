@@ -71,6 +71,14 @@ void simpleDescribeColaborator(Employee *data)
 // Criar um Funcionario
 Employee *createEmployee(Employee *data, int code, char *BI, char *name, float salary)
 {
+    Employee *auxEmployee = findOneEmployeeByCardId(data, BI);
+
+    if (auxEmployee)
+    {
+        printf("Este funcionario[BI=%s] ja existe!\n", BI);
+        return data;
+    }
+
     Employee *newEmployee = (Employee *)malloc(sizeof(Employee));
 
     if (!newEmployee)
@@ -78,6 +86,7 @@ Employee *createEmployee(Employee *data, int code, char *BI, char *name, float s
         printf("Falha na Alocacao de memória para Funcionario\n");
         return data;
     }
+
     // Inserção no Início
     newEmployee->code = code;
     newEmployee->status = 1;
@@ -104,7 +113,17 @@ Employee *findOneEmployee(Employee *data, int code)
     return aux;
 }
 
-// Encontra todos departamentos
+Employee *findOneEmployeeByCardId(Employee *data, char *BI)
+{
+    Employee *aux = data;
+
+    while (aux && !(strcmp(strlwr(aux->BI), strlwr(BI)) == 0))
+        aux = aux->next;
+
+    return aux;
+}
+
+// Encontra todos funcionarios
 void findAllEmployees(Employee *data, int type)
 {
     if (!data)
@@ -178,65 +197,48 @@ void findAllAbsenceFromPayroll(Absence *absence)
 }
 
 // Atualiza o dado de um funcionário
-Employee *updateEmployee(Employee *data, int code)
+void updateEmployee(Employee *employeeData, int code, char *BI, char *newName, float newSalary, int newState)
 {
-    Employee *employeeData = findOneEmployee(data, code);
+    int updated = 0;
 
-    char *newName = (char *)malloc(sizeof(size_char));
-    int newState;
-    float newSalary;
-
-    if (employeeData)
+    if (!(strcmp(newName, employeeData->name) == 0))
     {
-        fflush(stdin);
-
-        printf("Novo nome <apenas Enter para ignorar>: ");
-        fgets(newName, size_char, stdin);
-        newName[strcspn(newName, "\n")] = '\0';
-
-        printf("\nSalario: ");
-        scanf("%f", &newSalary);
-
-        printf("\nAtivar - 1 | Desactivar - 0: ");
-        scanf("%d", &newState);
-
-        /* printf("\nCodigo do departamento: ");
-        scanf("%d", &departCode);
-
-        if (departCode > 0 && findOneDepartment(departments, departCode))
-        {
-            setEmployeeDepartment(employeeData, departCode);
-            printf("\nDepartamento atualizado com sucesso!\n");
-        }
-        else if (departCode > 0 && !findOneDepartment(departments, departCode))
-        {
-            printf("\nDepartamento nao encontrado!\n");
-        } */
-
-        if (!(strcmp(newName, employeeData->name) == 0))
+        if (strlen(newName) > 0)
         {
             setEmployeeName(employeeData, newName);
             printf("\nNome atualizado com sucesso!\n");
+            updated = 1;
         }
-
-        if (!(employeeData->status == newState && (newState >= 0 && newState <= 1)))
-        {
-            setEmployeeStatus(employeeData, newState);
-            printf("Estado atualizado com sucesso!\n");
-        }
-
-        if (!(employeeData->salary == newSalary))
-        {
-            setEmployeeSalary(employeeData, newSalary);
-            printf("Salario atualizado com sucesso!\n");
-        }
-
-        printf("\n\nFuncionario actualizado com sucesso!\n\n");
     }
-    else
-        printf("Funcionario nao encontrado!\n");
 
-    return data;
+    if (!(strcmp(BI, employeeData->BI) == 0))
+    {
+        if (strlen(BI) > 0)
+        {
+            setEmployeeBI(employeeData, BI);
+            printf("\nBI atualizado com sucesso!\n");
+            updated = 1;
+        }
+    }
+
+    if (!(employeeData->status == newState && (newState >= 0 && newState <= 1)))
+    {
+        setEmployeeStatus(employeeData, newState);
+        printf("\nEstado atualizado com sucesso!\n");
+        updated = 1;
+    }
+
+    if (!(employeeData->salary == newSalary))
+    {
+        setEmployeeSalary(employeeData, newSalary);
+        printf("\nSalario atualizado com sucesso!\n");
+        updated = 1;
+    }
+
+    if (!updated)
+    {
+        printf("\nDados nao atualizados!\n");
+    }
 }
 
 Employee *employeeDepartment(Employee *data, Department *data_department)
@@ -501,4 +503,9 @@ void setEmployeeStatus(Employee *employee, int value)
 void setEmployeeSalary(Employee *employee, float value)
 {
     employee->salary = value;
+}
+
+void setEmployeeBI(Employee *employee, char *value)
+{
+    employee->BI = value;
 }

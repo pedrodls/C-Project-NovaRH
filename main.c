@@ -13,7 +13,7 @@
 #define size_char_phone 10
 #define size_char_nif 14
 
-char *CONST_MONTH[] = {"Janeiro", "Fevereiro", "Marco", "Abril", "Maio", "Junho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"};
+char *CONST_MONTH[] = {"Janeiro", "Fevereiro", "Marco", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"};
 
 // Funçao pra pegar o menu principal
 void menuMain(Company *company, Department *department, Employee *employee, QueueYear *year);
@@ -685,8 +685,6 @@ void createEmployeeFromMain(Company *company, Department *department, Employee *
 
     fflush(stdin);
 
-    // myEmployee = createEmployee(myEmployee,1,1,"bruno mateus", 5000);
-
     printf("000000000000000000000000000000000000000000000000\n");
     printf("|            Adicionar Funcionario             |\n");
     printf("|              Dados Necessarios               |\n");
@@ -717,7 +715,7 @@ void createEmployeeFromMain(Company *company, Department *department, Employee *
     if (required(name) || invalidCardId(BI))
     {
         system("timeout -t 5\n\n");
-        return createEmployeeFromMain(company, department, employee, year);
+        return menuEmployee(company, department, employee, year);
     }
 
     employee = createEmployee(employee, getEmployeeCode(employee) + 1, BI, name, salary);
@@ -850,7 +848,58 @@ void updateEmployeeFromMain(Company *company, Department *department, Employee *
     printf("\nCodigo do Funcionario: ");
     scanf("%d", &code);
 
-    employee = updateEmployee(employee, code);
+    Employee *employeeData = findOneEmployee(employee, code);
+
+    if (!employee)
+    {
+        printf("Funcionario nao encontrado!\n");
+    }
+    else
+    {
+        char *newName = (char *)malloc(sizeof(size_char));
+        char *newBI = (char *)malloc(sizeof(size_char));
+        int newState;
+        float newSalary;
+
+        fflush(stdin);
+
+        describeColaborator(employeeData);
+
+        printf("\n\nNovo nome <apenas Enter para ignorar>: ");
+        fgets(newName, size_char, stdin);
+        newName[strcspn(newName, "\n")] = '\0';
+
+        fflush(stdin);
+
+        printf("Novo BI <apenas Enter para ignorar>: ");
+        fgets(newBI, size_char, stdin);
+        newBI[strcspn(newBI, "\n")] = '\0';
+
+        fflush(stdin);
+
+        printf("\nSalario: ");
+        scanf("%f", &newSalary);
+
+        printf("\nAtivar - 1 | Desactivar - 0: ");
+        scanf("%d", &newState);
+
+        if (findOneEmployeeByCardId(employee, newBI))
+            printf("Este funcionario[BI=%s] ja existe!\n", newBI);
+        else
+        {
+            if (strlen(newBI) > 0)
+            {
+                if (!invalidCardId(newBI))
+                {
+                    updateEmployee(employeeData, code, newBI, newName, newSalary, newState);
+                }
+            }
+            else
+            {
+                updateEmployee(employeeData, code, newBI, newName, newSalary, newState);
+            }
+        }
+    }
 
     system("timeout -t 5\n\n");
 
@@ -881,7 +930,7 @@ int invalidCardId(char *value)
 
     if (countLetter > 2 || strlen(value) != 14 || (!isalpha(value[9]) || !isalpha(value[10])))
     {
-        printf("\nCampos invalidos! ");
+        printf("\nCampos invalidos![BI] ");
 
         return 1;
     }

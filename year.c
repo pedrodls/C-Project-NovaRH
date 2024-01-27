@@ -3,7 +3,7 @@
 #include "year.h"
 #include "payroll.h"
 
-char *months[] = {"Janeiro", "Fevereiro", "Marco", "Abril", "Maio", "Junho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"};
+char *months[] = {"Janeiro", "Fevereiro", "Marco", "Abril", "Maio", "Junho", "Julho","Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"};
 
 struct month
 {

@@ -111,13 +111,13 @@ void createPayroll(Employee *employee, QueueYear *year)
     while (aux_employee)
     {
 
-        Payroll *newPayroll = (Payroll *)malloc(sizeof(Payroll *));
+        Payroll *newPayroll = (Payroll *)malloc(sizeof(Payroll));
 
         // Na folha de pagamento, não queremos fazer refência direta para que atualizando o funcionário, altera a folha de pagamento;
 
-        Employee *newEmployee = (Employee *)malloc(sizeof(Employee *));
+        Employee *newEmployee = (Employee *)malloc(sizeof(aux_employee));
 
-        if (!newPayroll || newEmployee)
+        if (!newPayroll || !newEmployee)
         {
             printf("Falha na Alocacao\n");
 
@@ -126,9 +126,12 @@ void createPayroll(Employee *employee, QueueYear *year)
             return;
         }
 
-        newEmployee = aux_employee;
+        setEmployeeBI(newEmployee, getEmployeeBI(aux_employee));
+        setEmployeeCode(newEmployee, getEmployeeCode(aux_employee));
+        setEmployeeName(newEmployee, getEmployeeName(aux_employee));
+        setEmployeeStatus(newEmployee, getEmployeeStatus(aux_employee));
 
-        if (getEmployeeStatus(aux_employee))
+        if (getEmployeeStatus(newEmployee))
         {
             newPayroll->bonus = NULL;
             newPayroll->employee = newEmployee;
@@ -211,6 +214,8 @@ void describeYearHistoryPayroll(Payroll *payroll, int year, Month *month)
 
         printf("Funcionario        : %s\n", getEmployeeName(aux->employee));
 
+        printf("Bilhete            : %s\n", getEmployeeBI(aux->employee));
+
         printf("\nFaltas \n");
         findAbsence(aux->absence);
 
@@ -261,7 +266,9 @@ void describePayroll(Payroll *payroll, Year *year, int type)
     while (aux)
     {
 
-        printf("Funcionario        : %s\n", getEmployeeName(aux->employee));
+        printf("Funcionario         : %s\n", getEmployeeName(aux->employee));
+
+        printf("BI                  : %s\n", getEmployeeBI(aux->employee));
 
         printf("\nFaltas \n");
         findAbsence(aux->absence);

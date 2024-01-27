@@ -21,8 +21,10 @@ Employee *findOneEmployee(Employee *data, int code);
 // Encontra todos departamentos
 void findAllEmployees(Employee *data, int type);
 
+Employee *findOneEmployeeByCardId(Employee *data, char *BI);
+
 // Atualiza o dado de um funcionário
-Employee *updateEmployee(Employee *employee, int code);
+void updateEmployee(Employee *employeeData, int code, char *BI, char *newName, float newSalary, int newState);
 
 Employee *deleteEmployee(Employee *data, int code);
 
@@ -73,5 +75,6 @@ void setEmployeeDepartment(Employee *employee, char *value);
 void setEmployeeCode(Employee *employee, int value);
 void setEmployeeStatus(Employee *employee, int value);
 void setEmployeeSalary(Employee *employee, float value);
+void setEmployeeBI(Employee *employee, char *value);
 
 void findAllAbsenceFromPayroll(Absence *absence);
