@@ -9,24 +9,12 @@
 
 #define size_char 100
 
-/* employee
-{
-    int code, status;
-    char *name;
-    char *cargo;
-    char *conta;
-    int idade;
-    float salary;
-    StackBonus *bonus;
-    StackAbsence *absence;
-    Department *department;
-    Employee *next;
-};*/
-
 struct employee
 {
-    int code, status;
-    char *BI;
+    int code;
+    int status;
+    int age;
+    char *IBAN;
     char *name;
     float salary;
     StackBonus *bonus;
@@ -45,7 +33,7 @@ void describeColaborator(Employee *data)
 {
     if (data)
     {
-        printf("\nCodigo: %d,\nBI: %s, \nNome: %s,\nSalario: %.2f,\nEstado: %s\nDepartamento: %s\n\n", getEmployeeCode(data), getEmployeeBI(data), getEmployeeName(data), getEmployeeSalary(data), getEmployeeStatus(data) ? "Ativo" : "Desativado", data->department ? getDepartmentName(data->department) : "NULL");
+        printf("\nCodigo: %d,\nIBAN: %s, \nNome: %s,\nIdade: %d,\nSalario: %.2f,\nEstado: %s\nDepartamento: %s\n\n", getEmployeeCode(data), getEmployeeIBAN(data), getEmployeeName(data), getEmployeeAge(data), getEmployeeSalary(data), getEmployeeStatus(data) ? "Ativo" : "Desativado", data->department ? getDepartmentName(data->department) : "NULL");
 
         printf("\nBonus de %s: \n", getEmployeeName(data));
         findAllBonus(data);
@@ -69,15 +57,15 @@ void simpleDescribeColaborator(Employee *data)
 }
 
 // Criar um Funcionario
-Employee *createEmployee(Employee *data, int code, char *BI, char *name, float salary)
+Employee *createEmployee(Employee *data, int code, char IBAN[], char name[], float salary, int age)
 {
-    Employee *auxEmployee = findOneEmployeeByCardId(data, BI);
+    char *newIban = (char *)malloc(size_char);
 
-    if (auxEmployee)
-    {
-        printf("Este funcionario[BI=%s] ja existe!\n", BI);
-        return data;
-    }
+    char *newName = (char *)malloc(size_char);
+
+    newIban = IBAN;
+
+    newName = name;
 
     Employee *newEmployee = (Employee *)malloc(sizeof(Employee));
 
@@ -88,10 +76,11 @@ Employee *createEmployee(Employee *data, int code, char *BI, char *name, float s
     }
 
     // Inserção no Início
+    newEmployee->age = age;
     newEmployee->code = code;
     newEmployee->status = 1;
-    newEmployee->BI = BI;
-    newEmployee->name = name;
+    newEmployee->IBAN = newIban;
+    newEmployee->name = newName;
     newEmployee->salary = salary;
     newEmployee->department = NULL;
     newEmployee->bonus = initBonus();
@@ -108,16 +97,6 @@ Employee *findOneEmployee(Employee *data, int code)
     Employee *aux = data;
 
     while (aux && aux->code != code)
-        aux = aux->next;
-
-    return aux;
-}
-
-Employee *findOneEmployeeByCardId(Employee *data, char *BI)
-{
-    Employee *aux = data;
-
-    while (aux && !(strcmp(strlwr(aux->BI), strlwr(BI)) == 0))
         aux = aux->next;
 
     return aux;
@@ -197,7 +176,7 @@ void findAllAbsenceFromPayroll(Absence *absence)
 }
 
 // Atualiza o dado de um funcionário
-void updateEmployee(Employee *employeeData, int code, char *BI, char *newName, float newSalary, int newState)
+void updateEmployee(Employee *employeeData, int code, char *IBAN, char *newName, float newSalary, int newState, int age)
 {
     int updated = 0;
 
@@ -211,12 +190,12 @@ void updateEmployee(Employee *employeeData, int code, char *BI, char *newName, f
         }
     }
 
-    if (!(strcmp(BI, employeeData->BI) == 0))
+    if (!(strcmp(IBAN, employeeData->IBAN) == 0))
     {
-        if (strlen(BI) > 0)
+        if (strlen(IBAN) > 0)
         {
-            setEmployeeBI(employeeData, BI);
-            printf("\nBI atualizado com sucesso!\n");
+            setEmployeeIBAN(employeeData, IBAN);
+            printf("\nIBAN atualizado com sucesso!\n");
             updated = 1;
         }
     }
@@ -235,10 +214,30 @@ void updateEmployee(Employee *employeeData, int code, char *BI, char *newName, f
         updated = 1;
     }
 
+    if (!(employeeData->age == age))
+    {
+        setEmployeeAge(employeeData, age);
+        printf("\nIdade atualizada com sucesso!\n");
+        updated = 1;
+    }
+
     if (!updated)
     {
         printf("\nDados nao atualizados!\n");
     }
+}
+
+void updateEmployeeAge(Employee *employees){
+
+    Employee *aux = employees;
+
+    while (aux)
+    {
+        aux->age = aux->age + 1;
+
+        aux = aux->next; 
+    }
+    
 }
 
 Employee *employeeDepartment(Employee *data, Department *data_department)
@@ -451,9 +450,9 @@ char *getEmployeeName(Employee *employee)
     return employee->name;
 }
 
-char *getEmployeeBI(Employee *employee)
+char *getEmployeeIBAN(Employee *employee)
 {
-    return employee->BI;
+    return employee->IBAN;
 }
 
 // retorna o código do funcionário
@@ -466,6 +465,13 @@ int getEmployeeStatus(Employee *employee)
 {
     return employee->status;
 }
+
+// Pega a idade de um colaborador
+int getEmployeeAge(Employee *employee)
+{
+    return employee->age;
+}
+
 // retorna o nif da empresa
 float getEmployeeSalary(Employee *employee)
 {
@@ -505,7 +511,12 @@ void setEmployeeSalary(Employee *employee, float value)
     employee->salary = value;
 }
 
-void setEmployeeBI(Employee *employee, char *value)
+void setEmployeeIBAN(Employee *employee, char *value)
 {
-    employee->BI = value;
+    employee->IBAN = value;
+}
+
+void setEmployeeAge(Employee *employee, int value)
+{
+    employee->age = value;
 }

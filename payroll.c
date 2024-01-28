@@ -20,9 +20,10 @@ struct payroll
     float inss;
     float irt;
     float liquidSalary;
+    char *name;
+    char *iban;
     Bonus *bonus;
     Absence *absence;
-    Employee *employee;
     Payroll *next;
 };
 
@@ -92,6 +93,8 @@ float getBonusTotalValue(Bonus *bonus, Employee *employee, Payroll *newPayroll)
     return ((getEmployeeSalary(auxEmployee) * count) / 100);
 }
 
+// Na folha de pagamento, não queremos fazer refência direta para que atualizando o funcionário, não altere a folha de pagamento;
+
 // Cria folha de pagamento
 
 void createPayroll(Employee *employee, QueueYear *year)
@@ -113,11 +116,7 @@ void createPayroll(Employee *employee, QueueYear *year)
 
         Payroll *newPayroll = (Payroll *)malloc(sizeof(Payroll));
 
-        // Na folha de pagamento, não queremos fazer refência direta para que atualizando o funcionário, altera a folha de pagamento;
-
-        Employee *newEmployee = (Employee *)malloc(sizeof(aux_employee));
-
-        if (!newPayroll || !newEmployee)
+        if (!newPayroll)
         {
             printf("Falha na Alocacao\n");
 
@@ -126,15 +125,11 @@ void createPayroll(Employee *employee, QueueYear *year)
             return;
         }
 
-        setEmployeeBI(newEmployee, getEmployeeBI(aux_employee));
-        setEmployeeCode(newEmployee, getEmployeeCode(aux_employee));
-        setEmployeeName(newEmployee, getEmployeeName(aux_employee));
-        setEmployeeStatus(newEmployee, getEmployeeStatus(aux_employee));
-
-        if (getEmployeeStatus(newEmployee))
+        if (getEmployeeStatus(aux_employee))
         {
             newPayroll->bonus = NULL;
-            newPayroll->employee = newEmployee;
+            newPayroll->iban = getEmployeeIBAN(aux_employee);
+            newPayroll->name = getEmployeeName(aux_employee);
             newPayroll->absence = NULL;
             newPayroll->next = NULL;
 
@@ -183,6 +178,8 @@ void createPayroll(Employee *employee, QueueYear *year)
         year = enqueueYear(year, getYear(getCurrentYear(year)) + 1);
 
         enqueueMonth(getQueueMonth(year));
+
+        updateEmployeeAge(employee);
     }
     else
         enqueueMonth(getQueueMonth(year));
@@ -212,9 +209,9 @@ void describeYearHistoryPayroll(Payroll *payroll, int year, Month *month)
     while (aux)
     {
 
-        printf("Funcionario        : %s\n", getEmployeeName(aux->employee));
+        printf("Funcionario        : %s\n", aux->name);
 
-        printf("Bilhete            : %s\n", getEmployeeBI(aux->employee));
+        printf("IBAN               : %s\n", aux->iban);
 
         printf("\nFaltas \n");
         findAbsence(aux->absence);
@@ -266,9 +263,9 @@ void describePayroll(Payroll *payroll, Year *year, int type)
     while (aux)
     {
 
-        printf("Funcionario         : %s\n", getEmployeeName(aux->employee));
+        printf("Funcionario         : %s\n", aux->name);
 
-        printf("BI                  : %s\n", getEmployeeBI(aux->employee));
+        printf("IBAN                : %s\n", aux->iban);
 
         printf("\nFaltas \n");
         findAbsence(aux->absence);

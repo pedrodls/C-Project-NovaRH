@@ -13,7 +13,7 @@ void describeColaborator(Employee *data);
 void simpleDescribeColaborator(Employee *data);
 
 // Criar um Funcionario
-Employee *createEmployee(Employee *data, int code, char *BI, char *name, float salary);
+Employee *createEmployee(Employee *data, int code, char *IBAN, char *name, float salary, int age);
 
 // Encontra um Funcionario
 Employee *findOneEmployee(Employee *data, int code);
@@ -21,10 +21,11 @@ Employee *findOneEmployee(Employee *data, int code);
 // Encontra todos departamentos
 void findAllEmployees(Employee *data, int type);
 
-Employee *findOneEmployeeByCardId(Employee *data, char *BI);
-
 // Atualiza o dado de um funcionário
-void updateEmployee(Employee *employeeData, int code, char *BI, char *newName, float newSalary, int newState);
+void updateEmployee(Employee *employeeData, int code, char *IBAN, char *newName, float newSalary, int newState, int age);
+
+// Atualiza a idade de todos funcionários
+void updateEmployeeAge(Employee *employees);
 
 Employee *deleteEmployee(Employee *data, int code);
 
@@ -58,8 +59,11 @@ int getEmployeeStatus(Employee *employee);
 // retorna o nif da empresa
 float getEmployeeSalary(Employee *employee);
 
-//retorna BI do funcionário
-char *getEmployeeBI(Employee *employee);
+//retorna IBAN do funcionário
+char *getEmployeeIBAN(Employee *employee);
+
+//Pega a idade de um colaborador
+int getEmployeeAge(Employee *employee);
 
 StackAbsence *getStackAbsence(Employee *employee);
 
@@ -75,6 +79,7 @@ void setEmployeeDepartment(Employee *employee, char *value);
 void setEmployeeCode(Employee *employee, int value);
 void setEmployeeStatus(Employee *employee, int value);
 void setEmployeeSalary(Employee *employee, float value);
-void setEmployeeBI(Employee *employee, char *value);
+void setEmployeeIBAN(Employee *employee, char *value);
+void setEmployeeAge(Employee *employee, int value);
 
 void findAllAbsenceFromPayroll(Absence *absence);
