@@ -13,13 +13,19 @@ void describeColaborator(Employee *data);
 void simpleDescribeColaborator(Employee *data);
 
 // Criar um Funcionario
-Employee *createEmployee(Employee *data, int code, char *IBAN, char *name, float salary, int age);
+Employee *createEmployee(Employee *data, int code, char IBAN[], char name[], float salary, int age);
 
 // Encontra um Funcionario
 Employee *findOneEmployee(Employee *data, int code);
 
 // Encontra todos departamentos
 void findAllEmployees(Employee *data, int type);
+
+// Encontra todos os funcionários desativados
+void findAllDisabledEmployees(Employee *data);
+
+// Encontra os funcionarios na reforma
+void findAllOldEmployees(Employee *data);
 
 // Atualiza o dado de um funcionário
 void updateEmployee(Employee *employeeData, int code, char *IBAN, char *newName, float newSalary, int newState, int age);
@@ -59,10 +65,10 @@ int getEmployeeStatus(Employee *employee);
 // retorna o nif da empresa
 float getEmployeeSalary(Employee *employee);
 
-//retorna IBAN do funcionário
+// retorna IBAN do funcionário
 char *getEmployeeIBAN(Employee *employee);
 
-//Pega a idade de um colaborador
+// Pega a idade de um colaborador
 int getEmployeeAge(Employee *employee);
 
 StackAbsence *getStackAbsence(Employee *employee);

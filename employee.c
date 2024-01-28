@@ -113,14 +113,99 @@ void findAllEmployees(Employee *data, int type)
 
         printf("Lista de Funcionarios\n\n");
 
-        while (aux && getEmployeeStatus(aux))
+        while (aux)
         {
-            !type ? describeColaborator(aux)
-                  : simpleDescribeColaborator(aux);
+            if (getEmployeeStatus(aux))
+            {
+                !type ? describeColaborator(aux)
+                      : simpleDescribeColaborator(aux);
+            }
 
             aux = aux->next;
         }
         printf("\n\n");
+    }
+}
+
+// Encontra todos funcionarios desabilitados
+
+void findAllDisabledEmployees(Employee *data)
+{
+    if (!data)
+        printf("Lista de Funcionarios Vazia\n");
+    else
+    {
+        Employee *aux = data;
+
+        char op;
+        int employeeCode, cont = 0;
+
+        printf("Lista de Funcionarios Desativados\n\n");
+
+        while (aux && !getEmployeeStatus(aux))
+        {
+            describeColaborator(aux);
+            cont++;
+            aux = aux->next;
+        }
+
+        if (cont > 0)
+        {
+            printf("\n\n");
+            printf("1 - Habilitar\n");
+            printf("2 - Sair\n");
+
+            fflush(stdin);
+            printf("Opcao: ");
+
+            scanf("%c", &op);
+
+            printf("\n\n");
+
+            switch (op)
+            {
+            case '1':
+                printf("Codigo do funcionario: ");
+                scanf("%d", &employeeCode);
+
+                aux = findOneEmployee(data, employeeCode);
+
+                if (aux)
+                {
+                    setEmployeeStatus(data, 1);
+                    printf("Funcionario atualizado com sucesso!");
+                }
+                else
+                    printf("Funcionario nao encontrado!");
+
+                break;
+
+            default:
+                return;
+                break;
+            }
+        }
+    }
+}
+
+void findAllOldEmployees(Employee *data)
+{
+    if (!data)
+        printf("Lista de Funcionarios Vazia\n");
+    else
+    {
+        Employee *aux = data;
+
+        char op;
+        int employeeCode;
+
+        printf("Lista de Funcionarios Na Reforma\n\n");
+
+        while (aux && getEmployeeAge(aux) > 60)
+        {
+            describeColaborator(aux);
+            aux = aux->next;
+        }
     }
 }
 
@@ -227,7 +312,8 @@ void updateEmployee(Employee *employeeData, int code, char *IBAN, char *newName,
     }
 }
 
-void updateEmployeeAge(Employee *employees){
+void updateEmployeeAge(Employee *employees)
+{
 
     Employee *aux = employees;
 
@@ -235,9 +321,8 @@ void updateEmployeeAge(Employee *employees){
     {
         aux->age = aux->age + 1;
 
-        aux = aux->next; 
+        aux = aux->next;
     }
-    
 }
 
 Employee *employeeDepartment(Employee *data, Department *data_department)

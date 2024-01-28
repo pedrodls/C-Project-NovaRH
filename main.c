@@ -614,12 +614,19 @@ void updateDepartmentFromMain(Company *company, Department *department, Employee
     findAllDepartments(department);
     printf("000000000000000000000000000000000000000000000000\n\n");
 
-    printf("Codigo do Departmento: ");
-    scanf("%d", &code);
+    if (!getDepartmentCode(department))
+    {
+        system("timeout -t 5");
+    }
+    else
+    {
+        printf("Codigo do Departmento: ");
+        scanf("%d", &code);
 
-    department = updateDepartment(department, code);
+        department = updateDepartment(department, code);
 
-    system("timeout -t 5\n\n");
+        system("timeout -t 5\n\n");
+    }
 
     return menuDepartment(company, department, employee, year);
 }
@@ -639,7 +646,8 @@ void menuEmployee(Company *company, Department *department, Employee *employee, 
     printf("| 2 - ACTUALIZAR FUNCIONARIO                     |\n");
     printf("| 3 - LISTAR FUNCIONARIOS                        |\n");
     printf("| 4 - VINCULAR FUNCIONARIO A DEPARTAMENTO        |\n");
-    printf("| 5 - ELIMINAR FUNCIONARIO                       |\n");
+    printf("| 5 - REFORMADOS                                 |\n");
+    printf("| 6 - DESATIVADOS                                |\n");
     printf("| 0 - SAIR                                       |\n");
     printf("000000000000000000000000000000000000000000000000\n\nOpcao: ");
 
@@ -670,6 +678,18 @@ void menuEmployee(Company *company, Department *department, Employee *employee, 
         system("pause>nul");
         menuEmployee(company, department, employee, year);
         break;
+    case '5':
+        findAllOldEmployees(employee);
+        printf("\nClique <Enter> para Continuar\n");
+        system("pause>nul");
+        menuEmployee(company, department, employee, year);
+        break;
+    case '6':
+        findAllDisabledEmployees(employee);
+        printf("\nClique <Enter> para Continuar\n");
+        system("pause>nul");
+        menuEmployee(company, department, employee, year);
+        break;
     case '0':
         menuCompany(company, department, employee, year);
         break;
@@ -686,7 +706,7 @@ void createEmployeeFromMain(Company *company, Department *department, Employee *
 
     char name[size];
     char IBAN[size];
-    int age = 0;
+    int age;
 
     float salary;
 

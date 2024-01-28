@@ -14,6 +14,7 @@
 
 struct payroll
 {
+    int employeeCode;
     float bonusValue;
     float discount;
     float baseSalary;
@@ -130,6 +131,7 @@ void createPayroll(Employee *employee, QueueYear *year)
             newPayroll->bonus = NULL;
             newPayroll->iban = getEmployeeIBAN(aux_employee);
             newPayroll->name = getEmployeeName(aux_employee);
+            newPayroll->employeeCode = getEmployeeCode(aux_employee);
             newPayroll->absence = NULL;
             newPayroll->next = NULL;
 
@@ -166,25 +168,36 @@ void createPayroll(Employee *employee, QueueYear *year)
             }
         }
 
+        if (getEmployeeAge(aux_employee) > 60)
+            setEmployeeStatus(aux_employee, 0);
+
         aux_employee = getNextEmployee(aux_employee);
     }
 
     Month *auxMonth = getCurrentMonth(getQueueMonth(year));
 
-    setPayrollInCurrentMonth(oldPayroll, auxMonth);
-
-    if (getMonthCode(auxMonth) == 11)
+    if (oldPayroll)
     {
-        year = enqueueYear(year, getYear(getCurrentYear(year)) + 1);
+        setPayrollInCurrentMonth(oldPayroll, auxMonth);
 
-        enqueueMonth(getQueueMonth(year));
+        if (getMonthCode(auxMonth) == 11)
+        {
+            year = enqueueYear(year, getYear(getCurrentYear(year)) + 1);
 
-        updateEmployeeAge(employee);
+            enqueueMonth(getQueueMonth(year));
+
+            updateEmployeeAge(employee);
+        }
+        else
+            enqueueMonth(getQueueMonth(year));
+
+        printf("Folha de Pagamento criada com sucesso!\n");
     }
     else
-        enqueueMonth(getQueueMonth(year));
-
-    printf("Folha de Pagamento criada com sucesso!\n");
+    {
+        printf("Folha de Pagamento nao criada!\n");
+        printf("[Sem Colaboradores que cumprem com requisitos]!\n");
+    }
 }
 
 void describeYearHistoryPayroll(Payroll *payroll, int year, Month *month)
@@ -209,7 +222,7 @@ void describeYearHistoryPayroll(Payroll *payroll, int year, Month *month)
     while (aux)
     {
 
-        printf("Funcionario        : %s\n", aux->name);
+        printf("Funcionario[%d]    : %s\n", aux->employeeCode, aux->name);
 
         printf("IBAN               : %s\n", aux->iban);
 
@@ -263,7 +276,7 @@ void describePayroll(Payroll *payroll, Year *year, int type)
     while (aux)
     {
 
-        printf("Funcionario         : %s\n", aux->name);
+        printf("Funcionario[%d]    : %s\n", aux->employeeCode, aux->name);
 
         printf("IBAN                : %s\n", aux->iban);
 
