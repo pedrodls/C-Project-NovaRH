@@ -4,7 +4,7 @@
 #include "payroll.h"
 
 char *months[] = {"Janeiro", "Fevereiro", "Marco", "Abril", "Maio", "Junho", "Julho","Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"};
-
+//definição da struct month
 struct month
 {
     char *name;
@@ -13,12 +13,12 @@ struct month
     struct month *prev;
     Payroll *payrolls;
 };
-
+//fila do mês
 struct queueMonth
 {
     Month *startMonth, *endMonth;
 };
-
+//definição da struct year
 struct year
 {
     int year;
@@ -28,7 +28,7 @@ struct year
 
     QueueMonth *months;
 };
-
+//fila do year
 struct queueYear
 {
     Year *startYear, *endYear;
@@ -139,7 +139,7 @@ QueueYear *enqueueYear(QueueYear *queueYear, int year)
     return queueYear;
 }
 
-// cria um novo ano definindo também os meses
+// cria um novo mes
 QueueMonth *enqueueMonth(QueueMonth *queueMonth)
 {
 
@@ -181,54 +181,54 @@ QueueMonth *enqueueMonth(QueueMonth *queueMonth)
     return queueMonth;
 }
 
-// recebe a fila de um ano
+// recebe a fila de um ano, retorna a fila do mês do último ano
 QueueMonth *getQueueMonth(QueueYear *year)
 {
     // vou precisar do endYear dessa fila e retornar o QueueMonth
     return year->endYear->months;
 }
-
+//retorna a fila do mês de determinado ano
 QueueMonth *getQueueMonthFromYear(Year *year)
 {
     // Traz os meses de um ano
     return year->months;
 }
-
+//retorna o ano corrente
 Year *getCurrentYear(QueueYear *year)
 {
     return year->endYear;
 }
-
+//retorna o valor do ano
 int getYear(Year *year)
 {
     return year->year;
 }
-
+//retorna o mês corrente
 Month *getCurrentMonth(QueueMonth *month)
 {
     return month->endMonth;
 }
-
+//retorna o més anterior ao corrente
 Month *getPreviousMonth(QueueMonth *month)
 {
     return month->endMonth->prev;
 }
-
+//retorna o ano anterior ao corrente
 Year *getPreviousYear(QueueYear *year)
 {
     return year->endYear->prev;
 }
-
+//retorna o nome do mês
 char *getMonthName(Month *month)
 {
     return month->name;
 }
-
+//retorna o código do més
 int getMonthCode(Month *month)
 {
     return month->code;
 }
-
+//retorna a folha de pagamento de determinado mês
 Payroll *getLastPayroll(Month *month)
 {
 
@@ -241,12 +241,12 @@ Payroll *getLastPayroll(Month *month)
 
     return aux->payrolls;
 }
-
+//actualiza o payroll do mês
 void setPayrollInCurrentMonth(Payroll *payroll, Month *month)
 {
     month->payrolls = payroll;
 }
-
+//apresenta todos os anos q foram efectuados folha de salário
 void getYearHistory(QueueYear *queueYear)
 {
     Year *aux = queueYear->startYear;
