@@ -11,7 +11,7 @@
 #define IRT_MAX 25
 #define IRT 13
 #define INSS 3
-
+//definição da struct folha de salário
 struct payroll
 {
     int employeeCode;
@@ -27,7 +27,7 @@ struct payroll
     Absence *absence;
     Payroll *next;
 };
-
+//retorna o valor total dos descontos
 float getDiscountTotalValue(Absence *absence, Employee *employee, Payroll *newPayroll)
 {
     int count = 0;
@@ -60,7 +60,7 @@ float getDiscountTotalValue(Absence *absence, Employee *employee, Payroll *newPa
 
     return ((getEmployeeSalary(auxEmployee) * (count * DISCOUNT_FAULT) / 100));
 }
-
+//retorna o valor total dos bonus
 float getBonusTotalValue(Bonus *bonus, Employee *employee, Payroll *newPayroll)
 {
     int count = 0;
@@ -199,7 +199,7 @@ void createPayroll(Employee *employee, QueueYear *year)
         printf("[Sem Colaboradores que cumprem com requisitos]!\n");
     }
 }
-
+//apresenta a folha de salário relative a um ano e mês específico
 void describeYearHistoryPayroll(Payroll *payroll, int year, Month *month)
 {
     Payroll *aux = payroll;
@@ -249,7 +249,7 @@ void describeYearHistoryPayroll(Payroll *payroll, int year, Month *month)
         aux = aux->next;
     }
 }
-
+//apresenta a folha de salário, a última folha de salário
 void describePayroll(Payroll *payroll, Year *year, int type)
 {
     Payroll *aux = payroll;
@@ -303,12 +303,12 @@ void describePayroll(Payroll *payroll, Year *year, int type)
         aux = aux->next;
     }
 }
-
+//retorna a próxima folha de salário da lista
 Payroll *getNextPayroll(Payroll *payroll)
 {
     return payroll->next;
 }
-
+//retorna o ponteiro da falta que constará na losta da folha
 Absence *getAbsenceFromPayroll(Payroll *payroll)
 {
     return payroll->absence;
