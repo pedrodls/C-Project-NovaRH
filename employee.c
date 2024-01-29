@@ -8,7 +8,7 @@
 #include <string.h>
 
 #define size_char 100
-
+//definição da struct funcionário
 struct employee
 {
     int code;
@@ -22,7 +22,7 @@ struct employee
     Department *department;
     Employee *next;
 };
-
+//ponteiro da lista funcionário inicializa com NULL
 Employee *initEmployee()
 {
     return NULL;
@@ -187,7 +187,7 @@ void findAllDisabledEmployees(Employee *data)
         }
     }
 }
-
+//apresenta todos os funcionários aposentados
 void findAllOldEmployees(Employee *data)
 {
     if (!data)
@@ -242,7 +242,7 @@ void findAllAbsence(Employee *data)
         }
     }
 }
-
+//lista as faltas de uma lista do payroll
 void findAllAbsenceFromPayroll(Absence *absence)
 {
     Absence *aux = absence;
@@ -311,7 +311,7 @@ void updateEmployee(Employee *employeeData, int code, char *IBAN, char *newName,
         printf("\nDados nao atualizados!\n");
     }
 }
-
+//actualiza a idade de um funcionário
 void updateEmployeeAge(Employee *employees)
 {
 
@@ -324,7 +324,7 @@ void updateEmployeeAge(Employee *employees)
         aux = aux->next;
     }
 }
-
+//vincula o funcionário ao departamento
 Employee *employeeDepartment(Employee *data, Department *data_department)
 {
     if (!data)
@@ -389,7 +389,7 @@ Employee *employeeDepartment(Employee *data, Department *data_department)
 
     return data;
 }
-
+//elimina um funcionário da losta
 Employee *deleteEmployee(Employee *data, int code)
 {
     Employee *aux = data, *ant = NULL;
@@ -489,7 +489,7 @@ Employee *deleteBonus(Employee *employee, int code)
 
     return employee;
 }
-
+//cria faltas para o funcionario 
 Employee *createAbsence(Employee *employee, int code, char *desc)
 {
     Employee *aux_employee = findOneEmployee(employee, code); // Localizando funcionario
@@ -503,7 +503,7 @@ Employee *createAbsence(Employee *employee, int code, char *desc)
 
     return employee;
 }
-// elimina a ultima féria do funcionário
+// elimina a ultima falta do funcionário
 Employee *deleteAbsence(Employee *employee, int code)
 {
     Employee *aux_employee = findOneEmployee(employee, code); // Localizando funcionario
@@ -529,17 +529,17 @@ Employee *deleteAbsence(Employee *employee, int code)
 
     return employee;
 }
-
+//Métodos Getters
+//retorna o nome do funcionário
 char *getEmployeeName(Employee *employee)
 {
     return employee->name;
 }
-
+//retorna o iban do funcionário
 char *getEmployeeIBAN(Employee *employee)
 {
     return employee->IBAN;
 }
-
 // retorna o código do funcionário
 int getEmployeeCode(Employee *employee)
 {
@@ -550,57 +550,59 @@ int getEmployeeStatus(Employee *employee)
 {
     return employee->status;
 }
-
 // Pega a idade de um colaborador
 int getEmployeeAge(Employee *employee)
 {
     return employee->age;
 }
-
-// retorna o nif da empresa
+// retorna o salário do funcionário
 float getEmployeeSalary(Employee *employee)
 {
     return employee->salary;
 }
-
+//retorn a pilha de falta do funcionário 
 StackAbsence *getStackAbsence(Employee *employee)
 {
     return employee->absence;
 }
-
+//retorna a pilha de bonus do funcionário 
 StackBonus *getStackBonus(Employee *employee)
 {
     return employee->bonus;
 }
-
+//retorna o próximo endereço do funcionário 
 Employee *getNextEmployee(Employee *employee)
 {
     return employee->next;
 }
 
 // Mètodos Setters
+//actualiza o nome do funcionário 
 void setEmployeeName(Employee *employee, char *value)
 {
     employee->name = value;
 }
+//actualiza o código do funcionário
 void setEmployeeCode(Employee *employee, int value)
 {
     employee->code = value;
 }
+//actualiza o estado do funcionário
 void setEmployeeStatus(Employee *employee, int value)
 {
     employee->status = value;
 }
+//actualiza o salário do funcionário
 void setEmployeeSalary(Employee *employee, float value)
 {
     employee->salary = value;
 }
-
+//actualiza o iban do funcionário
 void setEmployeeIBAN(Employee *employee, char *value)
 {
     employee->IBAN = value;
 }
-
+//actualiza a idade do funcionário
 void setEmployeeAge(Employee *employee, int value)
 {
     employee->age = value;
