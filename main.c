@@ -12,7 +12,7 @@
 #define size_char 100
 #define size_char_phone 10
 #define size_char_nif 14
-
+//constante dos meses
 char *CONST_MONTH[] = {"Janeiro", "Fevereiro", "Marco", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"};
 
 // Funçao pra pegar o menu principal
@@ -59,20 +59,20 @@ void updateDepartmentFromMain(Company *company, Department *department, Employee
 
 //-------------------FUNCIONÁRIOS--------------------------------------
 void menuEmployee(Company *company, Department *department, Employee *employee, QueueYear *year);
-
+//funcão da lógica de criação de funcionário
 void createEmployeeFromMain(Company *company, Department *department, Employee *employee, QueueYear *year);
-
+//função da lógica de criação de funcionário
 void updateEmployeeFromMain(Company *company, Department *department, Employee *employee, QueueYear *year);
-
+//função da lógica de criação de bonus
 void createBonusFromMain(Employee *employee);
-
+//função da lógica de criação de faltas
 void createAbsenceFromMain(Employee *employee);
 
 //---------------------------FOLHA DE PAGAMENTOS------------------------------
 void menuPayroll(Company *company, Department *department, Employee *employee, QueueYear *year);
 
 int main()
-{
+{  //Inicialização das entidades
     Company *myCompany = initCompany();
 
     Department *myDepartments = initDepartment();
@@ -80,13 +80,13 @@ int main()
     Employee *myEmployees = initEmployee();
 
     QueueYear *year = initYear();
-
+    //----------------------------------
     // Cadastro do Ano
     year = enqueueYear(year, 2024);
     // Cadastro do Primeiro Mês do Ano
     enqueueMonth(getQueueMonth(year));
 
-    // Função para pegar dados da empresa apartir do ficheiro
+    // Função para pegar dados da empresa apartir do ficheiro caso exista
     readCompany(myCompany);
 
     menuMain(myCompany, myDepartments, myEmployees, year);
@@ -933,7 +933,7 @@ void updateEmployeeFromMain(Company *company, Department *department, Employee *
 
     return menuEmployee(company, department, employee, year);
 }
-
+//validação do iban
 int validateIBAN(char *value)
 {
     int countLetter = 0;
@@ -952,7 +952,7 @@ int validateIBAN(char *value)
 
     return 1;
 }
-
+//validação da idade
 int validateAge(int age)
 {
 
@@ -965,7 +965,7 @@ int validateAge(int age)
 
     return 0;
 }
-
+//campo obrigatórios
 int required(char *value)
 {
 
@@ -978,7 +978,7 @@ int required(char *value)
 
     return 0;
 }
-
+//Menu da folha de Pagamento
 void menuPayroll(Company *company, Department *department, Employee *employee, QueueYear *year)
 {
     system("cls");
