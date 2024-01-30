@@ -33,7 +33,7 @@ void findAllDisabledEmployees(Employee *data);
 void findAllOldEmployees(Employee *data);
 
 // Atualiza o dado de um funcionário
-void updateEmployee(Employee *employeeData, int code, char *IBAN, char *newName, float newSalary, int newState, int age);
+void updateEmployee(Employee *employeeData, int code, char *IBAN, char *newName, float newSalary, int newState, int age, char *bi, char *gender);
 
 // Atualiza a idade de todos funcionários
 void updateEmployeeAge(Employee *employees);

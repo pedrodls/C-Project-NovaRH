@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 #define size_char 100
 // definição da struct funcionário
@@ -92,7 +93,7 @@ Employee *createEmployee(Employee *data, int code, char IBAN[], char name[], flo
     newEmployee->status = 1;
     newEmployee->IBAN = newIban;
     newEmployee->BI = newBI;
-    newEmployee->gender = gender;
+    newEmployee->gender = strupr(newGender);
     newEmployee->name = newName;
     newEmployee->salary = salary;
     newEmployee->department = NULL;
@@ -285,7 +286,7 @@ void findAllAbsenceFromPayroll(Absence *absence)
 }
 
 // Atualiza o dado de um funcionário
-void updateEmployee(Employee *employeeData, int code, char *IBAN, char *newName, float newSalary, int newState, int age)
+void updateEmployee(Employee *employeeData, int code, char *IBAN, char *newName, float newSalary, int newState, int age, char *bi, char *gender)
 {
     int updated = 0;
 
@@ -305,6 +306,26 @@ void updateEmployee(Employee *employeeData, int code, char *IBAN, char *newName,
         {
             setEmployeeIBAN(employeeData, IBAN);
             printf("\nIBAN atualizado com sucesso!\n");
+            updated = 1;
+        }
+    }
+
+    if (!(strcmp(bi, employeeData->BI) == 0))
+    {
+        if (strlen(bi) > 0)
+        {
+            setEmployeeBI(employeeData, bi);
+            printf("\nBI atualizado com sucesso!\n");
+            updated = 1;
+        }
+    }
+
+    if (!(strcmp(gender, employeeData->gender) == 0))
+    {
+        if (strlen(gender) > 0)
+        {
+            setEmployeeIBAN(employeeData, gender);
+            printf("\nGenero atualizado com sucesso!\n");
             updated = 1;
         }
     }

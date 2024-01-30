@@ -50,6 +50,12 @@ int validateGender(char *value);
 // Função para validar BI
 int invalidIdCard(char *value);
 
+// Função para validar Estado do Funcionario
+int validateState(int state);
+
+// Função para validar Salário do Funcionario
+int validateSalary(float salary);
+
 // Funcao pra mostrar dados da empresa
 void showCompanyDataFromMain(Company *company, Department *department, Employee *employee, QueueYear *year);
 
@@ -775,9 +781,9 @@ void createEmployeeFromMain(Company *company, Department *department, Employee *
         return menuEmployee(company, department, employee, year);
     }
 
-    if (required(name) || !validateIBAN(IBAN) || validateAge(age) || invalidIdCard(BI) || validateGender(gender))
+    if (required(name) || !validateIBAN(IBAN) || validateAge(age) || invalidIdCard(BI) || validateGender(gender) || validateSalary(salary))
     {
-        system("timeout -t 5\n\n");
+        system("\n\ntimeout -t 5\n\n");
         return menuEmployee(company, department, employee, year);
     }
 
@@ -899,6 +905,8 @@ void updateEmployeeFromMain(Company *company, Department *department, Employee *
     printf("000000000000000000000000000000000000000000000000\n");
     printf("|            Atualizar Funcionario             |\n");
     printf("|              Dados Necessarios               |\n");
+    printf("| BI                                           |\n");
+    printf("| Genero - M | F                               |\n");
     printf("| Nome                                         |\n");
     printf("| Salario                                      |\n");
     printf("| Conta(IBAN)                                  |\n");
@@ -918,12 +926,31 @@ void updateEmployeeFromMain(Company *company, Department *department, Employee *
     {
         char name[size];
         char IBAN[size];
+        char BI[size];
+        char gender[size];
         int age = 0, state;
         float salary;
+        int noError = 1;
 
         fflush(stdin);
 
         describeColaborator(employeeData);
+
+        printf("\n\nNovo BI <apenas Enter para ignorar>: ");
+
+        fflush(stdin);
+
+        printf("BI: ");
+        fgets(BI, size, stdin);
+        BI[strcspn(BI, "\n")] = '\0';
+
+        fflush(stdin);
+
+        printf("\n\nNovo genero <apenas Enter para ignorar>  M | F: ");
+        fgets(gender, size, stdin);
+        gender[strcspn(gender, "\n")] = '\0';
+
+        fflush(stdin);
 
         printf("\n\nNovo nome <apenas Enter para ignorar>: ");
         fgets(name, size_char, stdin);
@@ -946,20 +973,38 @@ void updateEmployeeFromMain(Company *company, Department *department, Employee *
         printf("\nIdade: ");
         scanf("%d", &age);
 
-        if (strlen(IBAN) > 0)
+        if (findOneEmployeeByCardId(employee, BI))
         {
-            if (!validateIBAN(IBAN))
-            {
-                updateEmployee(employeeData, code, IBAN, name, salary, state, age);
-            }
+            printf("Este funcionario[BI=%s] ja existe!\n", BI);
+
+            noError = 0;
         }
         else
         {
-            updateEmployee(employeeData, code, IBAN, name, salary, state, age);
+            if (strlen(BI) > 0 && invalidIdCard(BI))
+                noError = 0;
+
+            if (strlen(IBAN) > 0 && !validateIBAN(IBAN))
+                noError = 0;
+
+            if (strlen(gender) > 0 && validateGender(gender))
+                noError = 0;
+
+            if (validateAge(age))
+                noError = 0;
+
+            if (validateState(state))
+                noError = 0;
+
+            if (validateSalary(salary))
+                noError = 0;
         }
+
+        if (noError)
+            updateEmployee(employeeData, code, IBAN, name, salary, state, age, BI, gender);
     }
 
-    system("timeout -t 5\n\n");
+    system("\n\ntimeout -t 5\n\n");
 
     return menuEmployee(company, department, employee, year);
 }
@@ -995,6 +1040,35 @@ int validateAge(int age)
 
     return 0;
 }
+
+// validação do estado
+int validateState(int state)
+{
+
+    if (!(state >= 0 && state <= 1))
+    {
+        printf("\nCampos invalidos![Estado] ");
+
+        return 1;
+    }
+
+    return 0;
+}
+
+// validação do salario
+int validateSalary(float salary)
+{
+
+    if (!(salary > 0))
+    {
+        printf("\nCampos invalidos![Salario] ");
+
+        return 1;
+    }
+
+    return 0;
+}
+
 // campo obrigatórios
 int required(char *value)
 {
@@ -1012,16 +1086,28 @@ int required(char *value)
 // Validar gênero
 int validateGender(char *value)
 {
-    char *aux = strupr(value);
+    char *aux = value;
+    int error = 1;
 
-    if (!(strlen(aux) == 1) || !(aux[0] == 'M') || (aux[0] == 'F'))
+    switch (toupper(aux[0]))
     {
-        printf("\nCampos invalidos![Genero] ");
-
-        return 1;
+    case 'M':
+        error = 0;
+        break;
+    case 'F':
+        error = 0;
+        break;
+    default:
+        error = 1;
+        break;
     }
 
-    return 0;
+    if (strlen(value) == 1 && !error)
+        return 0;
+
+    printf("\nCampos invalidos![Genero]");
+
+    return 1;
 }
 
 // Validar Bilhete
