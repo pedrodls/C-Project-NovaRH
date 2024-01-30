@@ -12,7 +12,7 @@
 #define size_char 100
 #define size_char_phone 10
 #define size_char_nif 14
-//constante dos meses
+// constante dos meses
 char *CONST_MONTH[] = {"Janeiro", "Fevereiro", "Marco", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"};
 
 // Funçao pra pegar o menu principal
@@ -44,6 +44,12 @@ int validateIBAN(char *value);
 // Função para validar idade
 int validateAge(int age);
 
+// Função para validar Gênero
+int validateGender(char *value);
+
+// Função para validar BI
+int invalidIdCard(char *value);
+
 // Funcao pra mostrar dados da empresa
 void showCompanyDataFromMain(Company *company, Department *department, Employee *employee, QueueYear *year);
 
@@ -59,20 +65,20 @@ void updateDepartmentFromMain(Company *company, Department *department, Employee
 
 //-------------------FUNCIONÁRIOS--------------------------------------
 void menuEmployee(Company *company, Department *department, Employee *employee, QueueYear *year);
-//funcão da lógica de criação de funcionário
+// funcão da lógica de criação de funcionário
 void createEmployeeFromMain(Company *company, Department *department, Employee *employee, QueueYear *year);
-//função da lógica de criação de funcionário
+// função da lógica de criação de funcionário
 void updateEmployeeFromMain(Company *company, Department *department, Employee *employee, QueueYear *year);
-//função da lógica de criação de bonus
+// função da lógica de criação de bonus
 void createBonusFromMain(Employee *employee);
-//função da lógica de criação de faltas
+// função da lógica de criação de faltas
 void createAbsenceFromMain(Employee *employee);
 
 //---------------------------FOLHA DE PAGAMENTOS------------------------------
 void menuPayroll(Company *company, Department *department, Employee *employee, QueueYear *year);
 
 int main()
-{  //Inicialização das entidades
+{ // Inicialização das entidades
     Company *myCompany = initCompany();
 
     Department *myDepartments = initDepartment();
@@ -706,6 +712,8 @@ void createEmployeeFromMain(Company *company, Department *department, Employee *
 
     char name[size];
     char IBAN[size];
+    char BI[size];
+    char gender[size];
     int age;
 
     float salary;
@@ -715,11 +723,25 @@ void createEmployeeFromMain(Company *company, Department *department, Employee *
     printf("000000000000000000000000000000000000000000000000\n");
     printf("|            Adicionar Funcionario             |\n");
     printf("|              Dados Necessarios               |\n");
+    printf("| BI                                           |\n");
+    printf("| Genero - M | F                               |\n");
     printf("| Nome                                         |\n");
     printf("| Salario                                      |\n");
     printf("| Conta(IBAN)                                  |\n");
     printf("| Idade                                        |\n");
     printf("000000000000000000000000000000000000000000000000\n");
+
+    fflush(stdin);
+
+    printf("BI: ");
+    fgets(BI, size, stdin);
+    BI[strcspn(BI, "\n")] = '\0';
+
+    fflush(stdin);
+
+    printf("Genero - M | F: ");
+    fgets(gender, size, stdin);
+    gender[strcspn(gender, "\n")] = '\0';
 
     fflush(stdin);
 
@@ -745,13 +767,21 @@ void createEmployeeFromMain(Company *company, Department *department, Employee *
 
     fflush(stdin);
 
-    if (required(name) || !validateIBAN(IBAN) || validateAge(age))
+    if (findOneEmployeeByCardId(employee, BI))
+    {
+        printf("\nFuncionario[BI = %s] ja existe!\n", BI);
+        system("timeout -t 5\n\n");
+
+        return menuEmployee(company, department, employee, year);
+    }
+
+    if (required(name) || !validateIBAN(IBAN) || validateAge(age) || invalidIdCard(BI) || validateGender(gender))
     {
         system("timeout -t 5\n\n");
         return menuEmployee(company, department, employee, year);
     }
 
-    employee = createEmployee(employee, getEmployeeCode(employee) + 1, IBAN, name, salary, age);
+    employee = createEmployee(employee, getEmployeeCode(employee) + 1, IBAN, name, salary, age, BI, gender);
 
     system("timeout -t 5\n\n");
 
@@ -933,7 +963,7 @@ void updateEmployeeFromMain(Company *company, Department *department, Employee *
 
     return menuEmployee(company, department, employee, year);
 }
-//validação do iban
+// validação do iban
 int validateIBAN(char *value)
 {
     int countLetter = 0;
@@ -952,7 +982,7 @@ int validateIBAN(char *value)
 
     return 1;
 }
-//validação da idade
+// validação da idade
 int validateAge(int age)
 {
 
@@ -965,7 +995,7 @@ int validateAge(int age)
 
     return 0;
 }
-//campo obrigatórios
+// campo obrigatórios
 int required(char *value)
 {
 
@@ -978,7 +1008,43 @@ int required(char *value)
 
     return 0;
 }
-//Menu da folha de Pagamento
+
+// Validar gênero
+int validateGender(char *value)
+{
+    char *aux = strupr(value);
+
+    if (!(strlen(aux) == 1) || !(aux[0] == 'M') || (aux[0] == 'F'))
+    {
+        printf("\nCampos invalidos![Genero] ");
+
+        return 1;
+    }
+
+    return 0;
+}
+
+// Validar Bilhete
+int invalidIdCard(char *value)
+{
+    int countLetter = 0;
+
+    for (int i = 0; i < strlen(value); i++)
+    {
+        countLetter += isalpha(value[i]) ? 1 : 0;
+    }
+
+    if (countLetter > 2 || strlen(value) != 14 || (!isalpha(value[9]) || !isalpha(value[10])))
+    {
+        printf("\nCampos invalidos![BI] ");
+
+        return 1;
+    }
+
+    return 0;
+}
+
+// Menu da folha de Pagamento
 void menuPayroll(Company *company, Department *department, Employee *employee, QueueYear *year)
 {
     system("cls");

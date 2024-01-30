@@ -8,13 +8,15 @@
 #include <string.h>
 
 #define size_char 100
-//definição da struct funcionário
+// definição da struct funcionário
 struct employee
 {
     int code;
     int status;
     int age;
     char *IBAN;
+    char *gender;
+    char *BI;
     char *name;
     float salary;
     StackBonus *bonus;
@@ -22,7 +24,7 @@ struct employee
     Department *department;
     Employee *next;
 };
-//ponteiro da lista funcionário inicializa com NULL
+// ponteiro da lista funcionário inicializa com NULL
 Employee *initEmployee()
 {
     return NULL;
@@ -33,7 +35,7 @@ void describeColaborator(Employee *data)
 {
     if (data)
     {
-        printf("\nCodigo: %d,\nIBAN: %s, \nNome: %s,\nIdade: %d,\nSalario: %.2f,\nEstado: %s\nDepartamento: %s\n\n", getEmployeeCode(data), getEmployeeIBAN(data), getEmployeeName(data), getEmployeeAge(data), getEmployeeSalary(data), getEmployeeStatus(data) ? "Ativo" : "Desativado", data->department ? getDepartmentName(data->department) : "NULL");
+        printf("\nCodigo: %d,\nBI: %s, \nGenero: %s, \nIBAN: %s, \nNome: %s,\nIdade: %d,\nSalario: %.2f,\nEstado: %s\nDepartamento: %s\n\n", getEmployeeCode(data), getEmployeeBI(data), getEmployeeGender(data), getEmployeeIBAN(data), getEmployeeName(data), getEmployeeAge(data), getEmployeeSalary(data), getEmployeeStatus(data) ? "Ativo" : "Desativado", data->department ? getDepartmentName(data->department) : "NULL");
 
         printf("\nBonus de %s: \n", getEmployeeName(data));
         findAllBonus(data);
@@ -57,29 +59,40 @@ void simpleDescribeColaborator(Employee *data)
 }
 
 // Criar um Funcionario
-Employee *createEmployee(Employee *data, int code, char IBAN[], char name[], float salary, int age)
+Employee *createEmployee(Employee *data, int code, char IBAN[], char name[], float salary, int age, char *BI, char *gender)
 {
+
     char *newIban = (char *)malloc(size_char);
 
     char *newName = (char *)malloc(size_char);
+
+    char *newBI = (char *)malloc(size_char);
+
+    char *newGender = (char *)malloc(sizeof(char));
+
+    Employee *newEmployee = (Employee *)malloc(sizeof(Employee));
+
+    if (!newEmployee || !newBI || !newIban || !newName || !newGender)
+    {
+        printf("Falha na Alocacao de memória para Funcionario\n");
+        return data;
+    }
 
     newIban = IBAN;
 
     newName = name;
 
-    Employee *newEmployee = (Employee *)malloc(sizeof(Employee));
+    newBI = BI;
 
-    if (!newEmployee)
-    {
-        printf("Falha na Alocacao de memória para Funcionario\n");
-        return data;
-    }
+    newGender = gender;
 
     // Inserção no Início
     newEmployee->age = age;
     newEmployee->code = code;
     newEmployee->status = 1;
     newEmployee->IBAN = newIban;
+    newEmployee->BI = newBI;
+    newEmployee->gender = gender;
     newEmployee->name = newName;
     newEmployee->salary = salary;
     newEmployee->department = NULL;
@@ -89,6 +102,17 @@ Employee *createEmployee(Employee *data, int code, char IBAN[], char name[], flo
 
     printf("\n\nFuncionario criado com sucesso!\n\n");
     return newEmployee;
+}
+
+// Encontra um Funcionario Pelo BI
+Employee *findOneEmployeeByCardId(Employee *data, char *BI)
+{
+    Employee *aux = data;
+
+    while (aux && !(strcmp(strlwr(aux->BI), strlwr(BI)) == 0))
+        aux = aux->next;
+
+    return aux;
 }
 
 // Encontra um Funcionario
@@ -187,7 +211,7 @@ void findAllDisabledEmployees(Employee *data)
         }
     }
 }
-//apresenta todos os funcionários aposentados
+// apresenta todos os funcionários aposentados
 void findAllOldEmployees(Employee *data)
 {
     if (!data)
@@ -242,7 +266,7 @@ void findAllAbsence(Employee *data)
         }
     }
 }
-//lista as faltas de uma lista do payroll
+// lista as faltas de uma lista do payroll
 void findAllAbsenceFromPayroll(Absence *absence)
 {
     Absence *aux = absence;
@@ -311,7 +335,7 @@ void updateEmployee(Employee *employeeData, int code, char *IBAN, char *newName,
         printf("\nDados nao atualizados!\n");
     }
 }
-//actualiza a idade de um funcionário
+// actualiza a idade de todos funcionário após o payroll
 void updateEmployeeAge(Employee *employees)
 {
 
@@ -324,7 +348,7 @@ void updateEmployeeAge(Employee *employees)
         aux = aux->next;
     }
 }
-//vincula o funcionário ao departamento
+// vincula o funcionário ao departamento
 Employee *employeeDepartment(Employee *data, Department *data_department)
 {
     if (!data)
@@ -389,7 +413,7 @@ Employee *employeeDepartment(Employee *data, Department *data_department)
 
     return data;
 }
-//elimina um funcionário da losta
+// elimina um funcionário da losta
 Employee *deleteEmployee(Employee *data, int code)
 {
     Employee *aux = data, *ant = NULL;
@@ -489,7 +513,7 @@ Employee *deleteBonus(Employee *employee, int code)
 
     return employee;
 }
-//cria faltas para o funcionario 
+// cria faltas para o funcionario
 Employee *createAbsence(Employee *employee, int code, char *desc)
 {
     Employee *aux_employee = findOneEmployee(employee, code); // Localizando funcionario
@@ -529,13 +553,13 @@ Employee *deleteAbsence(Employee *employee, int code)
 
     return employee;
 }
-//Métodos Getters
-//retorna o nome do funcionário
+// Métodos Getters
+// retorna o nome do funcionário
 char *getEmployeeName(Employee *employee)
 {
     return employee->name;
 }
-//retorna o iban do funcionário
+// retorna o iban do funcionário
 char *getEmployeeIBAN(Employee *employee)
 {
     return employee->IBAN;
@@ -560,50 +584,74 @@ float getEmployeeSalary(Employee *employee)
 {
     return employee->salary;
 }
-//retorn a pilha de falta do funcionário 
+
+// Retorna o BI de um Funcionario
+char *getEmployeeBI(Employee *employee)
+{
+    return employee->BI;
+}
+
+// Retorna o genero de um Funcionario
+char *getEmployeeGender(Employee *employee)
+{
+    return employee->gender;
+}
+// retorn a pilha de falta do funcionário
 StackAbsence *getStackAbsence(Employee *employee)
 {
     return employee->absence;
 }
-//retorna a pilha de bonus do funcionário 
+// retorna a pilha de bonus do funcionário
 StackBonus *getStackBonus(Employee *employee)
 {
     return employee->bonus;
 }
-//retorna o próximo endereço do funcionário 
+// retorna o próximo endereço do funcionário
 Employee *getNextEmployee(Employee *employee)
 {
     return employee->next;
 }
 
 // Mètodos Setters
-//actualiza o nome do funcionário 
+// actualiza o nome do funcionário
 void setEmployeeName(Employee *employee, char *value)
 {
     employee->name = value;
 }
-//actualiza o código do funcionário
+// actualiza o código do funcionário
 void setEmployeeCode(Employee *employee, int value)
 {
     employee->code = value;
 }
-//actualiza o estado do funcionário
+// actualiza o estado do funcionário
 void setEmployeeStatus(Employee *employee, int value)
 {
     employee->status = value;
 }
-//actualiza o salário do funcionário
+// actualiza o salário do funcionário
 void setEmployeeSalary(Employee *employee, float value)
 {
     employee->salary = value;
 }
-//actualiza o iban do funcionário
+// actualiza o iban do funcionário
 void setEmployeeIBAN(Employee *employee, char *value)
 {
     employee->IBAN = value;
 }
-//actualiza a idade do funcionário
+// actualiza a idade do funcionário
 void setEmployeeAge(Employee *employee, int value)
 {
     employee->age = value;
+}
+
+// Insere o BI num Funcionario
+void setEmployeeBI(Employee *employee, char *value)
+{
+    employee->BI = value;
+}
+
+// Insere o Genero num Funcionario
+void setEmployeeGender(Employee *employee, char *value)
+{
+    employee->gender = value;
 }
