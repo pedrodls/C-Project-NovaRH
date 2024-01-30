@@ -2,6 +2,7 @@
 #include "./department.h"
 #include "./absence.h"
 #include "./bonus.h"
+#include "./year.h"
 // definição da estrutura funcionário
 typedef struct employee Employee;
 
@@ -111,3 +112,6 @@ void setEmployeeBI(Employee *employee, char *value);
 
 // Insere o Genero num Funcionario
 void setEmployeeGender(Employee *employee, char *value);
+
+//apresenta todos os anos q foram efectuados folha de salário de um funcionario
+void getYearHistoryFromEmployee(QueueYear *queueYear, int code, Employee *employee);

@@ -1145,6 +1145,7 @@ void menuPayroll(Company *company, Department *department, Employee *employee, Q
     printf(" 1  -  EXECUTAR FOLHA PAGAMENTO (%d/%s)           \n", getYear(getCurrentYear(year)), getMonthName(getCurrentMonth(getQueueMonth(year))));
     printf(" 2  -  CONSULTAR ULTIMA FOLHA DE PAGAMENTO        \n");
     printf(" 3  -  CONSULTAR HISTORICO DE FOLHA PAGAMENTO     \n");
+    printf(" 4  -  CONSULTAR HISTORICO DE FOLHA PAGAMENTO DE UM FUNCIONARIO     \n");
     printf(" 0  -  SAIR                                       \n");
     printf("0000000000000000000000000000000000000000000000000000\n\nOpcao: ");
 
@@ -1182,6 +1183,25 @@ void menuPayroll(Company *company, Department *department, Employee *employee, Q
 
     case '3':
         getYearHistory(year);
+        printf("\nClique <Enter> para Continuar\n");
+        system("pause>nul");
+        menuPayroll(company, department, employee, year);
+        break;
+
+    case '4':
+
+        if (!employee)
+        {
+            printf("\nNAO EXISTE FUNCIONARIOS\n");
+        }
+        else
+        {
+            printf("\nInsira o codigo do funcionario: ");
+            scanf("%d", &code);
+
+            getYearHistoryFromEmployee(year, code, employee);
+        }
+
         printf("\nClique <Enter> para Continuar\n");
         system("pause>nul");
         menuPayroll(company, department, employee, year);

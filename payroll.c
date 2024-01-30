@@ -5,16 +5,17 @@
 #include "./absence.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #define size_char 100
 #define DISCOUNT_FAULT 2
 #define IRT_MAX 25
 #define IRT 13
 #define INSS 3
-//definição da struct folha de salário
+// definição da struct folha de salário
 struct payroll
 {
-    int employeeCode;
+    char *employeeBI;
     float bonusValue;
     float discount;
     float baseSalary;
@@ -27,7 +28,7 @@ struct payroll
     Absence *absence;
     Payroll *next;
 };
-//retorna o valor total dos descontos
+// retorna o valor total dos descontos
 float getDiscountTotalValue(Absence *absence, Employee *employee, Payroll *newPayroll)
 {
     int count = 0;
@@ -60,7 +61,7 @@ float getDiscountTotalValue(Absence *absence, Employee *employee, Payroll *newPa
 
     return ((getEmployeeSalary(auxEmployee) * (count * DISCOUNT_FAULT) / 100));
 }
-//retorna o valor total dos bonus
+// retorna o valor total dos bonus
 float getBonusTotalValue(Bonus *bonus, Employee *employee, Payroll *newPayroll)
 {
     int count = 0;
@@ -131,7 +132,7 @@ void createPayroll(Employee *employee, QueueYear *year)
             newPayroll->bonus = NULL;
             newPayroll->iban = getEmployeeIBAN(aux_employee);
             newPayroll->name = getEmployeeName(aux_employee);
-            newPayroll->employeeCode = getEmployeeCode(aux_employee);
+            newPayroll->employeeBI = getEmployeeBI(aux_employee);
             newPayroll->absence = NULL;
             newPayroll->next = NULL;
 
@@ -199,7 +200,7 @@ void createPayroll(Employee *employee, QueueYear *year)
         printf("[Sem Colaboradores que cumprem com requisitos]!\n");
     }
 }
-//apresenta a folha de salário relative a um ano e mês específico
+// apresenta a folha de salário relative a um ano e mês específico
 void describeYearHistoryPayroll(Payroll *payroll, int year, Month *month)
 {
     Payroll *aux = payroll;
@@ -222,7 +223,7 @@ void describeYearHistoryPayroll(Payroll *payroll, int year, Month *month)
     while (aux)
     {
 
-        printf("Funcionario[%d]    : %s\n", aux->employeeCode, aux->name);
+        printf("Funcionario[%s]    : %s\n", aux->employeeBI, aux->name);
 
         printf("IBAN               : %s\n", aux->iban);
 
@@ -249,7 +250,69 @@ void describeYearHistoryPayroll(Payroll *payroll, int year, Month *month)
         aux = aux->next;
     }
 }
-//apresenta a folha de salário, a última folha de salário
+
+// apresenta histórico da folha de salário de um funcionário
+void describeYearHistoryPayrollOfEmployee(Payroll *payroll, int year, Month *month, Employee *employee)
+{
+    Employee *auxEmployee = employee;
+
+    Payroll *aux = payroll;
+
+    int founded = 0;
+
+    printf("\n\n_________________________________________________________\n\n");
+
+    printf("\tFOLHA DE PAGAMENTO (%d/%s)\n",
+           year,
+           getMonthName(month));
+
+    printf("_________________________________________________________\n");
+
+    while (aux)
+    {
+
+        if (strcmp(strupr(aux->employeeBI), strupr(getEmployeeBI(auxEmployee))) == 0)
+        {
+
+            printf("Funcionario[%s]    : %s\n", aux->employeeBI, aux->name);
+
+            printf("IBAN               : %s\n", aux->iban);
+
+            printf("\nFaltas \n");
+            findAbsence(aux->absence);
+
+            printf("\nBonus\n");
+            findBonus(aux->bonus);
+
+            printf("\nINSS                : %.2f\n", (aux->inss));
+
+            printf("\nIRT                 : %.2f\n", aux->irt);
+
+            printf("\nTotal de Descontos  : %.2f\n", aux->discount);
+
+            printf("\nTotal de Bonus      : %.2f\n", aux->bonusValue);
+
+            printf("\nSalario Bruto       : %.2f\n", aux->baseSalary);
+
+            printf("\nSalario Liquido     : %.2f\n", aux->liquidSalary);
+
+            printf("_________________________________________________________\n");
+
+            founded = 1;
+        }
+
+        aux = aux->next;
+    }
+
+    if (!founded)
+    {
+        printf("Historico nao encontrado!\n");
+
+        return;
+    }
+}
+
+// apresenta a folha de salário, a última folha de salário
 void describePayroll(Payroll *payroll, Year *year, int type)
 {
     Payroll *aux = payroll;
@@ -276,7 +339,7 @@ void describePayroll(Payroll *payroll, Year *year, int type)
     while (aux)
     {
 
-        printf("Funcionario[%d]    : %s\n", aux->employeeCode, aux->name);
+        printf("Funcionario[%s]    : %s\n", aux->employeeBI, aux->name);
 
         printf("IBAN                : %s\n", aux->iban);
 
@@ -303,12 +366,12 @@ void describePayroll(Payroll *payroll, Year *year, int type)
         aux = aux->next;
     }
 }
-//retorna a próxima folha de salário da lista
+// retorna a próxima folha de salário da lista
 Payroll *getNextPayroll(Payroll *payroll)
 {
     return payroll->next;
 }
-//retorna o ponteiro da falta que constará na losta da folha
+// retorna o ponteiro da falta que constará na losta da folha
 Absence *getAbsenceFromPayroll(Payroll *payroll)
 {
     return payroll->absence;

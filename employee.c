@@ -676,3 +676,44 @@ void setEmployeeGender(Employee *employee, char *value)
 {
     employee->gender = value;
 }
+
+// apresenta todos os anos q foram efectuados folha de salário de um funcionario
+void getYearHistoryFromEmployee(QueueYear *queueYear, int code, Employee *employee)
+{
+    Year *aux = getQueueStartYear(queueYear);
+
+    Employee *auxEmployee = findOneEmployee(employee, code);
+
+    if (!aux)
+    {
+        printf("\n\nNao existem Folhas de Pagamentos!\n\n");
+        return;
+    }
+
+    if (!auxEmployee)
+    {
+        printf("\n\nEste funcionario nao existe!\n\n");
+        return;
+    }
+
+    while (aux)
+    {
+        Month *auxMonth = getStartMonth(getQueueMonthFromYear(aux));
+
+        if (!getMonthPayrolls(auxMonth))
+        {
+            printf("\n\nNao existem Folhas de Pagamentos!");
+            return;
+        }
+
+        while (auxMonth && getMonthPayrolls(auxMonth))
+        {
+
+            describeYearHistoryPayrollOfEmployee(getMonthPayrolls(auxMonth), getYear(aux), auxMonth, auxEmployee);
+
+            auxMonth = getNextMonth(auxMonth);
+        }
+
+        aux = getNextYear(aux);
+    }
+}
