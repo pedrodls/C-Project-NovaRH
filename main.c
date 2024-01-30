@@ -361,8 +361,11 @@ void updateCompanyFromMain(Company *company, Department *department, Employee *e
 
     fflush(stdin);
 
-    char *email = (char *)malloc(sizeof(size)), *name = (char *)malloc(sizeof(size)), *address = (char *)malloc(sizeof(size));
-    char *phone = (char *)malloc(sizeof(size_char_phone)), *nif = (char *)malloc(sizeof(size_char_nif));
+    char *email = (char *)malloc(sizeof(size));
+    char *name = (char *)malloc(sizeof(size));
+    char *address = (char *)malloc(sizeof(size));
+    char *phone = (char *)malloc(sizeof(size_char_phone));
+    char *nif = (char *)malloc(sizeof(size_char_nif));
 
     fflush(stdin);
 
@@ -545,9 +548,6 @@ void menuDepartment(Company *company, Department *department, Employee *employee
     case '2':
         updateDepartmentFromMain(company, department, employee, year);
         break;
-    case '0':
-        menuCompany(company, department, employee, year);
-        break;
     case '3':
         findAllDepartments(department);
         printf("\nClique <Enter> para Continuar\n");
@@ -573,6 +573,9 @@ void menuDepartment(Company *company, Department *department, Employee *employee
         department = deleteDepartment(department, code);
         system("timeout -t 5");
         menuDepartment(company, department, employee, year);
+        break;
+    case '0':
+        menuCompany(company, department, employee, year);
         break;
     default:
         menuDepartment(company, department, employee, year);

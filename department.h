@@ -30,3 +30,6 @@ char *getDepartmentName(Department *data);
 // retorna o código do funcionário
 int getDepartmentCode(Department *data);
 
+// Incrementar colaborador num departamento
+Department *incrementEmployeeDepartment(Department *data);
+

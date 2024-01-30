@@ -83,6 +83,9 @@ void *describeDepartment(Department *data)
 Department *findOneDepartment(Department *data, int code)
 {
     Department *aux = data;
+    
+    if (!aux)
+        return NULL;
 
     while (aux && aux->code != code)
         aux = aux->next;
@@ -177,19 +180,27 @@ Department *deleteDepartment(Department *data, int code)
     return data;
 }
 
-// retorna o nome do funcionário
+// retorna o nome do departamento
 char *getDepartmentName(Department *data)
 {
     return data->name;
 }
-// retorna o código do funcionário
+// retorna o código do departamento
 int getDepartmentCode(Department *data)
 {
-    return data->code;
+    return data ? data->code : -1;
 }
 
 // Retorna o proximo departamento
 Department *nextDepartment(Department *data)
 {
     return data->next;
+}
+
+// Incrementar colaborador num departamento
+Department *incrementEmployeeDepartment(Department *data)
+{
+    data->colaborators = data->colaborators + 1;
+
+    return data;
 }

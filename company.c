@@ -7,7 +7,7 @@
 #define size_char 100
 #define size_char_phone 10
 #define size_char_nif 14
-//definição struct empresa
+// definição struct empresa
 struct company
 {
     char *name;
@@ -41,7 +41,7 @@ Company *initCompany()
 Company *readCompany(Company *company)
 {
     FILE *file;
-    //abre o arquivo
+    // abre o arquivo
     file = fopen("./files/empresa.txt", "r");
 
     if (file == NULL)
@@ -52,14 +52,14 @@ Company *readCompany(Company *company)
 
     char *email = (char *)malloc(sizeof(size)), *name = (char *)malloc(sizeof(size)), *address = (char *)malloc(sizeof(size));
     char *phone = (char *)malloc(sizeof(size_char_phone)), *nif = (char *)malloc(sizeof(size_char_nif));
-    //coloca os valores dos arquivos nas variaveis, considerando espaços em branco
+    // coloca os valores dos arquivos nas variaveis, considerando espaços em branco
     fscanf(file, "%99[^\n]\n%99[^\n]\n%99[^\n]", name, email, address);
     fflush(stdin);
     fscanf(file, "%s", phone);
     fscanf(file, "%s", nif);
     // fscanf(file, "%d", countColaborator);
 
-    //actualiza os valores nas variaveis da struct
+    // actualiza os valores nas variaveis da struct
     setCompanyName(company, name);
     setCompanyEmail(company, email);
     setCompanyAddress(company, address);
@@ -67,7 +67,7 @@ Company *readCompany(Company *company)
     setCompanyNIF(company, nif);
 
     // setCountColaborator(company, countColaborator);
-    //fecha o arq
+    // fecha o arq
     fclose(file);
 
     return company;
@@ -84,7 +84,7 @@ Company *createCompany(Company *company, char *name, char *email, char *address,
         printf("Falha ao abrir Arquivo\n\n");
         return company;
     }
-    //envia os valores para o arquivo
+    // envia os valores para o arquivo
     fprintf(file, "%s\n%s\n%s\n%s\n%s", name, email, address, phone, nif);
 
     fclose(file);
@@ -92,7 +92,7 @@ Company *createCompany(Company *company, char *name, char *email, char *address,
     readCompany(company);
     return company;
 }
-//actualiza os dados da empresa no arquivo e actualiza na TAD
+// actualiza os dados da empresa no arquivo e actualiza na TAD
 Company *updateCompany(Company *company, char *name, char *email, char *address, char *phone, char *nif)
 {
     FILE *file;
@@ -103,21 +103,23 @@ Company *updateCompany(Company *company, char *name, char *email, char *address,
         return company;
     }
 
-    name = !!name ? company->name : name;
-    email = !!email ? company->email : email;
-    nif = !!nif ? company->nif : nif;
-    address = !!address ? company->address : address;
-    phone = !!phone ? company->phone : phone;
+    Company *auxCompany = company;
 
-    setCompanyName(company, name);
+    name = !(strlen(name) > 1) ? auxCompany->name : name;
+    email = !(strlen(email) > 1) ? auxCompany->email : email;
+    nif = !(strlen(nif) > 1) ? auxCompany->nif : nif;
+    address = !(strlen(address) > 1) ? auxCompany->address : address;
+    phone = !(strlen(phone) > 1) ? auxCompany->phone : phone;
 
-    setCompanyEmail(company, email);
+    setCompanyName(auxCompany, name);
 
-    setCompanyAddress(company, address);
-    
-    setCompanyPhone(company, phone);
+    setCompanyEmail(auxCompany, email);
 
-    setCompanyNIF(company, nif);
+    setCompanyAddress(auxCompany, address);
+
+    setCompanyPhone(auxCompany, phone);
+
+    setCompanyNIF(auxCompany, nif);
 
     fprintf(file, "%s\n%s\n%s\n%s\n%s", name, email, address, phone, nif);
 
@@ -155,27 +157,27 @@ char *getCompanyNIF(Company *company)
 }
 
 // Mètodos Setters
-//actualiza o email da empresa
+// actualiza o email da empresa
 void setCompanyEmail(Company *company, char *value)
 {
     company->email = value;
 }
-//actualiza o nome da empresa
+// actualiza o nome da empresa
 void setCompanyName(Company *company, char *value)
 {
     company->name = value;
 }
-//actualiza o endereço da empresa
+// actualiza o endereço da empresa
 void setCompanyAddress(Company *company, char *value)
 {
     company->address = value;
 }
-//actualiza o telefone da empresa
+// actualiza o telefone da empresa
 void setCompanyPhone(Company *company, char *value)
 {
     company->phone = value;
 }
-//actualiza o nif da empresa
+// actualiza o nif da empresa
 void setCompanyNIF(Company *company, char *value)
 {
     company->nif = value;

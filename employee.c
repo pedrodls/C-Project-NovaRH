@@ -425,7 +425,14 @@ Employee *employeeDepartment(Employee *data, Department *data_department)
             return data;
         }
 
-        aux_employee->department = aux_department;
+        if (getDepartmentCode(aux_employee->department) == getDepartmentCode(aux_department))
+        {
+            printf("Departamento do Funcionario nao atualizado pois e o mesmo !\n----------------------------------\n\n");
+
+            return data;
+        }
+
+        aux_employee->department = incrementEmployeeDepartment(aux_department);
 
         printf("Departamento do Funcionario Atualizado!\n----------------------------------\n\n");
 
@@ -467,31 +474,41 @@ Employee *deleteEmployee(Employee *data, int code)
 Department *findEmployeeByDepartment(Department *department, Employee *employee, int code)
 {
     Department *aux_department = findOneDepartment(department, code);
+
     Employee *aux_employee = employee;
 
+    int count = 0;
+
     /**/
+
     if (!aux_department)
         printf("\nDEPARTAMENTO NAO ENCONTRADO!\n----------------------------------\n\n");
     else
     {
-        int count = 0;
-        while (aux_employee)
+        if (aux_employee)
         {
-            if (getDepartmentCode(aux_employee->department) == code)
+            while (aux_employee)
             {
-                if (count == 0)
-                    printf("\t\nFUNCIONARIOS DO DEPARTAMENTO:\n");
+                if (getDepartmentCode(aux_employee->department) == code)
+                {
+                    if (count == 0)
+                        printf("\t\nFUNCIONARIOS DO DEPARTAMENTO:\n");
 
-                printf("+------------------------------------------+\n");
-                printf("  %s (cod: %d)\n", aux_employee->name, aux_employee->code);
-                printf("+------------------------------------------+\n");
+                    printf("+------------------------------------------+\n");
+
+                    simpleDescribeColaborator(aux_employee);
+
+                    printf("+------------------------------------------+\n");
+                    count = 1;
+                }
+
                 aux_employee = aux_employee->next;
-                count = 1;
             }
         }
-        if (!count)
-            printf("\t\n- - - NAO HA FUNCIONARIOS NESSE DEPARTAMENTO\n\n");
     }
+
+    if (!count)
+        printf("\t\n- - - NAO HA FUNCIONARIOS NESSE DEPARTAMENTO\n\n");
 
     return department;
 }
