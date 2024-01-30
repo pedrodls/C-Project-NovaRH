@@ -6,27 +6,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 #define size_char 100
-
-/* employee
-{
-    int code, status;
-    char *name;
-    char *cargo;
-    char *conta;
-    char *BI;
-    int idade;
-    float salary;
-    StackBonus *bonus;
-    StackAbsence *absence;
-    Department *department;
-    Employee *next;
-};*/
-
+// definição da struct funcionário
 struct employee
 {
-    int code, status;
+    int code;
+    int status;
+    int age;
+    char *IBAN;
+    char *gender;
+    char *BI;
     char *name;
     float salary;
     StackBonus *bonus;
@@ -34,7 +25,7 @@ struct employee
     Department *department;
     Employee *next;
 };
-
+// ponteiro da lista funcionário inicializa com NULL
 Employee *initEmployee()
 {
     return NULL;
@@ -45,7 +36,7 @@ void describeColaborator(Employee *data)
 {
     if (data)
     {
-        printf("\nCodigo: %d,\nNome: %s,\nSalario: %f,\nEstado: %s\nDepartamento: %s\n\n", getEmployeeCode(data), getEmployeeName(data), getEmployeeSalary(data), getEmployeeStatus(data) ? "Ativo" : "Desativado", data->department ? getDepartmentName(data->department) : "NULL");
+        printf("\nCodigo: %d,\nBI: %s, \nGenero: %s, \nIBAN: %s, \nNome: %s,\nIdade: %d,\nSalario: %.2f,\nEstado: %s\nDepartamento: %s\n\n", getEmployeeCode(data), getEmployeeBI(data), getEmployeeGender(data), getEmployeeIBAN(data), getEmployeeName(data), getEmployeeAge(data), getEmployeeSalary(data), getEmployeeStatus(data) ? "Ativo" : "Desativado", data->department ? getDepartmentName(data->department) : "NULL");
 
         printf("\nBonus de %s: \n", getEmployeeName(data));
         findAllBonus(data);
@@ -69,19 +60,41 @@ void simpleDescribeColaborator(Employee *data)
 }
 
 // Criar um Funcionario
-Employee *createEmployee(Employee *data, int code, char *name, float salary)
+Employee *createEmployee(Employee *data, int code, char IBAN[], char name[], float salary, int age, char *BI, char *gender)
 {
+
+    char *newIban = (char *)malloc(size_char);
+
+    char *newName = (char *)malloc(size_char);
+
+    char *newBI = (char *)malloc(size_char);
+
+    char *newGender = (char *)malloc(sizeof(char));
+
     Employee *newEmployee = (Employee *)malloc(sizeof(Employee));
 
-    if (!newEmployee)
+    if (!newEmployee || !newBI || !newIban || !newName || !newGender)
     {
         printf("Falha na Alocacao de memória para Funcionario\n");
         return data;
     }
+
+    newIban = IBAN;
+
+    newName = name;
+
+    newBI = BI;
+
+    newGender = gender;
+
     // Inserção no Início
+    newEmployee->age = age;
     newEmployee->code = code;
     newEmployee->status = 1;
-    newEmployee->name = name;
+    newEmployee->IBAN = newIban;
+    newEmployee->BI = newBI;
+    newEmployee->gender = strupr(newGender);
+    newEmployee->name = newName;
     newEmployee->salary = salary;
     newEmployee->department = NULL;
     newEmployee->bonus = initBonus();
@@ -90,6 +103,17 @@ Employee *createEmployee(Employee *data, int code, char *name, float salary)
 
     printf("\n\nFuncionario criado com sucesso!\n\n");
     return newEmployee;
+}
+
+// Encontra um Funcionario Pelo BI
+Employee *findOneEmployeeByCardId(Employee *data, char *BI)
+{
+    Employee *aux = data;
+
+    while (aux && !(strcmp(strlwr(aux->BI), strlwr(BI)) == 0))
+        aux = aux->next;
+
+    return aux;
 }
 
 // Encontra um Funcionario
@@ -103,7 +127,7 @@ Employee *findOneEmployee(Employee *data, int code)
     return aux;
 }
 
-// Encontra todos departamentos
+// Encontra todos funcionarios
 void findAllEmployees(Employee *data, int type)
 {
     if (!data)
@@ -114,14 +138,99 @@ void findAllEmployees(Employee *data, int type)
 
         printf("Lista de Funcionarios\n\n");
 
-        while (aux && getEmployeeStatus(aux))
+        while (aux)
         {
-            !type ? describeColaborator(aux)
-                  : simpleDescribeColaborator(aux);
+            if (getEmployeeStatus(aux))
+            {
+                !type ? describeColaborator(aux)
+                      : simpleDescribeColaborator(aux);
+            }
 
             aux = aux->next;
         }
         printf("\n\n");
+    }
+}
+
+// Encontra todos funcionarios desabilitados
+
+void findAllDisabledEmployees(Employee *data)
+{
+    if (!data)
+        printf("Lista de Funcionarios Vazia\n");
+    else
+    {
+        Employee *aux = data;
+
+        char op;
+        int employeeCode, cont = 0;
+
+        printf("Lista de Funcionarios Desativados\n\n");
+
+        while (aux && !getEmployeeStatus(aux))
+        {
+            describeColaborator(aux);
+            cont++;
+            aux = aux->next;
+        }
+
+        if (cont > 0)
+        {
+            printf("\n\n");
+            printf("1 - Habilitar\n");
+            printf("2 - Sair\n");
+
+            fflush(stdin);
+            printf("Opcao: ");
+
+            scanf("%c", &op);
+
+            printf("\n\n");
+
+            switch (op)
+            {
+            case '1':
+                printf("Codigo do funcionario: ");
+                scanf("%d", &employeeCode);
+
+                aux = findOneEmployee(data, employeeCode);
+
+                if (aux)
+                {
+                    setEmployeeStatus(data, 1);
+                    printf("Funcionario atualizado com sucesso!");
+                }
+                else
+                    printf("Funcionario nao encontrado!");
+
+                break;
+
+            default:
+                return;
+                break;
+            }
+        }
+    }
+}
+// apresenta todos os funcionários aposentados
+void findAllOldEmployees(Employee *data)
+{
+    if (!data)
+        printf("Lista de Funcionarios Vazia\n");
+    else
+    {
+        Employee *aux = data;
+
+        char op;
+        int employeeCode;
+
+        printf("Lista de Funcionarios Na Reforma\n\n");
+
+        while (aux && getEmployeeAge(aux) > 60)
+        {
+            describeColaborator(aux);
+            aux = aux->next;
+        }
     }
 }
 
@@ -158,7 +267,7 @@ void findAllAbsence(Employee *data)
         }
     }
 }
-
+// lista as faltas de uma lista do payroll
 void findAllAbsenceFromPayroll(Absence *absence)
 {
     Absence *aux = absence;
@@ -176,70 +285,91 @@ void findAllAbsenceFromPayroll(Absence *absence)
     }
 }
 
-
-
 // Atualiza o dado de um funcionário
-Employee *updateEmployee(Employee *data, int code)
+void updateEmployee(Employee *employeeData, int code, char *IBAN, char *newName, float newSalary, int newState, int age, char *bi, char *gender)
 {
-    Employee *employeeData = findOneEmployee(data, code);
+    int updated = 0;
 
-    char *newName = (char *)malloc(sizeof(size_char));
-    int newState;
-    float newSalary;
-
-    if (employeeData)
+    if (!(strcmp(newName, employeeData->name) == 0))
     {
-        fflush(stdin);
-
-        printf("Novo nome <apenas Enter para ignorar>: ");
-        fgets(newName, size_char, stdin);
-        newName[strcspn(newName, "\n")] = '\0';
-
-        printf("\nSalario: ");
-        scanf("%f", &newSalary);
-
-        printf("\nAtivar - 1 | Desactivar - 0: ");
-        scanf("%d", &newState);
-
-        /* printf("\nCodigo do departamento: ");
-        scanf("%d", &departCode);
-
-        if (departCode > 0 && findOneDepartment(departments, departCode))
-        {
-            setEmployeeDepartment(employeeData, departCode);
-            printf("\nDepartamento atualizado com sucesso!\n");
-        }
-        else if (departCode > 0 && !findOneDepartment(departments, departCode))
-        {
-            printf("\nDepartamento nao encontrado!\n");
-        } */
-
-        if (!(strcmp(newName, employeeData->name) == 0))
+        if (strlen(newName) > 0)
         {
             setEmployeeName(employeeData, newName);
             printf("\nNome atualizado com sucesso!\n");
+            updated = 1;
         }
-
-        if (!(employeeData->status == newState && (newState >= 0 && newState <= 1)))
-        {
-            setEmployeeStatus(employeeData, newState);
-            printf("Estado atualizado com sucesso!\n");
-        }
-
-        if (!(employeeData->salary == newSalary))
-        {
-            setEmployeeSalary(employeeData, newSalary);
-            printf("Salario atualizado com sucesso!\n");
-        }
-
-        printf("\n\nFuncionario actualizado com sucesso!\n\n");
     }
-    else
-        printf("Funcionario nao encontrado!\n");
 
-    return data;
+    if (!(strcmp(IBAN, employeeData->IBAN) == 0))
+    {
+        if (strlen(IBAN) > 0)
+        {
+            setEmployeeIBAN(employeeData, IBAN);
+            printf("\nIBAN atualizado com sucesso!\n");
+            updated = 1;
+        }
+    }
+
+    if (!(strcmp(bi, employeeData->BI) == 0))
+    {
+        if (strlen(bi) > 0)
+        {
+            setEmployeeBI(employeeData, bi);
+            printf("\nBI atualizado com sucesso!\n");
+            updated = 1;
+        }
+    }
+
+    if (!(strcmp(gender, employeeData->gender) == 0))
+    {
+        if (strlen(gender) > 0)
+        {
+            setEmployeeIBAN(employeeData, gender);
+            printf("\nGenero atualizado com sucesso!\n");
+            updated = 1;
+        }
+    }
+
+    if (!(employeeData->status == newState && (newState >= 0 && newState <= 1)))
+    {
+        setEmployeeStatus(employeeData, newState);
+        printf("\nEstado atualizado com sucesso!\n");
+        updated = 1;
+    }
+
+    if (!(employeeData->salary == newSalary))
+    {
+        setEmployeeSalary(employeeData, newSalary);
+        printf("\nSalario atualizado com sucesso!\n");
+        updated = 1;
+    }
+
+    if (!(employeeData->age == age))
+    {
+        setEmployeeAge(employeeData, age);
+        printf("\nIdade atualizada com sucesso!\n");
+        updated = 1;
+    }
+
+    if (!updated)
+    {
+        printf("\nDados nao atualizados!\n");
+    }
 }
+// actualiza a idade de todos funcionário após o payroll
+void updateEmployeeAge(Employee *employees)
+{
 
+    Employee *aux = employees;
+
+    while (aux)
+    {
+        aux->age = aux->age + 1;
+
+        aux = aux->next;
+    }
+}
+// vincula o funcionário ao departamento
 Employee *employeeDepartment(Employee *data, Department *data_department)
 {
     if (!data)
@@ -295,7 +425,14 @@ Employee *employeeDepartment(Employee *data, Department *data_department)
             return data;
         }
 
-        aux_employee->department = aux_department;
+        if (getDepartmentCode(aux_employee->department) == getDepartmentCode(aux_department))
+        {
+            printf("Departamento do Funcionario nao atualizado pois e o mesmo !\n----------------------------------\n\n");
+
+            return data;
+        }
+
+        aux_employee->department = incrementEmployeeDepartment(aux_department);
 
         printf("Departamento do Funcionario Atualizado!\n----------------------------------\n\n");
 
@@ -304,7 +441,7 @@ Employee *employeeDepartment(Employee *data, Department *data_department)
 
     return data;
 }
-
+// elimina um funcionário da losta
 Employee *deleteEmployee(Employee *data, int code)
 {
     Employee *aux = data, *ant = NULL;
@@ -337,31 +474,41 @@ Employee *deleteEmployee(Employee *data, int code)
 Department *findEmployeeByDepartment(Department *department, Employee *employee, int code)
 {
     Department *aux_department = findOneDepartment(department, code);
+
     Employee *aux_employee = employee;
 
+    int count = 0;
+
     /**/
+
     if (!aux_department)
         printf("\nDEPARTAMENTO NAO ENCONTRADO!\n----------------------------------\n\n");
     else
     {
-        int count = 0;
-        while (aux_employee)
+        if (aux_employee)
         {
-            if (getDepartmentCode(aux_employee->department) == code)
+            while (aux_employee)
             {
-                if (count == 0)
-                    printf("\t\nFUNCIONARIOS DO DEPARTAMENTO:\n");
+                if (getDepartmentCode(aux_employee->department) == code)
+                {
+                    if (count == 0)
+                        printf("\t\nFUNCIONARIOS DO DEPARTAMENTO:\n");
 
-                printf("+------------------------------------------+\n");
-                printf("  %s (cod: %d)\n", aux_employee->name, aux_employee->code);
-                printf("+------------------------------------------+\n");
+                    printf("+------------------------------------------+\n");
+
+                    simpleDescribeColaborator(aux_employee);
+
+                    printf("+------------------------------------------+\n");
+                    count = 1;
+                }
+
                 aux_employee = aux_employee->next;
-                count = 1;
             }
         }
-        if (!count)
-            printf("\t\n- - - NAO HA FUNCIONARIOS NESSE DEPARTAMENTO\n\n");
     }
+
+    if (!count)
+        printf("\t\n- - - NAO HA FUNCIONARIOS NESSE DEPARTAMENTO\n\n");
 
     return department;
 }
@@ -404,7 +551,7 @@ Employee *deleteBonus(Employee *employee, int code)
 
     return employee;
 }
-
+// cria faltas para o funcionario
 Employee *createAbsence(Employee *employee, int code, char *desc)
 {
     Employee *aux_employee = findOneEmployee(employee, code); // Localizando funcionario
@@ -418,7 +565,7 @@ Employee *createAbsence(Employee *employee, int code, char *desc)
 
     return employee;
 }
-// elimina a ultima féria do funcionário
+// elimina a ultima falta do funcionário
 Employee *deleteAbsence(Employee *employee, int code)
 {
     Employee *aux_employee = findOneEmployee(employee, code); // Localizando funcionario
@@ -434,7 +581,7 @@ Employee *deleteAbsence(Employee *employee, int code)
         else
         {
 
-           popAbsence(aux_employee->absence);
+            popAbsence(aux_employee->absence);
 
             printf("Falta removido com Sucesso!\n");
         }
@@ -444,13 +591,17 @@ Employee *deleteAbsence(Employee *employee, int code)
 
     return employee;
 }
-
+// Métodos Getters
+// retorna o nome do funcionário
 char *getEmployeeName(Employee *employee)
 {
     return employee->name;
 }
-
-
+// retorna o iban do funcionário
+char *getEmployeeIBAN(Employee *employee)
+{
+    return employee->IBAN;
+}
 // retorna o código do funcionário
 int getEmployeeCode(Employee *employee)
 {
@@ -461,37 +612,125 @@ int getEmployeeStatus(Employee *employee)
 {
     return employee->status;
 }
-// retorna o nif da empresa
+// Pega a idade de um colaborador
+int getEmployeeAge(Employee *employee)
+{
+    return employee->age;
+}
+// retorna o salário do funcionário
 float getEmployeeSalary(Employee *employee)
 {
     return employee->salary;
 }
 
-StackAbsence *getStackAbsence(Employee *employee){
-    return employee->absence;
+// Retorna o BI de um Funcionario
+char *getEmployeeBI(Employee *employee)
+{
+    return employee->BI;
 }
 
-Employee *getNextEmployee(Employee *employee){
+// Retorna o genero de um Funcionario
+char *getEmployeeGender(Employee *employee)
+{
+    return employee->gender;
+}
+// retorn a pilha de falta do funcionário
+StackAbsence *getStackAbsence(Employee *employee)
+{
+    return employee->absence;
+}
+// retorna a pilha de bonus do funcionário
+StackBonus *getStackBonus(Employee *employee)
+{
+    return employee->bonus;
+}
+// retorna o próximo endereço do funcionário
+Employee *getNextEmployee(Employee *employee)
+{
     return employee->next;
 }
 
-
-
-
 // Mètodos Setters
+// actualiza o nome do funcionário
 void setEmployeeName(Employee *employee, char *value)
 {
     employee->name = value;
 }
+// actualiza o código do funcionário
 void setEmployeeCode(Employee *employee, int value)
 {
     employee->code = value;
 }
+// actualiza o estado do funcionário
 void setEmployeeStatus(Employee *employee, int value)
 {
     employee->status = value;
 }
+// actualiza o salário do funcionário
 void setEmployeeSalary(Employee *employee, float value)
 {
     employee->salary = value;
+}
+// actualiza o iban do funcionário
+void setEmployeeIBAN(Employee *employee, char *value)
+{
+    employee->IBAN = value;
+}
+// actualiza a idade do funcionário
+void setEmployeeAge(Employee *employee, int value)
+{
+    employee->age = value;
+}
+
+// Insere o BI num Funcionario
+void setEmployeeBI(Employee *employee, char *value)
+{
+    employee->BI = value;
+}
+
+// Insere o Genero num Funcionario
+void setEmployeeGender(Employee *employee, char *value)
+{
+    employee->gender = value;
+}
+
+// apresenta todos os anos q foram efectuados folha de salário de um funcionario
+void getYearHistoryFromEmployee(QueueYear *queueYear, int code, Employee *employee)
+{
+    Year *aux = getQueueStartYear(queueYear);
+
+    Employee *auxEmployee = findOneEmployee(employee, code);
+
+    if (!aux)
+    {
+        printf("\n\nNao existem Folhas de Pagamentos!\n\n");
+        return;
+    }
+
+    if (!auxEmployee)
+    {
+        printf("\n\nEste funcionario nao existe!\n\n");
+        return;
+    }
+
+    while (aux)
+    {
+        Month *auxMonth = getStartMonth(getQueueMonthFromYear(aux));
+
+        if (!getMonthPayrolls(auxMonth))
+        {
+            printf("\n\nNao existem Folhas de Pagamentos!");
+            return;
+        }
+
+        while (auxMonth && getMonthPayrolls(auxMonth))
+        {
+
+            describeYearHistoryPayrollOfEmployee(getMonthPayrolls(auxMonth), getYear(aux), auxMonth, auxEmployee);
+
+            auxMonth = getNextMonth(auxMonth);
+        }
+
+        aux = getNextYear(aux);
+    }
 }

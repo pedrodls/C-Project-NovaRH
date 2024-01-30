@@ -4,13 +4,14 @@
 
 #define size_char 100
 
+//definição da struct faltas
 struct absence
 {
     char *desc;
     int qtd;
     Absence *next;
 };
-
+//definição pilha de faltas
 struct stackAbsence
 {
     Absence *top;
@@ -67,7 +68,7 @@ Absence *popAbsence(StackAbsence *head)
 
     return aux;
 }
-
+//Métodos Getters
 // retorna o topo da pilha absence
 Absence *getTopAbsence(StackAbsence *head)
 {
@@ -105,14 +106,15 @@ void setAbsenceNext(Absence *oldAbsence, Absence *newAbsence)
 {
     oldAbsence->next = newAbsence;
 }
-
+//apresenta todas as faltas de uma lista de faltas
 void findAbsence(Absence *absence)
 {
     Absence *aux = absence;
 
     while (aux)
     {
-        printf("%s\n", aux->desc);
+        printf("\nDescricao: %s - Quantidade: %d\n\n", aux->desc, aux->qtd);
         aux = aux->next;
     }
+
 }

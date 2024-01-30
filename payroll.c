@@ -5,103 +5,373 @@
 #include "./absence.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #define size_char 100
-
+#define DISCOUNT_FAULT 2
+#define IRT_MAX 25
+#define IRT 13
+#define INSS 3
+// definição da struct folha de salário
 struct payroll
 {
+    char *employeeBI;
     float bonusValue;
     float discount;
     float baseSalary;
+    float inss;
+    float irt;
     float liquidSalary;
+    char *name;
+    char *iban;
     Bonus *bonus;
     Absence *absence;
-    Employee *employee;
     Payroll *next;
 };
+// retorna o valor total dos descontos
+float getDiscountTotalValue(Absence *absence, Employee *employee, Payroll *newPayroll)
+{
+    int count = 0;
+
+    Absence *auxAbsence = absence;
+
+    Employee *auxEmployee = employee;
+
+    while (auxAbsence)
+    {
+
+        Absence *newAbsence = (Absence *)malloc(sizeof(absence));
+
+        setAbsenceDesc(newAbsence, getAbsenceDesc(auxAbsence));
+        setAbsenceQtd(newAbsence, getAbsenceQtd(auxAbsence));
+
+        if (!newPayroll->absence)
+            setAbsenceNext(newAbsence, NULL);
+        else
+            setAbsenceNext(newAbsence, newPayroll->absence);
+
+        newPayroll->absence = newAbsence;
+
+        count += getAbsenceQtd(auxAbsence);
+
+        popAbsence(getStackAbsence(auxEmployee));
+
+        auxAbsence = getNextAbsence(auxAbsence);
+    }
+
+    return ((getEmployeeSalary(auxEmployee) * (count * DISCOUNT_FAULT) / 100));
+}
+// retorna o valor total dos bonus
+float getBonusTotalValue(Bonus *bonus, Employee *employee, Payroll *newPayroll)
+{
+    int count = 0;
+
+    Bonus *auxBonus = bonus;
+
+    Employee *auxEmployee = employee;
+
+    while (auxBonus)
+    {
+
+        Bonus *newBonus = (Bonus *)malloc(sizeof(bonus));
+
+        setBonusDesc(newBonus, getBonusDesc(auxBonus));
+        setBonusPerc(newBonus, getBonusPerc(auxBonus));
+
+        if (!newPayroll->bonus)
+            setBonusNext(newBonus, NULL);
+        else
+            setBonusNext(newBonus, newPayroll->bonus);
+
+        newPayroll->bonus = newBonus;
+
+        count += getBonusPerc(auxBonus);
+
+        popBonus(getStackBonus(auxEmployee));
+
+        auxBonus = getNextBonus(auxBonus);
+    }
+
+    return ((getEmployeeSalary(auxEmployee) * count) / 100);
+}
+
+// Na folha de pagamento, não queremos fazer refência direta para que atualizando o funcionário, não altere a folha de pagamento;
 
 // Cria folha de pagamento
 
-Payroll *createPayroll(Employee *employee, QueueYear *year)
+void createPayroll(Employee *employee, QueueYear *year)
 {
 
     Employee *aux_employee = employee;
 
-    Payroll *newPayroll = (Payroll *)malloc(sizeof(Payroll));
-
-    if (!newPayroll)
+    if (!aux_employee)
     {
-        printf("Falha na Alocacao da folha de Pagamento\n");
-        return NULL;
+        printf("NAO EXISTEM FUNCIONARIOS\n");
+
+        return;
     }
+
+    Payroll *oldPayroll = NULL;
 
     while (aux_employee)
     {
 
-        if (getStackAbsence(aux_employee))
+        Payroll *newPayroll = (Payroll *)malloc(sizeof(Payroll));
+
+        if (!newPayroll)
         {
+            printf("Falha na Alocacao\n");
 
-            Absence *absence = getTopAbsence(getStackAbsence(aux_employee));
+            system("pause <Enter para continuar>!");
 
-            do
+            return;
+        }
+
+        if (getEmployeeStatus(aux_employee))
+        {
+            newPayroll->bonus = NULL;
+            newPayroll->iban = getEmployeeIBAN(aux_employee);
+            newPayroll->name = getEmployeeName(aux_employee);
+            newPayroll->employeeBI = getEmployeeBI(aux_employee);
+            newPayroll->absence = NULL;
+            newPayroll->next = NULL;
+
+            newPayroll->irt = 0.00;
+
+            if (getEmployeeSalary(aux_employee) >= 101000.00 && getEmployeeSalary(aux_employee) < 120000000.00)
+            {
+                newPayroll->irt = (getEmployeeSalary(aux_employee) * IRT) / 100;
+            }
+            else if (getEmployeeSalary(aux_employee) >= 120000000.00)
+            {
+                newPayroll->irt = (getEmployeeSalary(aux_employee) * IRT_MAX) / 100;
+            }
+
+            newPayroll->inss = (getEmployeeSalary(aux_employee) * INSS) / 100;
+
+            newPayroll->baseSalary = getEmployeeSalary(aux_employee);
+
+            newPayroll->discount = getDiscountTotalValue(getTopAbsence(getStackAbsence(aux_employee)), aux_employee, newPayroll) + newPayroll->inss + newPayroll->irt;
+
+            newPayroll->bonusValue = getBonusTotalValue(getTopBonus(getStackBonus(aux_employee)), aux_employee, newPayroll);
+
+            newPayroll->liquidSalary = (newPayroll->baseSalary - newPayroll->discount) + newPayroll->bonusValue;
+
+            if (!oldPayroll)
             {
 
-                if (absence)
-                {
-                    Absence *newAbsence = (Absence *)malloc(sizeof(absence));
-                    setAbsenceDesc(newAbsence, getAbsenceDesc(absence));
-                    setAbsenceQtd(newAbsence, getAbsenceQtd(absence));
-
-                    if (!newPayroll->absence)
-                    { // se é a primeira iteração
-                        newPayroll->absence = newAbsence;
-                        setAbsenceNext(newPayroll->absence, NULL);
-                    }
-                    else
-                    {
-                        setAbsenceNext(newAbsence, newPayroll->absence);
-                        newPayroll->absence = newAbsence;
-                    };
-
-                    popAbsence(getStackAbsence(aux_employee));
-
-                    absence = getNextAbsence(absence);
-                }
-
-            } while (absence);
+                oldPayroll = newPayroll;
+            }
+            else
+            {
+                newPayroll->next = oldPayroll;
+                oldPayroll = newPayroll;
+            }
         }
+
+        if (getEmployeeAge(aux_employee) > 60)
+            setEmployeeStatus(aux_employee, 0);
 
         aux_employee = getNextEmployee(aux_employee);
     }
 
     Month *auxMonth = getCurrentMonth(getQueueMonth(year));
 
-    setPayrollInCurrentMonth(getLastPayroll(auxMonth), auxMonth);
+    if (oldPayroll)
+    {
+        setPayrollInCurrentMonth(oldPayroll, auxMonth);
 
-    describePayroll(getLastPayroll(auxMonth));
+        if (getMonthCode(auxMonth) == 11)
+        {
+            year = enqueueYear(year, getYear(getCurrentYear(year)) + 1);
 
-    printf("Folha de Pagamento criada com sucesso!\n");
+            enqueueMonth(getQueueMonth(year));
 
-    return newPayroll;
+            updateEmployeeAge(employee);
+        }
+        else
+            enqueueMonth(getQueueMonth(year));
+
+        printf("Folha de Pagamento criada com sucesso!\n");
+    }
+    else
+    {
+        printf("Folha de Pagamento nao criada!\n");
+        printf("[Sem Colaboradores que cumprem com requisitos]!\n");
+    }
 }
-
-void describePayroll(Payroll *payroll)
+// apresenta a folha de salário relative a um ano e mês específico
+void describeYearHistoryPayroll(Payroll *payroll, int year, Month *month)
 {
     Payroll *aux = payroll;
 
+    if (!aux)
+    {
+        printf("Final do Historico\n");
+
+        return;
+    }
+
+    printf("_________________________________________________________\n\n");
+
+    printf("\tFOLHA DE PAGAMENTO (%d/%s)\n",
+           year,
+           getMonthName(month));
+
+    printf("_________________________________________________________\n");
+
     while (aux)
     {
-        printf("%s", getEmployeeName(aux->employee));
+
+        printf("Funcionario[%s]    : %s\n", aux->employeeBI, aux->name);
+
+        printf("IBAN               : %s\n", aux->iban);
+
+        printf("\nFaltas \n");
+        findAbsence(aux->absence);
+
+        printf("\nBonus\n");
+        findBonus(aux->bonus);
+
+        printf("\nINSS                : %.2f\n", (aux->inss));
+
+        printf("\nIRT                 : %.2f\n", aux->irt);
+
+        printf("\nTotal de Descontos  : %.2f\n", aux->discount);
+
+        printf("\nTotal de Bonus      : %.2f\n", aux->bonusValue);
+
+        printf("\nSalario Bruto       : %.2f\n", aux->baseSalary);
+
+        printf("\nSalario Liquido     : %.2f\n", aux->liquidSalary);
+
+        printf("_________________________________________________________\n");
 
         aux = aux->next;
     }
 }
 
+// apresenta histórico da folha de salário de um funcionário
+void describeYearHistoryPayrollOfEmployee(Payroll *payroll, int year, Month *month, Employee *employee)
+{
+    Employee *auxEmployee = employee;
+
+    Payroll *aux = payroll;
+
+    int founded = 0;
+
+    printf("\n\n_________________________________________________________\n\n");
+
+    printf("\tFOLHA DE PAGAMENTO (%d/%s)\n",
+           year,
+           getMonthName(month));
+
+    printf("_________________________________________________________\n");
+
+    while (aux)
+    {
+
+        if (strcmp(strupr(aux->employeeBI), strupr(getEmployeeBI(auxEmployee))) == 0)
+        {
+
+            printf("Funcionario[%s]    : %s\n", aux->employeeBI, aux->name);
+
+            printf("IBAN               : %s\n", aux->iban);
+
+            printf("\nFaltas \n");
+            findAbsence(aux->absence);
+
+            printf("\nBonus\n");
+            findBonus(aux->bonus);
+
+            printf("\nINSS                : %.2f\n", (aux->inss));
+
+            printf("\nIRT                 : %.2f\n", aux->irt);
+
+            printf("\nTotal de Descontos  : %.2f\n", aux->discount);
+
+            printf("\nTotal de Bonus      : %.2f\n", aux->bonusValue);
+
+            printf("\nSalario Bruto       : %.2f\n", aux->baseSalary);
+
+            printf("\nSalario Liquido     : %.2f\n", aux->liquidSalary);
+
+            printf("_________________________________________________________\n");
+
+            founded = 1;
+        }
+
+        aux = aux->next;
+    }
+
+    if (!founded)
+    {
+        printf("Historico nao encontrado!\n");
+
+        return;
+    }
+}
+
+// apresenta a folha de salário, a última folha de salário
+void describePayroll(Payroll *payroll, Year *year, int type)
+{
+    Payroll *aux = payroll;
+
+    if (!aux)
+    {
+        printf("NAO EXISTE FOLHA DE PAGAMENTO\n");
+
+        return;
+    }
+
+    printf("_________________________________________________________\n\n");
+
+    type ? printf("\tULTIMA FOLHA DE PAGAMENTO (%d/%s)\n",
+                  getYear(year),
+                  getMonthName(getCurrentMonth(getQueueMonthFromYear(year))))
+
+         : printf("\tULTIMA FOLHA DE PAGAMENTO (%d/%s)\n",
+                  getYear(year),
+                  getMonthName(getPreviousMonth(getQueueMonthFromYear(year))));
+
+    printf("_________________________________________________________\n");
+
+    while (aux)
+    {
+
+        printf("Funcionario[%s]    : %s\n", aux->employeeBI, aux->name);
+
+        printf("IBAN                : %s\n", aux->iban);
+
+        printf("\nFaltas \n");
+        findAbsence(aux->absence);
+
+        printf("\nBonus\n");
+        findBonus(aux->bonus);
+
+        printf("\nINSS                : %.2f\n", (aux->inss));
+
+        printf("\nIRT                 : %.2f\n", aux->irt);
+
+        printf("\nTotal de Desconto   : %.2f\n", aux->discount);
+
+        printf("\nTotal de Bonus      : %.2f\n", aux->bonusValue);
+
+        printf("\nSalario Bruto       : %.2f\n", aux->baseSalary);
+
+        printf("\nSalario Liquido     : %.2f\n", aux->liquidSalary);
+
+        printf("_________________________________________________________\n");
+
+        aux = aux->next;
+    }
+}
+// retorna a próxima folha de salário da lista
 Payroll *getNextPayroll(Payroll *payroll)
 {
     return payroll->next;
 }
-
+// retorna o ponteiro da falta que constará na losta da folha
 Absence *getAbsenceFromPayroll(Payroll *payroll)
 {
     return payroll->absence;

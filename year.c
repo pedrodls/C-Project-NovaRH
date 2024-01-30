@@ -3,29 +3,32 @@
 #include "year.h"
 #include "payroll.h"
 
-char *months[] = {"Janeiro", "Fevereiro", "Marco", "Abril", "Maio", "Junho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"};
-
+char *months[] = {"Janeiro", "Fevereiro", "Marco", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"};
+// definição da struct month
 struct month
 {
     char *name;
     int code;
     struct month *next;
+    struct month *prev;
     Payroll *payrolls;
 };
-
+// fila do mês
 struct queueMonth
 {
     Month *startMonth, *endMonth;
 };
-
+// definição da struct year
 struct year
 {
     int year;
 
     struct year *next;
+    struct year *prev;
+
     QueueMonth *months;
 };
-
+// fila do year
 struct queueYear
 {
     Year *startYear, *endYear;
@@ -121,6 +124,8 @@ QueueYear *enqueueYear(QueueYear *queueYear, int year)
 
     newYear->year = year;
 
+    newYear->prev = queueYear->endYear;
+
     newYear->next = NULL;
 
     if (!queueYear->startYear)
@@ -134,7 +139,7 @@ QueueYear *enqueueYear(QueueYear *queueYear, int year)
     return queueYear;
 }
 
-// cria um novo ano definindo também os meses
+// cria um novo mes
 QueueMonth *enqueueMonth(QueueMonth *queueMonth)
 {
 
@@ -153,6 +158,7 @@ QueueMonth *enqueueMonth(QueueMonth *queueMonth)
     }
 
     newMonth->next = NULL;
+    newMonth->prev = queueMonth->endMonth;
     newMonth->payrolls = NULL;
 
     if (!queueMonth->startMonth)
@@ -175,39 +181,123 @@ QueueMonth *enqueueMonth(QueueMonth *queueMonth)
     return queueMonth;
 }
 
-// recebe a fila de um ano
+// recebe a fila de um ano, retorna a fila do mês do último ano
 QueueMonth *getQueueMonth(QueueYear *year)
 {
     // vou precisar do endYear dessa fila e retornar o QueueMonth
     return year->endYear->months;
 }
-
-int getCurrentYear(QueueYear *year)
+// retorna a fila do mês de determinado ano
+QueueMonth *getQueueMonthFromYear(Year *year)
 {
-    return year->endYear->year;
+    // Traz os meses de um ano
+    return year->months;
 }
-
+// retorna o ano corrente
+Year *getCurrentYear(QueueYear *year)
+{
+    return year->endYear;
+}
+// retorna o valor do ano
+int getYear(Year *year)
+{
+    return year->year;
+}
+// retorna o mês corrente
 Month *getCurrentMonth(QueueMonth *month)
 {
     return month->endMonth;
 }
 
+// retorna o 1º mês de uma fila
+Month *getStartMonth(QueueMonth *month)
+{
+    return month->startMonth;
+}
+
+// retorna o més anterior ao corrente
+Month *getPreviousMonth(QueueMonth *month)
+{
+    return month->endMonth->prev;
+}
+// retorna o ano anterior ao corrente
+Year *getPreviousYear(QueueYear *year)
+{
+    return year->endYear->prev;
+}
+// retorna o nome do mês
 char *getMonthName(Month *month)
 {
     return month->name;
 }
-
+// retorna o código do més
+int getMonthCode(Month *month)
+{
+    return month->code;
+}
+// retorna a folha de pagamento de determinado mês
 Payroll *getLastPayroll(Month *month)
 {
 
     Month *aux = month;
 
+    if (!aux)
+    {
+        return NULL;
+    }
+
     return aux->payrolls;
 }
-
+// actualiza o payroll do mês
 void setPayrollInCurrentMonth(Payroll *payroll, Month *month)
 {
-    describePayroll(payroll);
-    
     month->payrolls = payroll;
+}
+// apresenta todos os anos q foram efectuados folha de salário
+void getYearHistory(QueueYear *queueYear)
+{
+    Year *aux = queueYear->startYear;
+
+    if (!aux)
+    {
+        printf("Nao existem Folhas de Pagamentos!");
+        return;
+    }
+
+    while (aux)
+    {
+        Month *auxMonth = aux->months->startMonth;
+
+        while (auxMonth && auxMonth->payrolls)
+        {
+
+            describeYearHistoryPayroll(auxMonth->payrolls, aux->year, auxMonth);
+
+            auxMonth = auxMonth->next;
+        }
+
+        aux = aux->next;
+    }
+}
+
+// Função que retorna o start year da fila do ano
+Year *getQueueStartYear(QueueYear *queueYear)
+{
+    return queueYear->startYear;
+}
+
+Payroll *getMonthPayrolls(Month *month)
+{
+    return month->payrolls;
+}
+
+// Função que retorna o próximo mês
+Month *getNextMonth(Month *month)
+{
+    return month->next;
+}
+
+Year *getNextYear(Year *year)
+{
+    return year->next;
 }

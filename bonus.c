@@ -3,14 +3,14 @@
 #include <stdlib.h>
 
 #define size_char 100
-
+//definição da struct bonus
 struct bonus
 {
     char *desc;
     float perc;
     Bonus *next;
 };
-
+//definição da struct pilha de bonus
 struct stackBonus
 {
     Bonus *top;
@@ -53,10 +53,11 @@ StackBonus *pushBonus(StackBonus *head, char *desc, float perc)
 
     return head;
 }
-
+//Elimina um bonus
 Bonus *popBonus(StackBonus *head)
 {
-    if (!head || !head->top){
+    if (!head || !head->top)
+    {
         printf("NAO EXISTE BONUS\n");
         return NULL;
     }
@@ -66,23 +67,52 @@ Bonus *popBonus(StackBonus *head)
 
     return aux;
 }
-
-//retorna o topo da pilha bonus
-Bonus *getTopBonus(StackBonus *head){
+//Métodos Getters
+// retorna o topo da pilha bonus
+Bonus *getTopBonus(StackBonus *head)
+{
     return head->top;
 }
 
-//retorna a descrição do bonus
-char* getBonusDesc(Bonus *bonus){
+// retorna a descrição do bonus
+char *getBonusDesc(Bonus *bonus)
+{
     return bonus->desc;
 }
-//retorna a percentagem do bonus
-float getBonusPerc(Bonus *bonus){
+// retorna a percentagem do bonus
+float getBonusPerc(Bonus *bonus)
+{
     return bonus->perc;
 }
-//retorna o proximo bonus da lista
-Bonus *getNextBonus(Bonus *bonus){
+// retorna o proximo bonus da lista
+Bonus *getNextBonus(Bonus *bonus)
+{
     return bonus->next;
 }
+//apresenta todos os bonus de uma lista
+void findBonus(Bonus *bonus)
+{
+    Bonus *aux = bonus;
 
-
+    while (aux)
+    {
+        printf("\nDescricao: %s - Percentagem: %.2f%\n\n", aux->desc, aux->perc);
+        aux = aux->next;
+    }
+}
+//Métodos Setters
+//actualiza a descrição de um bonus
+void setBonusDesc(Bonus *bonus, char *desc)
+{
+    bonus->desc = desc;
+}
+//actualiza a percentagem de um bonus
+void setBonusPerc(Bonus *bonus, float perc)
+{
+    bonus->perc = perc;
+}
+//actualiza o next de um nó
+void setBonusNext(Bonus *oldBonus, Bonus *newBonus)
+{
+    oldBonus->next = newBonus;
+}

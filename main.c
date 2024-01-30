@@ -6,13 +6,14 @@
 #include "payroll.h"
 #include <string.h>
 #include "year.h"
+#include <ctype.h>
 
 #define size 100
 #define size_char 100
 #define size_char_phone 10
 #define size_char_nif 14
-
-char *CONST_MONTH[] = {"Janeiro", "Fevereiro", "Marco", "Abril", "Maio", "Junho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"};
+// constante dos meses
+char *CONST_MONTH[] = {"Janeiro", "Fevereiro", "Marco", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"};
 
 // Funçao pra pegar o menu principal
 void menuMain(Company *company, Department *department, Employee *employee, QueueYear *year);
@@ -37,6 +38,24 @@ void createCompanyFromMain(Company *company, Department *department, Employee *e
 // Funcao pra verificar campos vazios
 int required(char *value);
 
+// Funcao para validar IBAN
+int validateIBAN(char *value);
+
+// Função para validar idade
+int validateAge(int age);
+
+// Função para validar Gênero
+int validateGender(char *value);
+
+// Função para validar BI
+int invalidIdCard(char *value);
+
+// Função para validar Estado do Funcionario
+int validateState(int state);
+
+// Função para validar Salário do Funcionario
+int validateSalary(float salary);
+
 // Funcao pra mostrar dados da empresa
 void showCompanyDataFromMain(Company *company, Department *department, Employee *employee, QueueYear *year);
 
@@ -52,20 +71,20 @@ void updateDepartmentFromMain(Company *company, Department *department, Employee
 
 //-------------------FUNCIONÁRIOS--------------------------------------
 void menuEmployee(Company *company, Department *department, Employee *employee, QueueYear *year);
-
+// funcão da lógica de criação de funcionário
 void createEmployeeFromMain(Company *company, Department *department, Employee *employee, QueueYear *year);
-
+// função da lógica de criação de funcionário
 void updateEmployeeFromMain(Company *company, Department *department, Employee *employee, QueueYear *year);
-
+// função da lógica de criação de bonus
 void createBonusFromMain(Employee *employee);
-
+// função da lógica de criação de faltas
 void createAbsenceFromMain(Employee *employee);
 
 //---------------------------FOLHA DE PAGAMENTOS------------------------------
 void menuPayroll(Company *company, Department *department, Employee *employee, QueueYear *year);
 
 int main()
-{
+{ // Inicialização das entidades
     Company *myCompany = initCompany();
 
     Department *myDepartments = initDepartment();
@@ -73,13 +92,13 @@ int main()
     Employee *myEmployees = initEmployee();
 
     QueueYear *year = initYear();
-
+    //----------------------------------
     // Cadastro do Ano
     year = enqueueYear(year, 2024);
     // Cadastro do Primeiro Mês do Ano
     enqueueMonth(getQueueMonth(year));
 
-    // Função para pegar dados da empresa apartir do ficheiro
+    // Função para pegar dados da empresa apartir do ficheiro caso exista
     readCompany(myCompany);
 
     menuMain(myCompany, myDepartments, myEmployees, year);
@@ -98,7 +117,6 @@ void menuMain(Company *company, Department *department, Employee *employee, Queu
     printf("\t\tLOGIN\n");
     printf("000000000000000000000000000000000000000000000000\n");
     printf("| 1 - ADMIN                                    |\n");
-    printf("| 2 - FUNCIONARIO                              |\n");
     printf("| 0 - SAIR                                     |\n");
     printf("000000000000000000000000000000000000000000000000\n\nOpcao: ");
     fflush(stdin);
@@ -343,8 +361,11 @@ void updateCompanyFromMain(Company *company, Department *department, Employee *e
 
     fflush(stdin);
 
-    char *email = (char *)malloc(sizeof(size)), *name = (char *)malloc(sizeof(size)), *address = (char *)malloc(sizeof(size));
-    char *phone = (char *)malloc(sizeof(size_char_phone)), *nif = (char *)malloc(sizeof(size_char_nif));
+    char *email = (char *)malloc(sizeof(size));
+    char *name = (char *)malloc(sizeof(size));
+    char *address = (char *)malloc(sizeof(size));
+    char *phone = (char *)malloc(sizeof(size_char_phone));
+    char *nif = (char *)malloc(sizeof(size_char_nif));
 
     fflush(stdin);
 
@@ -527,9 +548,6 @@ void menuDepartment(Company *company, Department *department, Employee *employee
     case '2':
         updateDepartmentFromMain(company, department, employee, year);
         break;
-    case '0':
-        menuCompany(company, department, employee, year);
-        break;
     case '3':
         findAllDepartments(department);
         printf("\nClique <Enter> para Continuar\n");
@@ -556,6 +574,9 @@ void menuDepartment(Company *company, Department *department, Employee *employee
         system("timeout -t 5");
         menuDepartment(company, department, employee, year);
         break;
+    case '0':
+        menuCompany(company, department, employee, year);
+        break;
     default:
         menuDepartment(company, department, employee, year);
         break;
@@ -569,6 +590,7 @@ void createDepartmentFromMain(Company *company, Department *department, Employee
     char *name = (char *)malloc(sizeof(size));
 
     printf("000000000000000000000000000000000000000000000000\n");
+    printf("|           Adicionar Departamento             |\n");
     printf("|              Dados Necessarios               |\n");
     printf("| Nome                                         |\n\n");
     printf("000000000000000000000000000000000000000000000000\n\n");
@@ -607,16 +629,24 @@ void updateDepartmentFromMain(Company *company, Department *department, Employee
     findAllDepartments(department);
     printf("000000000000000000000000000000000000000000000000\n\n");
 
-    printf("Codigo do Departmento: ");
-    scanf("%d", &code);
+    if (!getDepartmentCode(department))
+    {
+        system("timeout -t 5");
+    }
+    else
+    {
+        printf("Codigo do Departmento: ");
+        scanf("%d", &code);
 
-    department = updateDepartment(department, code);
+        department = updateDepartment(department, code);
 
-    system("timeout -t 5\n\n");
+        system("timeout -t 5\n\n");
+    }
 
     return menuDepartment(company, department, employee, year);
 }
 
+// Mostra menu dos funcionários
 void menuEmployee(Company *company, Department *department, Employee *employee, QueueYear *year)
 {
     system("cls");
@@ -631,7 +661,8 @@ void menuEmployee(Company *company, Department *department, Employee *employee, 
     printf("| 2 - ACTUALIZAR FUNCIONARIO                     |\n");
     printf("| 3 - LISTAR FUNCIONARIOS                        |\n");
     printf("| 4 - VINCULAR FUNCIONARIO A DEPARTAMENTO        |\n");
-    printf("| 5 - ELIMINAR FUNCIONARIO                       |\n");
+    printf("| 5 - REFORMADOS                                 |\n");
+    printf("| 6 - DESATIVADOS                                |\n");
     printf("| 0 - SAIR                                       |\n");
     printf("000000000000000000000000000000000000000000000000\n\nOpcao: ");
 
@@ -646,6 +677,9 @@ void menuEmployee(Company *company, Department *department, Employee *employee, 
         break;
     case '2':
         updateEmployeeFromMain(company, department, employee, year);
+        printf("\nClique <Enter> para Continuar\n");
+        system("pause>nul");
+        menuEmployee(company, department, employee, year);
         break;
     case '3':
         findAllEmployees(employee, 0);
@@ -655,6 +689,18 @@ void menuEmployee(Company *company, Department *department, Employee *employee, 
         break;
     case '4':
         employeeDepartment(employee, department);
+        printf("\nClique <Enter> para Continuar\n");
+        system("pause>nul");
+        menuEmployee(company, department, employee, year);
+        break;
+    case '5':
+        findAllOldEmployees(employee);
+        printf("\nClique <Enter> para Continuar\n");
+        system("pause>nul");
+        menuEmployee(company, department, employee, year);
+        break;
+    case '6':
+        findAllDisabledEmployees(employee);
         printf("\nClique <Enter> para Continuar\n");
         system("pause>nul");
         menuEmployee(company, department, employee, year);
@@ -673,21 +719,43 @@ void createEmployeeFromMain(Company *company, Department *department, Employee *
 {
     system("cls");
 
-    char *name = (char *)malloc(sizeof(size));
+    char name[size];
+    char IBAN[size];
+    char BI[size];
+    char gender[size];
+    int age;
+
     float salary;
 
     fflush(stdin);
 
-    // myEmployee = createEmployee(myEmployee,1,1,"bruno mateus", 5000);
-
     printf("000000000000000000000000000000000000000000000000\n");
+    printf("|            Adicionar Funcionario             |\n");
     printf("|              Dados Necessarios               |\n");
+    printf("| BI                                           |\n");
+    printf("| Genero - M | F                               |\n");
     printf("| Nome                                         |\n");
-    printf("| Salario                                      |\n\n");
-    printf("000000000000000000000000000000000000000000000000\n\n");
+    printf("| Salario                                      |\n");
+    printf("| Conta(IBAN)                                  |\n");
+    printf("| Idade                                        |\n");
+    printf("000000000000000000000000000000000000000000000000\n");
+
+    fflush(stdin);
+
+    printf("BI: ");
+    fgets(BI, size, stdin);
+    BI[strcspn(BI, "\n")] = '\0';
+
+    fflush(stdin);
+
+    printf("Genero - M | F: ");
+    fgets(gender, size, stdin);
+    gender[strcspn(gender, "\n")] = '\0';
+
+    fflush(stdin);
 
     printf("Nome: ");
-    fgets(name, size_char, stdin);
+    fgets(name, size, stdin);
     name[strcspn(name, "\n")] = '\0';
 
     fflush(stdin);
@@ -695,13 +763,34 @@ void createEmployeeFromMain(Company *company, Department *department, Employee *
     printf("Salario: ");
     scanf("%f", &salary);
 
-    if (required(name))
+    fflush(stdin);
+
+    printf("IBAN: ");
+    fgets(IBAN, size, stdin);
+    IBAN[strcspn(IBAN, "\n")] = '\0';
+
+    fflush(stdin);
+
+    printf("Idade: ");
+    scanf("%d", &age);
+
+    fflush(stdin);
+
+    if (findOneEmployeeByCardId(employee, BI))
     {
+        printf("\nFuncionario[BI = %s] ja existe!\n", BI);
         system("timeout -t 5\n\n");
-        return createEmployeeFromMain(company, department, employee, year);
+
+        return menuEmployee(company, department, employee, year);
     }
 
-    employee = createEmployee(employee, getEmployeeCode(employee) + 1, name, salary);
+    if (required(name) || !validateIBAN(IBAN) || validateAge(age) || invalidIdCard(BI) || validateGender(gender) || validateSalary(salary))
+    {
+        system("\n\ntimeout -t 5\n\n");
+        return menuEmployee(company, department, employee, year);
+    }
+
+    employee = createEmployee(employee, getEmployeeCode(employee) + 1, IBAN, name, salary, age, BI, gender);
 
     system("timeout -t 5\n\n");
 
@@ -724,6 +813,7 @@ void createBonusFromMain(Employee *employee)
         return;
 
     printf("000000000000000000000000000000000000000000000000\n");
+    printf("|               Adicionar Bonus                |\n");
     printf("|              Dados Necessarios               |\n");
     printf("| Descricao                                    |\n\n");
     printf("| Percentagem                                  |\n\n");
@@ -773,6 +863,7 @@ void createAbsenceFromMain(Employee *employee)
         return;
 
     printf("000000000000000000000000000000000000000000000000\n");
+    printf("|               Adicionar Falta                |\n");
     printf("|              Dados Necessarios               |\n");
     printf("| Descricao                                    |\n\n");
     printf("| Codigo do Funcionario                        |\n\n");
@@ -800,7 +891,7 @@ void createAbsenceFromMain(Employee *employee)
         createAbsence(employee, code, desc);
     }
 }
-// Actualização dos dadods de um funcionário
+// Actualização dos dados de um funcionário
 void updateEmployeeFromMain(Company *company, Department *department, Employee *employee, QueueYear *year)
 {
     system("cls");
@@ -815,22 +906,173 @@ void updateEmployeeFromMain(Company *company, Department *department, Employee *
         return;
 
     printf("000000000000000000000000000000000000000000000000\n");
+    printf("|            Atualizar Funcionario             |\n");
     printf("|              Dados Necessarios               |\n");
+    printf("| BI                                           |\n");
+    printf("| Genero - M | F                               |\n");
     printf("| Nome                                         |\n");
-    printf("| Estado                                       |\n");
-    printf("| Salario                                      |\n\n");
-    printf("000000000000000000000000000000000000000000000000\n\n");
+    printf("| Salario                                      |\n");
+    printf("| Conta(IBAN)                                  |\n");
+    printf("| Idade                                        |\n");
+    printf("000000000000000000000000000000000000000000000000\n");
 
     printf("\nCodigo do Funcionario: ");
     scanf("%d", &code);
 
-    employee = updateEmployee(employee, code);
+    Employee *employeeData = findOneEmployee(employee, code);
 
-    system("timeout -t 5\n\n");
+    if (!employee)
+    {
+        printf("Funcionario nao encontrado!\n");
+    }
+    else
+    {
+        char name[size];
+        char IBAN[size];
+        char BI[size];
+        char gender[size];
+        int age = 0, state;
+        float salary;
+        int noError = 1;
+
+        fflush(stdin);
+
+        describeColaborator(employeeData);
+
+        printf("\n\nNovo BI <apenas Enter para ignorar>: ");
+
+        fflush(stdin);
+
+        printf("BI: ");
+        fgets(BI, size, stdin);
+        BI[strcspn(BI, "\n")] = '\0';
+
+        fflush(stdin);
+
+        printf("\n\nNovo genero <apenas Enter para ignorar>  M | F: ");
+        fgets(gender, size, stdin);
+        gender[strcspn(gender, "\n")] = '\0';
+
+        fflush(stdin);
+
+        printf("\n\nNovo nome <apenas Enter para ignorar>: ");
+        fgets(name, size_char, stdin);
+        name[strcspn(name, "\n")] = '\0';
+
+        fflush(stdin);
+
+        printf("Novo IBAN <apenas Enter para ignorar>: ");
+        fgets(IBAN, size_char, stdin);
+        IBAN[strcspn(IBAN, "\n")] = '\0';
+
+        fflush(stdin);
+
+        printf("\nSalario: ");
+        scanf("%f", &salary);
+
+        printf("\nAtivar - 1 | Desactivar - 0: ");
+        scanf("%d", &state);
+
+        printf("\nIdade: ");
+        scanf("%d", &age);
+
+        if (findOneEmployeeByCardId(employee, BI))
+        {
+            printf("Este funcionario[BI=%s] ja existe!\n", BI);
+
+            noError = 0;
+        }
+        else
+        {
+            if (strlen(BI) > 0 && invalidIdCard(BI))
+                noError = 0;
+
+            if (strlen(IBAN) > 0 && !validateIBAN(IBAN))
+                noError = 0;
+
+            if (strlen(gender) > 0 && validateGender(gender))
+                noError = 0;
+
+            if (validateAge(age))
+                noError = 0;
+
+            if (validateState(state))
+                noError = 0;
+
+            if (validateSalary(salary))
+                noError = 0;
+        }
+
+        if (noError)
+            updateEmployee(employeeData, code, IBAN, name, salary, state, age, BI, gender);
+    }
+
+    system("\n\ntimeout -t 5\n\n");
 
     return menuEmployee(company, department, employee, year);
 }
+// validação do iban
+int validateIBAN(char *value)
+{
+    int countLetter = 0;
 
+    for (int i = 0; i < strlen(value); i++)
+    {
+        countLetter += isalpha(value[i]) ? 1 : 0;
+    }
+
+    if (countLetter > 0 || !(strlen(value) > 20 && strlen(value) < 22))
+    {
+        printf("\nCampos invalidos![IBAN] ");
+
+        return 0;
+    }
+
+    return 1;
+}
+// validação da idade
+int validateAge(int age)
+{
+
+    if (!(age > 18 && age < 61))
+    {
+        printf("\nCampos invalidos![Idade] ");
+
+        return 1;
+    }
+
+    return 0;
+}
+
+// validação do estado
+int validateState(int state)
+{
+
+    if (!(state >= 0 && state <= 1))
+    {
+        printf("\nCampos invalidos![Estado] ");
+
+        return 1;
+    }
+
+    return 0;
+}
+
+// validação do salario
+int validateSalary(float salary)
+{
+
+    if (!(salary > 0))
+    {
+        printf("\nCampos invalidos![Salario] ");
+
+        return 1;
+    }
+
+    return 0;
+}
+
+// campo obrigatórios
 int required(char *value)
 {
 
@@ -838,12 +1080,60 @@ int required(char *value)
     {
         printf("\nCampos invalidos! ");
 
-        return !(strlen(value) > 1);
+        return 1;
     }
 
     return 0;
 }
 
+// Validar gênero
+int validateGender(char *value)
+{
+    char *aux = value;
+    int error = 1;
+
+    switch (toupper(aux[0]))
+    {
+    case 'M':
+        error = 0;
+        break;
+    case 'F':
+        error = 0;
+        break;
+    default:
+        error = 1;
+        break;
+    }
+
+    if (strlen(value) == 1 && !error)
+        return 0;
+
+    printf("\nCampos invalidos![Genero]");
+
+    return 1;
+}
+
+// Validar Bilhete
+int invalidIdCard(char *value)
+{
+    int countLetter = 0;
+
+    for (int i = 0; i < strlen(value); i++)
+    {
+        countLetter += isalpha(value[i]) ? 1 : 0;
+    }
+
+    if (countLetter > 2 || strlen(value) != 14 || (!isalpha(value[9]) || !isalpha(value[10])))
+    {
+        printf("\nCampos invalidos![BI] ");
+
+        return 1;
+    }
+
+    return 0;
+}
+
+// Menu da folha de Pagamento
 void menuPayroll(Company *company, Department *department, Employee *employee, QueueYear *year)
 {
     system("cls");
@@ -855,10 +1145,10 @@ void menuPayroll(Company *company, Department *department, Employee *employee, Q
 
     printf("\t Gerencie a sua Empresa com a NOVA-RH\n\n");
     printf("0000000000000000000000000000000000000000000000000000\n");
-    printf(" 1  -  EXECUTAR FOLHA PAGAMENTO (%d/%s)           \n", getCurrentYear(year), getMonthName(getCurrentMonth(getQueueMonth(year))));
+    printf(" 1  -  EXECUTAR FOLHA PAGAMENTO (%d/%s)           \n", getYear(getCurrentYear(year)), getMonthName(getCurrentMonth(getQueueMonth(year))));
     printf(" 2  -  CONSULTAR ULTIMA FOLHA DE PAGAMENTO        \n");
     printf(" 3  -  CONSULTAR HISTORICO DE FOLHA PAGAMENTO     \n");
-    printf(" 4  -  EDITAR FOLHA PAGAMENTO                     \n");
+    printf(" 4  -  CONSULTAR HISTORICO DE FOLHA PAGAMENTO DE UM FUNCIONARIO     \n");
     printf(" 0  -  SAIR                                       \n");
     printf("0000000000000000000000000000000000000000000000000000\n\nOpcao: ");
 
@@ -880,7 +1170,40 @@ void menuPayroll(Company *company, Department *department, Employee *employee, Q
         menuPayroll(company, department, employee, year);
         break;
     case '2':
-        describePayroll(getLastPayroll(getCurrentMonth(getQueueMonth(year))));
+        if (getPreviousYear(year) && (getMonthCode(getCurrentMonth(getQueueMonth(year))) == 0))
+        {
+            describePayroll(getLastPayroll(getCurrentMonth(getQueueMonthFromYear(getPreviousYear(year)))), getPreviousYear(year), 1);
+        }
+        else
+        {
+            describePayroll(getLastPayroll(getPreviousMonth(getQueueMonth(year))), getCurrentYear(year), 0);
+        }
+
+        printf("\nClique <Enter> para Continuar\n");
+        system("pause>nul");
+        menuPayroll(company, department, employee, year);
+        break;
+
+    case '3':
+        getYearHistory(year);
+        printf("\nClique <Enter> para Continuar\n");
+        system("pause>nul");
+        menuPayroll(company, department, employee, year);
+        break;
+
+    case '4':
+
+        if (!employee)
+        {
+            printf("\nNAO EXISTE FUNCIONARIOS\n");
+        }
+        else
+        {
+            printf("\nInsira o codigo do funcionario: ");
+            scanf("%d", &code);
+
+            getYearHistoryFromEmployee(year, code, employee);
+        }
 
         printf("\nClique <Enter> para Continuar\n");
         system("pause>nul");
